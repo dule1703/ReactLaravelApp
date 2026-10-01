@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ":memory:"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Install PHP dependencies (with dev, needed for PHPUnit)
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install & build frontend (Vite manifest is needed, tests render Inertia views)
+        run: |
+          npm ci --legacy-peer-deps
+          npm run build
+
+      # --if-present: skipped until the "test" script (vitest) is added to package.json
+      - name: Run JS tests (vitest)
+        run: npm run test --if-present
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Run PHP tests
+        run: composer test

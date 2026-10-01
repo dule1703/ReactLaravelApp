@@ -1,0 +1,58 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to roll back"
+        required: true
+        type: choice
+        options:
+          - production
+          - staging
+      release_timestamp:
+        description: "Release timestamp to roll back to (empty = previous release)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    # Inputs go through env instead of being pasted into the shell command:
+    # the repo is public, so never interpolate free-text input into a script.
+    env:
+      ENV_NAME: ${{ inputs.environment }}
+      RELEASE_TS: ${{ inputs.release_timestamp }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate input
+        run: |
+          if [ -n "$RELEASE_TS" ] && ! [[ "$RELEASE_TS" =~ ^[0-9]{14}$ ]]; then
+            echo "release_timestamp must be 14 digits (YYYYMMDDHHMMSS) or empty." >&2
+            exit 1
+          fi
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Refresh rollback.sh at its permanent path on the server
+        run: |
+          scp -P ${{ secrets.SSH_PORT }} deploy/rollback.sh \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/projects/react-laravel-app/deploy/$ENV_NAME/rollback.sh
+
+      - name: Run rollback on the server
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "bash ~/projects/react-laravel-app/deploy/$ENV_NAME/rollback.sh $ENV_NAME $RELEASE_TS"
