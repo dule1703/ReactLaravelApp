@@ -81,9 +81,6 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Install PHP dependencies (production only, for Ziggy during the build)
-        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
       - name: Install & build frontend
         run: |
           npm ci --legacy-peer-deps
