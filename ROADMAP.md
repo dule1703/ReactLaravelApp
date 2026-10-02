@@ -1,83 +1,83 @@
 # Roadmap
 
-Rule: one sub-phase at a time. A sub-phase is DONE only when its tests pass, the manual
-check works, and it is merged into `develop` and deployed to staging.
+Pravilo: jedna podfaza u jednom trenutku, jedna feature grana i jedan PR po podfazi.
+Podfaza je GOTOVA tek kad prođu testovi, radi ručna provera i PR je merge-ovan u `develop`.
 
-Legend: `[x]` done, `[ ]` to do.
+Legenda: `[x]` gotovo, `[ ]` na redu.
 
-## Phase 0 - Foundation and pipeline
+## Faza 0 - Temelji i pipeline
 
-- [x] 0.1 Fresh Laravel 12 + React + Inertia install, repo on GitHub with `main` and `develop`
-- [ ] 0.2 Run locally (`composer run setup`, `php artisan serve` + `npm run dev`)
-- [ ] 0.3 GitHub: rulesets for `main` and `develop`, squash merge, auto-delete branches
-- [ ] 0.4 Deploy SSH key pair + all 9 repository secrets
-- [ ] 0.5 Staging server prep: `shared/.env`, MySQL database, PHP >= 8.2 for the domain
-- [ ] 0.6 vitest + first test (`npm install -D vitest`, commit `package-lock.json` too)
-- [ ] 0.7 CI/CD files via PR into `develop` -> CI green -> first staging deploy
-- [ ] 0.8 Test the Rollback workflow on staging
-- [ ] 0.9 Production server prep, PR `develop` -> `main`, first production deploy
-- [ ] 0.10 Cron jobs: `schedule:run` every minute, `queue:work --stop-when-empty`
+- [x] 0.1 Sveža Laravel 12 + React + Inertia instalacija, repo na GitHubu (`main`, `develop`)
+- [ ] 0.2 Lokalno pokretanje (`composer run setup`, `php artisan serve` + `npm run dev`)
+- [ ] 0.3 GitHub: rulesets za `main` i `develop`, squash merge, automatsko brisanje grana
+- [ ] 0.4 Deploy SSH ključ + svih 9 repository secrets
+- [ ] 0.5 Priprema staging servera: `shared/.env`, MySQL baza, PHP >= 8.2 za domen
+- [ ] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
+- [ ] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
+- [ ] 0.8 Test Rollback workflow-a na stagingu
+- [ ] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
+- [ ] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
 
-## Phase 1 - Auth and roles
+## Faza 1 - Autentifikacija i uloge
 
-- [ ] 1.1 Expand migration: `role` on users (admin/client), admin seeder
-- [ ] 1.2 Auth screens: login, register (name, email, password), password reset by email
-- [ ] 1.3 Serbian UI texts; guest layout with Skoda-inspired design tokens (Tailwind)
-- [ ] 1.4 Role middleware + Policy skeleton, Feature tests for access rules
-- [ ] 1.5 Access log: record every client login (admin can see when each client visited)
-- [ ] 1.6 App shell: navbar (Home, Clients, Offers), logout, flash messages
+- [ ] 1.1 Expand migracija: `role` na korisnicima (admin/client), seeder za admina
+- [ ] 1.2 Ekrani: prijava, registracija (ime i prezime, email, lozinka), reset lozinke mejlom
+- [ ] 1.3 Srpski tekstovi; guest layout sa dizajn tokenima u duhu Škode (Tailwind)
+- [ ] 1.4 Middleware za uloge + Policy skelet, Feature testovi pristupa
+- [ ] 1.5 Log pristupa: beleži se svaka prijava klijenta (admin vidi kada je ko pristupio)
+- [ ] 1.6 Shell aplikacije: navigacija (Home, Klijenti, Ponude), odjava, flash poruke
 
-## Phase 2 - Client profiles
+## Faza 2 - Profili klijenata
 
-- [ ] 2.1 Client profile migration: name/company, JMBG (13 digits + checksum), PIB (9 digits),
-      address, postal code (5 digits), city, country
-- [ ] 2.2 Form Request validation + Policy (client: own profile only, admin: all) + tests
-- [ ] 2.3 Client edits own profile
-- [ ] 2.4 Admin: clients table with search, per-page selector, pagination, edit, delete
+- [ ] 2.1 Migracija profila: ime i prezime / naziv firme, JMBG (13 cifara + kontrolna cifra),
+      PIB (9 cifara), adresa, poštanski broj (5 cifara), grad, zemlja
+- [ ] 2.2 Form Request validacija + Policy (klijent: samo svoj profil, admin: svi) + testovi
+- [ ] 2.3 Klijent menja svoj profil
+- [ ] 2.4 Admin: tabela klijenata sa pretragom, brojem redova po strani, paginacijom, izmenom, brisanjem
 
-## Phase 3 - Catalog (admin)
+## Faza 3 - Katalog (admin)
 
-- [ ] 3.1 Schema: models, equipment packages, engines, transmissions, versions
-      (version = package + engine + transmission + base price in cents)
-- [ ] 3.2 Equipment per package: standard / optional (with price) / unavailable
-- [ ] 3.3 Seeders: 3-4 models with realistic packages, engines and equipment
-- [ ] 3.4 Admin dashboard: edit all prices (single and bulk), with tests
-- [ ] 3.5 Admin CRUD for models, packages, engines, versions and equipment
+- [ ] 3.1 Šema: modeli, paketi opreme, motori, menjači, verzije
+      (verzija = paket + motor + menjač + osnovna cena u centima)
+- [ ] 3.2 Oprema po paketu: serijska / dodatna (sa cenom) / nedostupna
+- [ ] 3.3 Seederi: 3-4 modela sa realnim paketima, motorima i opremom
+- [ ] 3.4 Admin dashboard: izmena svih cena (pojedinačno i grupno), sa testovima
+- [ ] 3.5 Admin CRUD za modele, pakete, motore, verzije i opremu
 
-## Phase 4 - Offers and configurator
+## Faza 4 - Ponude i konfigurator
 
-- [ ] 4.1 Schema: offers + offer items with price snapshot
-- [ ] 4.2 Offer number NNN/YYYY, resets every year, safe under concurrent requests
-- [ ] 4.3 VAT rate as an admin setting (default decided in D3)
-- [ ] 4.4 Price calculation: PHP service + JS util with identical results (PHPUnit + vitest)
-- [ ] 4.5 Configurator UI: model -> package -> engine, standard/optional equipment, number of cars,
-      "save model" adds an item, live totals without and with VAT
-- [ ] 4.6 Offers list: search, per-page, pagination, edit, delete
-- [ ] 4.7 Policy: client sees only own offers, admin sees all; Feature tests
+- [ ] 4.1 Šema: ponude + stavke ponude sa snimkom cena
+- [ ] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima
+- [ ] 4.3 PDV stopa kao admin podešavanje (podrazumevana vrednost: odluka D3)
+- [ ] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)
+- [ ] 4.5 UI konfiguratora: model -> paket -> motor, serijska/dodatna oprema, broj vozila,
+      "Snimi model" dodaje stavku, zbirovi bez i sa PDV-om uživo
+- [ ] 4.6 Lista ponuda: pretraga, broj po strani, paginacija, izmena, brisanje
+- [ ] 4.7 Policy: klijent vidi samo svoje ponude, admin sve; Feature testovi
 
-## Phase 5 - PDF and print
+## Faza 5 - PDF i štampa
 
-- [ ] 5.1 dompdf + Blade template with a font that supports Serbian letters
-- [ ] 5.2 PDF download and print view for an offer, authorization tests
-- [ ] 5.3 PDF layout polish (header, items table, totals, notes)
+- [ ] 5.1 dompdf + Blade šablon sa fontom koji podržava srpska slova
+- [ ] 5.2 PDF preuzimanje i prikaz za štampu ponude, testovi autorizacije
+- [ ] 5.3 Doterivanje PDF izgleda (zaglavlje, tabela stavki, zbirovi, napomena)
 
-## Phase 6 - Admin dashboard and polish
+## Faza 6 - Admin dashboard i poliranje
 
-- [ ] 6.1 Dashboard: counts of clients/offers, recent activity, quick links to price editing
-- [ ] 6.2 Empty states, loading states, validation messages, responsive layout
-- [ ] 6.3 Security pass: rate limiting, policy coverage review, no sensitive data in logs
+- [ ] 6.1 Dashboard: broj klijenata/ponuda, poslednje aktivnosti, prečice do izmene cena
+- [ ] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost
+- [ ] 6.3 Bezbednosni pregled: rate limiting, pokrivenost Policy-ja, bez osetljivih podataka u logovima
 
-## Phase 7 - Release hardening
+## Faza 7 - Završnica
 
-- [ ] 7.1 README with setup, deploy and rollback instructions
-- [ ] 7.2 Database backup routine on the server
-- [ ] 7.3 Final regression: tests green, staging walkthrough, production release
+- [ ] 7.1 README: podešavanje, deploy i rollback
+- [ ] 7.2 Rutina za backup baze na serveru
+- [ ] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
 
-## Open decisions
+## Otvorene odluke
 
-- D1: Are "clients" separate from user accounts? (admin creates clients without logins, as in
-  the old app, or is every client a registered user?)
-- D2: JMBG is sensitive. Encrypt at rest (Laravel `encrypted` cast) or keep it searchable?
-  Encryption makes searching by JMBG impossible.
-- D3: Default VAT rate. The old app used 18%; the general rate in Serbia is 20%.
-- D4: Is the UI Serbian only, or also English?
+- D1: Da li su "klijenti" odvojeni od korisničkih naloga? (admin unosi klijente bez naloga kao u
+  staroj aplikaciji, ili je svaki klijent registrovan korisnik?)
+- D2: JMBG je osetljiv. Šifrovati u bazi (Laravel `encrypted` cast) ili ostaviti pretraživ?
+  Šifrovanje onemogućava pretragu po JMBG-u.
+- D3: Podrazumevana stopa PDV-a. Stara aplikacija je koristila 18%, opšta stopa u Srbiji je 20%.
+- D4: Da li je UI samo na srpskom ili i na engleskom?
