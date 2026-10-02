@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,6 +19,10 @@ Route::get('/dashboard', function () {
 Route::get('/admin', function () {
     return Inertia::render('Admin/Dashboard');
 })->middleware(['auth', 'role:admin'])->name('admin.dashboard');
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('admin.activity-log');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

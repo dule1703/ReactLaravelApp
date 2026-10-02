@@ -14,3 +14,11 @@ export function t(key, replacements = {}) {
 
     return text;
 }
+
+/**
+ * Translate a dynamic key (e.g. an action code from the server). Unlike t(), a missing
+ * key falls back to the given text instead of showing the raw key.
+ */
+export function tOr(key, fallback) {
+    return translations[key] ?? fallback;
+}

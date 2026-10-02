@@ -29,6 +29,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
 
 - Autorizacija preko Policy-ja (admin vs klijent), validacija preko Form Request-a.
 - Rute po ulozi: `->middleware(['auth', 'role:admin'])` (`auth` uvek prvi); pristup tuđim podacima samo kroz Policy.
+- Svaka funkcionalnost koja upisuje podatke mora beležiti aktivnost: modeli preko traita `LogsActivity`, ostalo preko `ActivityLogger`. Osetljiva polja dodaj u `config/activity-log.php` (u log ide samo naziv polja, nikad vrednost). Log je samo za dopisivanje.
 - Svaka promena šeme je migracija, unazad kompatibilna (expand/contract): rollback samo
   pomera symlink, baza se NE vraća.
 - Novac: celobrojni iznosi u centima, nikad float. Stavke ponude čuvaju snimak cena.

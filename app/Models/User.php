@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserRole;
+use App\Models\Concerns\LogsActivity;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, LogsActivity, Notifiable;
 
     /**
      * Default attribute values. `role` is deliberately not in $fillable.
@@ -66,5 +67,22 @@ class User extends Authenticatable
     public function isClient(): bool
     {
         return $this->role === UserRole::Client;
+    }
+
+    public function activityLabel(): string
+    {
+        return __($this->isAdmin() ? 'Administrator' : 'Client').' #'.$this->getKey().' '.$this->name;
+    }
+
+    /**
+     * @param  array<string, mixed>  $changes
+     */
+    public function activityAction(string $event, array $changes): string
+    {
+        if ($event === 'updated' && array_keys($changes) === ['password']) {
+            return 'auth.password_changed';
+        }
+
+        return 'user.'.$event;
     }
 }

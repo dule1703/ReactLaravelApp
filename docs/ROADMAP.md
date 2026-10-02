@@ -17,7 +17,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 0.8 Test Rollback workflow-a na stagingu
 - [ ] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
 - [ ] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
-      Provera: `php artisan schedule:list`.
+      Provera: `php artisan schedule:list`. MORA biti gotovo pre produkcije (`activitylog:prune` je
+      zakazan dnevno); do tada se `php artisan activitylog:prune` pokreće ručno.
 
 ## Faza 1 - Autentifikacija i uloge
 
@@ -29,8 +30,13 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 1.3 Srpski tekstovi na jednom mestu (`lang/sr_Latn.json` (locale `sr_Latn`)); `APP_TIMEZONE=Europe/Belgrade` i locale;
       guest layout sa dizajn tokenima u duhu Škode (Tailwind); logo (`public/images/logo.svg` +
       `logo.png` za PDF, favicon, izmena `ApplicationLogo.jsx`, naslov i `APP_NAME`)
-- [ ] 1.4 Middleware za uloge + Policy skelet, Feature testovi pristupa
-- [ ] 1.5 Log pristupa: beleži se svaka prijava klijenta (admin vidi kada je ko pristupio)
+- [x] 1.4 Middleware za uloge + Policy skelet, Feature testovi pristupa
+- [ ] 1.5 Dnevnik aktivnosti SVIH korisnika (i admina), samo za dopisivanje: tabela `activity_logs`
+      (snimak korisnika, akcija, predmet + oznaka, izmene stara/nova vrednost, IP, uređaj),
+      `ActivityLogger` + trait `LogsActivity`, događaji prijave/odjave/neuspele prijave/reseta/
+      promene lozinke i profila; osetljiva polja (lozinka, JMBG, PIB) samo kao naziv polja;
+      admin stranica `/admin/activity-log` (filteri, pretraga, detalji); retencija 365 dana
+      (`ACTIVITY_LOG_RETENTION_DAYS`, `activitylog:prune`). Klijent ne vidi istoriju.
 - [ ] 1.6 Shell aplikacije: navigacija (Home, Klijenti, Ponude), odjava, flash poruke
 
 ## Faza 2 - Profili klijenata
@@ -40,6 +46,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 2.2 Form Request validacija + Policy (klijent: samo svoj profil, admin: svi) + testovi
 - [ ] 2.3 Klijent menja svoj profil
 - [ ] 2.4 Admin: tabela klijenata sa pretragom, brojem redova po strani, paginacijom, izmenom, brisanjem
+      Beleži se pregled osetljivih podataka klijenta (JMBG, PIB) kroz `ActivityLogger`.
 
 ## Faza 3 - Katalog (admin)
 
@@ -65,6 +72,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 - [ ] 5.1 dompdf + Blade šablon sa fontom koji podržava srpska slova
 - [ ] 5.2 PDF preuzimanje i prikaz za štampu ponude, testovi autorizacije
+      Beleže se PDF preuzimanje i štampa ponude kroz `ActivityLogger`.
 - [ ] 5.3 Doterivanje PDF izgleda (zaglavlje, tabela stavki, zbirovi, napomena)
 
 ## Faza 6 - Admin dashboard i poliranje
