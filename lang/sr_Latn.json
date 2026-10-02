@@ -107,5 +107,13 @@
     "activity.field.role": "Uloga",
     "activity.field.email_verified_at": "Email verifikovan",
     "role.admin": "Administrator",
-    "role.client": "Klijent"
+    "role.client": "Klijent",
+    "Main navigation": "Glavna navigacija",
+    "Menu": "Meni",
+    "Soon": "uskoro",
+    "My profile": "Moj profil",
+    "Clients": "Klijenti",
+    "Offers": "Ponude",
+    "Profile saved.": "Profil je sačuvan.",
+    "Password changed.": "Lozinka je promenjena."
 }
