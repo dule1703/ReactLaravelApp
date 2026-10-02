@@ -12,17 +12,21 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 0.3 GitHub: rulesets za `main` i `develop`, squash merge, automatsko brisanje grana
 - [ ] 0.4 Deploy SSH ključ + svih 9 repository secrets
 - [ ] 0.5 Priprema staging servera: `shared/.env`, MySQL baza, PHP >= 8.2 za domen
-- [ ] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
-- [ ] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
+- [x] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
+- [x] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
 - [ ] 0.8 Test Rollback workflow-a na stagingu
 - [ ] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
 - [ ] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
+      Provera: `php artisan schedule:list`.
 
 ## Faza 1 - Autentifikacija i uloge
 
-- [ ] 1.1 Expand migracija: `role` na korisnicima (admin/client), seeder za admina
-- [ ] 1.2 Ekrani: prijava, registracija (ime i prezime, email, lozinka), reset lozinke mejlom
-- [ ] 1.3 Srpski tekstovi; guest layout sa dizajn tokenima u duhu Škode (Tailwind)
+- [ ] 1.1 Expand migracija: `role` na korisnicima (admin/client), seeder za admina, Factory stanja
+      admin/client, test da `role` nije mass-assignable (nije u `$fillable`)
+- [ ] 1.2 Ekrani: prijava, registracija (ime i prezime, email, lozinka) sa Form Request-om umesto
+      inline validacije, reset lozinke mejlom
+- [ ] 1.3 Srpski tekstovi na jednom mestu (`lang/sr.json`); `APP_TIMEZONE=Europe/Belgrade` i locale;
+      guest layout sa dizajn tokenima u duhu Škode (Tailwind)
 - [ ] 1.4 Middleware za uloge + Policy skelet, Feature testovi pristupa
 - [ ] 1.5 Log pristupa: beleži se svaka prijava klijenta (admin vidi kada je ko pristupio)
 - [ ] 1.6 Shell aplikacije: navigacija (Home, Klijenti, Ponude), odjava, flash poruke
@@ -75,9 +79,10 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 ## Otvorene odluke
 
-- D1: Da li su "klijenti" odvojeni od korisničkih naloga? (admin unosi klijente bez naloga kao u
-  staroj aplikaciji, ili je svaki klijent registrovan korisnik?)
+- D1 (ODLUČENO): svaki klijent je registrovan korisnik (`users` + `client_profiles`, 1:1).
 - D2: JMBG je osetljiv. Šifrovati u bazi (Laravel `encrypted` cast) ili ostaviti pretraživ?
   Šifrovanje onemogućava pretragu po JMBG-u.
-- D3: Podrazumevana stopa PDV-a. Stara aplikacija je koristila 18%, opšta stopa u Srbiji je 20%.
+- D3 (ODLUČENO): podrazumevana stopa PDV-a je 20%; ostaje admin podešavanje (4.3).
 - D4: Da li je UI samo na srpskom ili i na engleskom?
+- D5: Valuta. Stara aplikacija prikazuje €, pa `resources/js/lib/money.js` formatira EUR (iznosi u
+  centima), a valuta je na jednom mestu. Potvrditi pre faze 4 da je EUR (a ne RSD) konačan.

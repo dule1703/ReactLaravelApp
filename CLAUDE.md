@@ -22,7 +22,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
 - Setup: `composer run setup`
 - Dev (Windows): `php artisan serve` i `npm run dev` u dva terminala
   (`composer run dev` pada na Windowsu jer `artisan pail` traži `pcntl`)
-- PHP testovi: `composer test` · JS testovi: `npm run test` (vitest, podfaza 0.6)
+- PHP testovi: `composer test` · JS testovi: `npm run test` (vitest)
 - Format: `./vendor/bin/pint` · Build: `npm run build`
 
 ## Pravila
