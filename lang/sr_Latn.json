@@ -45,5 +45,15 @@
     "Regards,": "Srdačan pozdrav,",
     "Whoops!": "Ups!",
     "If you’re having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Ako imate problem sa dugmetom \":actionText\", kopirajte i nalepite link ispod\nu pretraživač:",
-    "All rights reserved.": "Sva prava zadržana."
+    "All rights reserved.": "Sva prava zadržana.",
+    "Administration": "Administracija",
+    "Admin area. Clients, offers and prices will be managed here.": "Administratorski deo. Ovde će se upravljati klijentima, ponudama i cenama.",
+    "This action is unauthorized.": "Nemate pravo pristupa ovoj stranici.",
+    "Forbidden": "Zabranjeno",
+    "Unauthorized": "Neovlašćen pristup",
+    "Not Found": "Stranica nije pronađena",
+    "Page Expired": "Stranica je istekla",
+    "Too Many Requests": "Previše zahteva",
+    "Server Error": "Greška na serveru",
+    "Service Unavailable": "Servis nije dostupan"
 }
