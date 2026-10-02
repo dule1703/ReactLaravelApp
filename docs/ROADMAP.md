@@ -21,12 +21,12 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 ## Faza 1 - Autentifikacija i uloge
 
-- [ ] 1.1 Expand migracija: `role` na korisnicima (admin/client), seeder za admina, Factory stanja
+- [x] 1.1 Expand migracija: `role` na korisnicima (admin/client), seeder za admina, Factory stanja
       admin/client, test da `role` nije mass-assignable (nije u `$fillable`)
-- [ ] 1.2 Ekrani: prijava, registracija (ime i prezime, email, lozinka) sa Form Request-om umesto
+- [x] 1.2 Ekrani: prijava, registracija (ime i prezime, email, lozinka) sa Form Request-om umesto
       inline validacije, reset lozinke mejlom. Klijent ne briše sopstveni nalog (uklonjeno).
       Verifikacija mejla (`MustVerifyEmail`) se uključuje tek kad SMTP radi (posle 0.5).
-- [ ] 1.3 Srpski tekstovi na jednom mestu (`lang/sr.json`); `APP_TIMEZONE=Europe/Belgrade` i locale;
+- [ ] 1.3 Srpski tekstovi na jednom mestu (`lang/sr_Latn.json` (locale `sr_Latn`)); `APP_TIMEZONE=Europe/Belgrade` i locale;
       guest layout sa dizajn tokenima u duhu Škode (Tailwind); logo (`public/images/logo.svg` +
       `logo.png` za PDF, favicon, izmena `ApplicationLogo.jsx`, naslov i `APP_NAME`)
 - [ ] 1.4 Middleware za uloge + Policy skelet, Feature testovi pristupa
