@@ -1,0 +1,165 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+# One deploy per branch at a time. Never cancel a deploy that is already running,
+# a half-finished release is worse than a queued one.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ":memory:"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Install PHP dependencies (with dev, needed for PHPUnit)
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install & build frontend (Vite manifest is needed, tests render Inertia views)
+        run: |
+          npm ci --legacy-peer-deps
+          npm run build
+
+      # --if-present: skipped until the "test" script (vitest) is added to package.json
+      - name: Run JS tests (vitest)
+        run: npm run test --if-present
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Run PHP tests
+        run: composer test
+
+  build-and-deploy:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve environment and timestamp
+        id: vars
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "env_name=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "env_name=staging" >> "$GITHUB_OUTPUT"
+          fi
+          echo "ts=$(date +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install & build frontend
+        run: |
+          npm ci --legacy-peer-deps
+          npm run build
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # Excludes are anchored with "./" so they only match the repo root
+      # (a plain "tests" would also drop resources/js/**/tests).
+      - name: Create release directory and upload build (tar over ssh, no remote rsync needed)
+        run: |
+          tar czf - \
+            --exclude="./.git" \
+            --exclude="./.github" \
+            --exclude="./node_modules" \
+            --exclude="./vendor" \
+            --exclude="./tests" \
+            --exclude="./storage" \
+            --exclude="./.env" \
+            --exclude="./deploy" \
+            . | ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "mkdir -p ~/projects/react-laravel-app/deploy/${{ steps.vars.outputs.env_name }}/releases/${{ steps.vars.outputs.ts }} && tar xzf - -C ~/projects/react-laravel-app/deploy/${{ steps.vars.outputs.env_name }}/releases/${{ steps.vars.outputs.ts }}"
+
+      - name: Refresh finish-release.sh at its permanent path on the server
+        run: |
+          scp -P ${{ secrets.SSH_PORT }} deploy/finish-release.sh \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/projects/react-laravel-app/deploy/${{ steps.vars.outputs.env_name }}/finish-release.sh
+
+      - name: Finish release on the server (composer, migrations, cache, symlink swap, cleanup)
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "bash ~/projects/react-laravel-app/deploy/${{ steps.vars.outputs.env_name }}/finish-release.sh ${{ steps.vars.outputs.env_name }} ${{ steps.vars.outputs.ts }}"
+
+  notify:
+    needs: [tests, build-and-deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve environment and status
+        id: status
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "env_name=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "env_name=staging" >> "$GITHUB_OUTPUT"
+          fi
+          if [ "${{ needs.tests.result }}" = "success" ] && [ "${{ needs.build-and-deploy.result }}" = "success" ]; then
+            echo "status=SUCCESS" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=FAILED" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.NOTIFY_SMTP_HOST }}
+          server_port: ${{ secrets.NOTIFY_SMTP_PORT }}
+          secure: true
+          username: ${{ secrets.NOTIFY_SMTP_USER }}
+          password: ${{ secrets.NOTIFY_SMTP_PASSWORD }}
+          from: Skoda Configurator CI
+          to: ${{ secrets.NOTIFY_EMAIL_TO }}
+          subject: "[Skoda Configurator] Deploy ${{ steps.status.outputs.env_name }} - ${{ steps.status.outputs.status }}"
+          body: |
+            Environment: ${{ steps.status.outputs.env_name }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+            Commit message: ${{ github.event.head_commit.message }}
+
+            Tests job: ${{ needs.tests.result }}
+            Build & deploy job: ${{ needs.build-and-deploy.result }}
+
+            Details and logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
