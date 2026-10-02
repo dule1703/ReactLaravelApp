@@ -12,8 +12,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 0.3 GitHub: rulesets za `main` i `develop`, squash merge, automatsko brisanje grana
 - [ ] 0.4 Deploy SSH ključ + svih 9 repository secrets
 - [ ] 0.5 Priprema staging servera: `shared/.env`, MySQL baza, PHP >= 8.2 za domen
-- [x] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
-- [x] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
+- [ ] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
+- [ ] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
 - [ ] 0.8 Test Rollback workflow-a na stagingu
 - [ ] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
 - [ ] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`

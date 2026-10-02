@@ -35,6 +35,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
   PHP i JS implementacija moraju davati identičan rezultat.
 - Seederi za demo podatke. Podaci su lažni: repo je JAVAN.
 - NIKAD ne commituj niti ispisuj tajne (.env, ključeve, lozinke, tokene).
+- Testove uvek proveri i sa `CI=true` (CI okruženje se ponaša drugačije od lokalnog).
 - Frontend: funkcionalne komponente + hooks, Tailwind, Ziggy `route()`.
 
 ## Shared hosting (cPanel)
