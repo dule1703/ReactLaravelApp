@@ -37,6 +37,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
 - NIKAD ne commituj niti ispisuj tajne (.env, ključeve, lozinke, tokene).
 - Testove uvek proveri i sa `CI=true` (CI okruženje se ponaša drugačije od lokalnog).
 - Frontend: funkcionalne komponente + hooks, Tailwind, Ziggy `route()`.
+- UI tekstovi samo kroz `t()` (`resources/js/lib/i18n.js`) i `lang/sr_Latn.json`; boje samo preko tokena iz `tailwind.config.js`.
 
 ## Shared hosting (cPanel)
 
