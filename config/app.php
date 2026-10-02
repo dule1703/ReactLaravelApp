@@ -84,6 +84,9 @@ return [
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
+    // Read via config() so seeding also works when the config is cached (env() would be null).
+    'seed_admin_password' => env('SEED_ADMIN_PASSWORD'),
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
