@@ -55,7 +55,9 @@ Nema Node-a ni supervisora na serveru, nema headless Chrome-a (PDF preko dompdf)
    srpskom: šta je urađeno, zašto, kako da proverim.
 6. **Merge radim ja.** Nikad ne radi merge, ne pushuj direktno na `develop` ni `main`, nikad
    force push.
-7. Sledeću podfazu počni tek kad javim da je merge-ovano.
+7. Kad javim "merge-ovano": uvek prvo `git checkout develop` + `git pull`, obriši lokalnu i
+   udaljenu feature granu, `git fetch --prune`, pa tek onda nova grana. Sledeću podfazu
+   počni tek posle toga.
 
 ## Deploy (pitaj me pre izmene)
 
@@ -73,3 +75,4 @@ Drži oba fajla kratkim: oni se učitavaju u svaku sesiju.
 ## Izveštaj posle podfaze (kratko)
 
 Urađeno · Kako proveriti · Link ka PR-u · Predlog sledeće podfaze.
+Plan i izveštaj: najviše ~20 linija, bez prepričavanja nepromenjenog stanja.

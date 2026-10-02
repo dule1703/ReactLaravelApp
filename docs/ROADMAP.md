@@ -12,7 +12,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 0.3 GitHub: rulesets za `main` i `develop`, squash merge, automatsko brisanje grana
 - [ ] 0.4 Deploy SSH ključ + svih 9 repository secrets
 - [ ] 0.5 Priprema staging servera: `shared/.env`, MySQL baza, PHP >= 8.2 za domen
-- [ ] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
+- [x] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
 - [ ] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
 - [ ] 0.8 Test Rollback workflow-a na stagingu
 - [ ] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
@@ -26,7 +26,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 1.2 Ekrani: prijava, registracija (ime i prezime, email, lozinka) sa Form Request-om umesto
       inline validacije, reset lozinke mejlom
 - [ ] 1.3 Srpski tekstovi na jednom mestu (`lang/sr.json`); `APP_TIMEZONE=Europe/Belgrade` i locale;
-      guest layout sa dizajn tokenima u duhu Škode (Tailwind)
+      guest layout sa dizajn tokenima u duhu Škode (Tailwind); logo (`public/images/logo.svg` +
+      `logo.png` za PDF, favicon, izmena `ApplicationLogo.jsx`, naslov i `APP_NAME`)
 - [ ] 1.4 Middleware za uloge + Policy skelet, Feature testovi pristupa
 - [ ] 1.5 Log pristupa: beleži se svaka prijava klijenta (admin vidi kada je ko pristupio)
 - [ ] 1.6 Shell aplikacije: navigacija (Home, Klijenti, Ponude), odjava, flash poruke
