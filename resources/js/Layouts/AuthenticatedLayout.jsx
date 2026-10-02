@@ -39,6 +39,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                         {t('Administration')}
                                     </NavLink>
                                 )}
+                                {user.role === 'admin' && (
+                                    <NavLink
+                                        href={route('admin.activity-log')}
+                                        active={route().current('admin.activity-log')}
+                                    >
+                                        {t('Activity log')}
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -149,6 +157,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                 active={route().current('admin.dashboard')}
                             >
                                 {t('Administration')}
+                            </ResponsiveNavLink>
+                        )}
+                        {user.role === 'admin' && (
+                            <ResponsiveNavLink
+                                href={route('admin.activity-log')}
+                                active={route().current('admin.activity-log')}
+                            >
+                                {t('Activity log')}
                             </ResponsiveNavLink>
                         )}
                     </div>
