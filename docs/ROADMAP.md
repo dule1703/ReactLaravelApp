@@ -56,11 +56,15 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 ## Faza 3 - Katalog (admin)
 
-- [ ] 3.1 Šema: modeli, paketi opreme, motori, menjači, verzije
-      (verzija = paket + motor + menjač + osnovna cena u centima)
+- [x] 3.1 Šema (migracija `car_models`, `trims`, `engines`, `transmissions`, `versions`, svi FK restrict,
+      `is_active` umesto brisanja), modeli, factory-ji, `Version::available()`, `AdminOnlyPolicy`.
+      Verzija = paket + motor + menjač (sa `drive` fwd/awd) + osnovna cena u centima, NETO bez PDV-a.
 - [ ] 3.2 Oprema po paketu: serijska / dodatna (sa cenom) / nedostupna
 - [ ] 3.3 Seederi: 3-4 modela sa realnim paketima, motorima i opremom
-- [ ] 3.4 Admin dashboard: izmena svih cena (pojedinačno i grupno), sa testovima
+- [ ] 3.4 Admin dashboard: izmena svih cena (pojedinačno i grupno), sa testovima. Cene se čuvaju NETO; unos
+      preko bruto polja sa preračunom: neto = intdiv(bruto_cents * 10000 + rate_bp / 2, 10000 + rate_bp),
+      rate_bp iz admin podešavanja (D3, 2000 = 20%). PHP i vitest testovi: za sve cene u celim evrima
+      bruto -> neto -> bruto daje istu vrednost.
 - [ ] 3.5 Admin CRUD za modele, pakete, motore, verzije i opremu
 
 ## Faza 4 - Ponude i konfigurator
