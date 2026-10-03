@@ -234,5 +234,13 @@
     "activity.field.engine.name": "Naziv",
     "activity.field.transmission.name": "Naziv",
     "activity.field.equipment_item.name": "Naziv",
-    "activity.field.transmission.type": "Tip menjača"
+    "activity.field.transmission.type": "Tip menjača",
+    "activity.action.catalog.seeded": "Seed kataloga",
+    "activity.field.catalog.car_model": "Modeli vozila",
+    "activity.field.catalog.trim": "Paketi opreme",
+    "activity.field.catalog.engine": "Motori",
+    "activity.field.catalog.transmission": "Menjači",
+    "activity.field.catalog.version": "Verzije",
+    "activity.field.catalog.equipment_item": "Stavke opreme",
+    "activity.field.catalog.trim_equipment": "Oprema po paketima"
 }
