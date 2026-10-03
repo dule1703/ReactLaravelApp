@@ -95,6 +95,36 @@ class ClientProfile extends Model
             : str_repeat('*', $length);
     }
 
+    /**
+     * Display mask: first 2 and last 2 characters, e.g. 10*****01.
+     */
+    public function maskedPib(): ?string
+    {
+        $pib = $this->pib;
+
+        if ($pib === null || $pib === '') {
+            return null;
+        }
+
+        $length = strlen($pib);
+
+        return $length > 4
+            ? substr($pib, 0, 2).str_repeat('*', $length - 4).substr($pib, -2)
+            : str_repeat('*', $length);
+    }
+
+    /**
+     * @param  array<string, mixed>  $changes
+     */
+    public function activityAction(string $event, array $changes): string
+    {
+        if ($event === 'updated' && isset($changes['jmbg']) && $this->jmbg === null) {
+            return 'client_profile.jmbg_deleted';
+        }
+
+        return 'client_profile.'.$event;
+    }
+
     public function activityLabel(): string
     {
         return __('Client profile').' #'.$this->getKey();
