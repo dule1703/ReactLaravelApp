@@ -76,17 +76,24 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 3.6 Osnova kataloga: kategorije modela (`categories`, `car_model_category`, many-to-many; kartica
       „Kategorije“, višestruki izbor u formi modela, filter liste; promena kroz `CarModelCategories`, jedan
       zapis u dnevniku) i slika modela (`car_models.image_path`, otpremanje kroz admin u storage, nikad u git).
-- [ ] 3.7 Realni podaci kataloga: nazive paketa, motora, menjača, cene i opremu čita vlasnik iz zvaničnog
-      konfiguratora i dostavlja kao podatke za seeder (zamenjuju demo podatke iz 3.3 i 3.6). Ništa se ne
-      preuzima automatski sa skoda-auto sajtova.
-- [ ] 3.8 Kartice Verzije i Oprema (stavke opreme): admin CRUD
-- [ ] 3.9 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno)
-
+- [x] 3.7 Mehanizam i format za realne podatke kataloga: `database/seeders/data/real_catalog.php` (prazan okvir
+      sa opisom formata; cene BRUTO u centima, neto izvodi seeder stopom iz fajla), `RealCatalogSeeder`
+      (validacija sve-ili-ništa, idempotentno, zbirni zapis `catalog.real_seeded`, marker
+      `catalog_real_seeded_at`), `catalog:validate-real` i `catalog:purge-demo` (nivo `CATALOG_PURGE`,
+      samo dok nema ponuda). `DatabaseSeeder` učitava realni fajl; demo seederi ostaju za razvoj.
+- [ ] 3.8 Realni podaci kataloga: 4 modela, ručno ih priprema i dostavlja vlasnik (ništa se ne preuzima sa
+      skoda-auto sajtova); redosled: `catalog:validate-real`, `catalog:purge-demo` (samo lokalno/staging),
+      `db:seed --class=RealCatalogSeeder`.
+- [ ] 3.9 Kartice Verzije i Oprema (stavke opreme): admin CRUD
+- [ ] 3.10 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno)
 ## Faza 4 - Ponude i konfigurator
 
 - [ ] 4.1 Šema: ponude + stavke ponude sa snimkom cena
       Stavke ponude snimaju NAZIVE i CENE opreme (tekst i iznosi u centima), ne reference na `trim_equipment`:
       kasnija izmena ili brisanje kataloga ne sme da promeni postojeću ponudu.
+      `catalog:purge-demo` odbija da radi dok ponude imaju redove: spisak tabela ponuda je u
+      `config/catalog.php` (`offer_tables`, podrazumevano `offers` i `offer_items`) i MORA se uskladiti sa stvarnim
+      nazivima tabela koje faza 4 napravi.
       Zaštita klijenata sa ponudama: `offers.user_id` sa `restrictOnDelete`; brisanje klijenta (2.4) se
       blokira porukom ako ima ponude, a kasnije opciono anonimizacija (ponude čuvaju snimak podataka).
 - [ ] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima

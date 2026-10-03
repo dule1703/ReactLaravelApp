@@ -217,10 +217,16 @@ class CatalogSeederTest extends TestCase
         $this->assertNotNull(Version::where('trim_id', $removed->trim_id)->where('engine_id', $removed->engine_id)->first());
     }
 
-    public function test_the_database_seeder_runs_without_errors(): void
+    public function test_the_database_seeder_no_longer_seeds_the_demo_catalog(): void
     {
+        // DatabaseSeeder loads the real catalog file (an empty frame until the data arrives);
+        // the demo catalog is seeded explicitly with CatalogSeeder (development and tests).
         $this->seed(DatabaseSeeder::class);
 
+        $this->assertSame(0, Version::count());
+        $this->assertSame(0, CarModel::count());
+
+        $this->seed(CatalogSeeder::class);
         $this->assertSame(30, Version::available()->count());
         $this->assertSame(4, CarModel::count());
     }

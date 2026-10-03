@@ -1,0 +1,14 @@
+<?php
+
+return [
+    // Real catalog data (see the format comments in the file). Tests point this at a sample file.
+    'real_catalog_path' => env('CATALOG_REAL_PATH', database_path('seeders/data/real_catalog.php')),
+
+    // How far `php artisan catalog:purge-demo` may go: off (refuses), demo (only before real data
+    // was loaded) or all (also real data, with --include-real). Never set it on production.
+    'purge' => env('CATALOG_PURGE', 'off'),
+
+    // Tables of phase 4 offers: the purge command refuses while any of them has rows. Add the
+    // new offer tables here when phase 4 creates them.
+    'offer_tables' => ['offers', 'offer_items'],
+];
