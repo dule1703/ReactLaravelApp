@@ -3,13 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+// Model events stay on (no WithoutModelEvents): the JMBG hash is computed by a model event.
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
@@ -21,5 +19,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Demo Client',
             'email' => 'client@example.com',
         ]);
+        User::factory()->client()->create([
+            'name' => 'Demo Firma',
+            'email' => 'firma@example.com',
+        ]);
+
+        $this->call(ClientProfileSeeder::class);
     }
 }

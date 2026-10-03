@@ -37,6 +37,11 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
   PHP i JS implementacija moraju davati identičan rezultat.
 - Seederi za demo podatke. Podaci su lažni: repo je JAVAN.
 - NIKAD ne commituj niti ispisuj tajne (.env, ključeve, lozinke, tokene).
+- JMBG: `encrypted` cast + `jmbg_hash` (HMAC-SHA256 nad normalizovanom vrednošću, ključ `JMBG_HASH_KEY`,
+  min 32 znaka, fail-fast ako fali). `APP_KEY` i `JMBG_HASH_KEY` se NE menjaju bez plana (šifrovani JMBG
+  i hash postaju neupotrebljivi). `JMBG_HASH_KEY` mora biti u `.env` na svakom serveru pre deploy-a.
+  JMBG se menja samo kroz model (ne query builder), da hash ostane usklađen. Ne vraćati ga preko
+  `toArray()`/Inertia propsa; vlasniku ga vraća eksplicitno 2.3. Seederi ne koriste `WithoutModelEvents`.
 - Testove uvek proveri i sa `CI=true` (CI okruženje se ponaša drugačije od lokalnog).
 - Frontend: funkcionalne komponente + hooks, Tailwind, Ziggy `route()`.
 - UI tekstovi samo kroz `t()` (`resources/js/lib/i18n.js`) i `lang/sr_Latn.json`; boje samo preko tokena iz `tailwind.config.js`.

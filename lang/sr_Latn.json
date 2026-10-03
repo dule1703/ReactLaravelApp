@@ -89,6 +89,7 @@
     "Name, email, subject or description": "Ime, email, predmet ili opis",
     "Administrator": "Administrator",
     "Client": "Klijent",
+    "Client profile": "Profil klijenta",
     "Failed login attempt for :email": "Neuspela prijava za :email",
     "Failed login attempt with an invalid input": "Neuspela prijava (nevažeći unos)",
     "Activity log pruned: :count records older than :days days.": "Dnevnik očišćen: obrisano :count zapisa starijih od :days dana.",
