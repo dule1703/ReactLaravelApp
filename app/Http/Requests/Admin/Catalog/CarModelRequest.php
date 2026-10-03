@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Catalog;
 
 use App\Models\CarModel;
+use App\Support\ImageRules;
 use Closure;
 
 /**
@@ -12,7 +13,7 @@ use Closure;
  */
 class CarModelRequest extends CatalogRequest
 {
-    public const IMAGE_MAX_KB = 2048;
+    public const IMAGE_MAX_KB = ImageRules::MAX_KB;
 
     protected function modelClass(): string
     {
@@ -40,13 +41,7 @@ class CarModelRequest extends CatalogRequest
         $rules['category_ids'] = ['nullable', 'array'];
         $rules['category_ids.*'] = ['integer', 'distinct', 'exists:categories,id'];
 
-        $rules['image'] = [
-            'nullable',
-            'file',
-            'mimes:jpg,jpeg,png,webp',
-            'max:'.self::IMAGE_MAX_KB,
-            'dimensions:min_width=400,min_height=250,max_width=4000,max_height=4000',
-        ];
+        $rules['image'] = ImageRules::rules();
         $rules['remove_image'] = ['sometimes', 'boolean'];
 
         return $rules;
@@ -57,14 +52,7 @@ class CarModelRequest extends CatalogRequest
      */
     public function messages(): array
     {
-        $tooLarge = __('The image is larger than the allowed 2 MB.');
-
-        return [
-            'image.max' => $tooLarge,
-            'image.uploaded' => $tooLarge,
-            'image.mimes' => __('The image must be a JPG, PNG or WEBP file.'),
-            'image.dimensions' => __('The image must be from 400x250 to 4000x4000 pixels.'),
-        ];
+        return ImageRules::messages('image');
     }
 
     public function attributes(): array

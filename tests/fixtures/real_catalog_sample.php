@@ -12,6 +12,11 @@ return [
 
     'categories' => ['Probni gradski', 'Probni porodični', 'Probni sportski'],
 
+    'groups' => [
+        ['name' => 'Probni točkovi', 'selection' => 'single', 'category' => 'exterior'],
+        ['name' => 'Probne boje', 'selection' => 'single', 'category' => 'exterior', 'swatch' => true],
+    ],
+
     'models' => [
         ['slug' => 'alfa', 'name' => 'Alfa', 'categories' => ['Probni gradski'], 'trims' => ['Basic', 'Plus']],
         ['slug' => 'beta', 'name' => 'Beta', 'categories' => ['Probni porodični', 'Probni sportski'], 'trims' => ['Basic', 'Plus', 'Top']],
@@ -60,6 +65,56 @@ return [
             'category' => 'multimedia',
             'models' => [
                 'beta' => ['Plus' => ['O', 110_000], 'Top' => 'S'],
+            ],
+        ],
+        // Option group "wheels": per trim exactly one standard item; the other prices are
+        // SURCHARGES over it. An item that is not available on a trim has no entry.
+        [
+            'name' => 'Probni točkovi 16"',
+            'category' => 'exterior',
+            'group' => 'Probni točkovi',
+            'models' => [
+                'alfa' => ['Basic' => 'S'],
+                'beta' => ['Basic' => 'S'],
+            ],
+        ],
+        [
+            'name' => 'Probni točkovi 17"',
+            'category' => 'exterior',
+            'group' => 'Probni točkovi',
+            'models' => [
+                'alfa' => ['Basic' => ['O', 44_000], 'Plus' => 'S'],
+                'beta' => ['Basic' => ['O', 44_000], 'Plus' => 'S'],
+            ],
+        ],
+        [
+            'name' => 'Probni točkovi 18"',
+            'category' => 'exterior',
+            'group' => 'Probni točkovi',
+            'models' => [
+                'alfa' => ['Basic' => ['O', 99_000], 'Plus' => ['O', 55_000]],
+                'beta' => ['Basic' => ['O', 99_000], 'Plus' => ['O', 55_000], 'Top' => 'S'],
+            ],
+        ],
+        // Option group "colors" with swatches: the first color is standard everywhere.
+        [
+            'name' => 'Probna bela',
+            'category' => 'exterior',
+            'group' => 'Probne boje',
+            'swatch_hex' => '#FFFFFF',
+            'models' => [
+                'alfa' => ['Basic' => 'S', 'Plus' => 'S'],
+                'beta' => ['Basic' => 'S', 'Plus' => 'S', 'Top' => 'S'],
+            ],
+        ],
+        [
+            'name' => 'Probna crvena',
+            'category' => 'exterior',
+            'group' => 'Probne boje',
+            'swatch_hex' => '#C62828',
+            'models' => [
+                'alfa' => ['Basic' => ['O', 33_000], 'Plus' => ['O', 33_000]],
+                'beta' => ['Basic' => ['O', 33_000], 'Plus' => ['O', 33_000], 'Top' => ['O', 33_000]],
             ],
         ],
         [
