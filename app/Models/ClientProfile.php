@@ -76,6 +76,25 @@ class ClientProfile extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Display mask: first 4 and last 3 characters, e.g. 0101******008. Never use the mask
+     * as an input value; the full JMBG is only ever entered, not echoed back.
+     */
+    public function maskedJmbg(): ?string
+    {
+        $jmbg = $this->jmbg;
+
+        if ($jmbg === null || $jmbg === '') {
+            return null;
+        }
+
+        $length = strlen($jmbg);
+
+        return $length > 7
+            ? substr($jmbg, 0, 4).str_repeat('*', $length - 7).substr($jmbg, -3)
+            : str_repeat('*', $length);
+    }
+
     public function activityLabel(): string
     {
         return __('Client profile').' #'.$this->getKey();

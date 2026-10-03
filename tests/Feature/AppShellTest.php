@@ -32,7 +32,7 @@ class AppShellTest extends TestCase
 
         $this->assertSame(['dashboard', 'profile', 'offers'], array_column($nav, 'key'));
         $this->assertSame(['Početna', 'Moj profil', 'Ponude'], array_column($nav, 'label'));
-        $this->assertSame(['/dashboard', '/profile', null], array_column($nav, 'href'));
+        $this->assertSame(['/dashboard', '/client-profile', null], array_column($nav, 'href'));
         $this->assertSame([false, false, true], array_column($nav, 'soon'));
     }
 
