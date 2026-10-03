@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\ClientProfileController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/clients/{clientProfile}/reveal', [ClientController::class, 'reveal'])
         ->middleware('throttle:20,1')->name('clients.reveal');
     Route::delete('/clients/{clientProfile}/jmbg', [ClientController::class, 'destroyJmbg'])->name('clients.jmbg.destroy');
+
+    Route::get('/prices', [PriceController::class, 'index'])->name('prices.index');
+    Route::patch('/prices/versions/{version}', [PriceController::class, 'updateVersion'])->name('prices.versions.update');
+    Route::patch('/prices/equipment/{trimEquipment}', [PriceController::class, 'updateEquipment'])->name('prices.equipment.update');
+    Route::patch('/prices/vat', [PriceController::class, 'updateVat'])->name('prices.vat.update');
+    Route::post('/prices/bulk/preview', [PriceController::class, 'bulkPreview'])->name('prices.bulk.preview');
+    Route::post('/prices/bulk/apply', [PriceController::class, 'bulkApply'])->name('prices.bulk.apply');
 });
 
 Route::middleware(['auth', 'role:client'])->group(function () {
