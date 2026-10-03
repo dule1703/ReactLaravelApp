@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -57,6 +58,14 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
         ];
+    }
+
+    /**
+     * @return HasOne<ClientProfile, $this>
+     */
+    public function clientProfile(): HasOne
+    {
+        return $this->hasOne(ClientProfile::class);
     }
 
     public function isAdmin(): bool
