@@ -35,6 +35,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
 - Novac: celobrojni iznosi u centima, nikad float. Stavke ponude čuvaju snimak cena.
 - Katalog: cene su NETO (bez PDV-a); katalog se ne briše nego deaktivira (`is_active`, FK restrict); šta se sme ponuditi odlučuje samo `Version::available()`.
   Cena opreme paketa (`TrimEquipment`): standard => bez cene, optional => cena >= 0; menja se samo kroz model (ne `attach`/`sync`/query builder), da pravilo i dnevnik važe. Nazivi polja u dnevniku: pravilo samo u `resources/js/lib/activity.js`.
+  Seederi kataloga: samo `firstOrCreate` po prirodnom ključu (nikad `updateOrCreate` nad cenom/`is_active`), kroz modele; masovni upis u konzoli kroz `ActivityLogger::withoutLogging()` + jedan zbirni zapis.
 - Svaka funkcionalnost ide sa PHPUnit Feature testom. Kalkulacije cena imaju i vitest testove;
   PHP i JS implementacija moraju davati identičan rezultat.
 - Seederi za demo podatke. Podaci su lažni: repo je JAVAN.
@@ -87,5 +88,5 @@ Drži oba fajla kratkim: oni se učitavaju u svaku sesiju.
 
 ## Izveštaj posle podfaze (kratko)
 
-Urađeno · Kako proveriti · Link ka PR-u · Predlog sledeće podfaze.
+Urađeno · Kako proveriti · Gde se vidi (za svaki deo podfaze: URL u aplikaciji, artisan/tinker komanda ili tabela u bazi i šta tamo treba da se vidi; ako nema UI, napisati to i kako se proverava inače) · Link ka PR-u · Predlog sledeće podfaze.
 Plan i izveštaj: najviše ~20 linija, bez prepričavanja nepromenjenog stanja.

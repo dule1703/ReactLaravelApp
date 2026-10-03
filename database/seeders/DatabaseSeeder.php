@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(ClientProfileSeeder::class);
+        $this->call(CatalogSeeder::class);
     }
 }

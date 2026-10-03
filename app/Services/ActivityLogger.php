@@ -12,6 +12,29 @@ use Throwable;
 
 class ActivityLogger
 {
+    /** Set only by withoutLogging(); always reset in a finally block. */
+    private static bool $suppressed = false;
+
+    /**
+     * Run bulk work (the catalog seeder) without one log entry per row; the caller writes a
+     * single summary entry instead. Works ONLY in the console: during a web request the
+     * callback still runs, but with logging on, so a request can never switch the log off.
+     */
+    public function withoutLogging(callable $callback): mixed
+    {
+        if (! app()->runningInConsole() || self::$suppressed) {
+            return $callback();
+        }
+
+        self::$suppressed = true;
+
+        try {
+            return $callback();
+        } finally {
+            self::$suppressed = false;
+        }
+    }
+
     /**
      * Write one entry. Never throws: a logging failure must not break the user's action.
      *
@@ -29,6 +52,10 @@ class ActivityLogger
         ?User $actor = null,
         ?string $actorType = null,
     ): ?ActivityLog {
+        if (self::$suppressed) {
+            return null;
+        }
+
         try {
             $actor ??= Auth::user();
             $isHttp = request()->route() !== null;
