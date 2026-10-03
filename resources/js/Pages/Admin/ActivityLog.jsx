@@ -5,6 +5,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { activityFieldLabel } from '@/lib/activity';
 import { t, tOr } from '@/lib/i18n';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
@@ -20,7 +21,6 @@ const EMPTY_FILTERS = {
 };
 
 const actionLabel = (action) => tOr(`activity.action.${action}`, action);
-const fieldLabel = (field) => tOr(`activity.field.${field}`, field);
 const roleLabel = (role) => tOr(`role.${role}`, role);
 
 function Actor({ log }) {
@@ -78,7 +78,7 @@ function Details({ log, onClose }) {
                             <tbody className="divide-y divide-gray-100">
                                 {entries.map(([field, change]) => (
                                     <tr key={field}>
-                                        <td className="py-1.5 pe-3 font-medium">{fieldLabel(field)}</td>
+                                        <td className="py-1.5 pe-3 font-medium">{activityFieldLabel(log.action, field)}</td>
                                         {change.redacted ? (
                                             <td colSpan={2} className="py-1.5 italic text-gray-500">
                                                 {t('Value not stored')}

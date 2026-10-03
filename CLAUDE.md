@@ -34,6 +34,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
   pomera symlink, baza se NE vraća.
 - Novac: celobrojni iznosi u centima, nikad float. Stavke ponude čuvaju snimak cena.
 - Katalog: cene su NETO (bez PDV-a); katalog se ne briše nego deaktivira (`is_active`, FK restrict); šta se sme ponuditi odlučuje samo `Version::available()`.
+  Cena opreme paketa (`TrimEquipment`): standard => bez cene, optional => cena >= 0; menja se samo kroz model (ne `attach`/`sync`/query builder), da pravilo i dnevnik važe. Nazivi polja u dnevniku: pravilo samo u `resources/js/lib/activity.js`.
 - Svaka funkcionalnost ide sa PHPUnit Feature testom. Kalkulacije cena imaju i vitest testove;
   PHP i JS implementacija moraju davati identičan rezultat.
 - Seederi za demo podatke. Podaci su lažni: repo je JAVAN.
