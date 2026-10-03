@@ -8,6 +8,7 @@ use App\Models\Concerns\LogsActivity;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -66,6 +67,24 @@ class User extends Authenticatable
     public function clientProfile(): HasOne
     {
         return $this->hasOne(ClientProfile::class);
+    }
+
+    /**
+     * The client's profile, created on demand: a client registered before profiles existed
+     * (e.g. on a rolled-back release) has none. Admins have no profile.
+     */
+    public function profile(): ?ClientProfile
+    {
+        if (! $this->isClient()) {
+            return null;
+        }
+
+        try {
+            return $this->clientProfile()->firstOrCreate([], ['full_name' => $this->name]);
+        } catch (UniqueConstraintViolationException) {
+            // A concurrent request created it first.
+            return $this->clientProfile()->firstOrFail();
+        }
     }
 
     public function isAdmin(): bool
