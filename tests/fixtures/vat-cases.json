@@ -1,0 +1,31 @@
+{
+    "netFromGross": [
+        { "rate_bp": 2000, "gross": 1, "net": 1 },
+        { "rate_bp": 2000, "gross": 2, "net": 2 },
+        { "rate_bp": 2000, "gross": 3, "net": 3 },
+        { "rate_bp": 2000, "gross": 4, "net": 3 },
+        { "rate_bp": 2000, "gross": 5, "net": 4 },
+        { "rate_bp": 2000, "gross": 6, "net": 5 },
+        { "rate_bp": 2000, "gross": 7, "net": 6 },
+        { "rate_bp": 2000, "gross": 3000000, "net": 2500000 },
+        { "rate_bp": 2000, "gross": 2399900, "net": 1999917 },
+        { "rate_bp": 1000, "gross": 1, "net": 1 },
+        { "rate_bp": 1000, "gross": 6, "net": 5 },
+        { "rate_bp": 1000, "gross": 11, "net": 10 },
+        { "rate_bp": 1000, "gross": 100, "net": 91 },
+        { "rate_bp": 0, "gross": 1, "net": 1 },
+        { "rate_bp": 0, "gross": 100, "net": 100 },
+        { "rate_bp": 0, "gross": 999999999, "net": 999999999 }
+    ],
+    "grossFromNet": [
+        { "rate_bp": 2000, "net": 1, "gross": 1 },
+        { "rate_bp": 2000, "net": 2, "gross": 2 },
+        { "rate_bp": 2000, "net": 3, "gross": 4 },
+        { "rate_bp": 2000, "net": 5, "gross": 6 },
+        { "rate_bp": 2000, "net": 2500000, "gross": 3000000 },
+        { "rate_bp": 1000, "net": 5, "gross": 6 },
+        { "rate_bp": 1000, "net": 10, "gross": 11 },
+        { "rate_bp": 0, "net": 123, "gross": 123 }
+    ],
+    "roundTrip": { "rate_bp": 2000, "from_euro": 1, "to_euro": 100000 }
+}

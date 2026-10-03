@@ -63,6 +63,7 @@ class HandleInertiaRequests extends Middleware
                 ['admin', 'Administration', 'admin.dashboard', 'admin.dashboard'],
                 ['activity-log', 'Activity log', 'admin.activity-log', 'admin.activity-log'],
                 ['clients', 'Clients', 'clients.index', 'clients.*'],
+                ['prices', 'Prices', 'prices.index', 'prices.*'],
                 ['offers', 'Offers', 'offers.index', 'offers.*'],
             ]
             : [

@@ -65,11 +65,10 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 3.3 Seederi kataloga (`CatalogSeeder`, podaci u `database/seeders/data/catalog.php`): 4 modela, 12 paketa,
       9 motora, 6 menjača (uklj. `rwd`), 30 verzija, 30 stavki opreme; idempotentno (`firstOrCreate`), jedan
       zbirni zapis `catalog.seeded`. Na serveru ručno: `php artisan db:seed --class=CatalogSeeder --force`.
-- [ ] 3.4 Admin dashboard: izmena svih cena (pojedinačno i grupno), sa testovima. Cene se čuvaju NETO; unos
-      preko bruto polja sa preračunom: neto = intdiv(bruto_cents * 10000 + intdiv(10000 + rate_bp, 2),
-      10000 + rate_bp), rate_bp iz admin podešavanja (D3, 2000 = 20%). PHP i vitest testovi: za sve cene
-      u celim evrima bruto -> neto -> bruto daje istu vrednost; za 20%: 1 cent -> 1, 3000000 -> 2500000,
-      a polovina se zaokružuje naviše (3 -> 3, jer je 3 / 1,2 = 2,5).
+- [x] 3.4 Admin ekran `/admin/prices`: izmena cena verzija i dodatne opreme (unos neto ILI bruto, server sam
+      preračunava), PDV stopa (`settings`, `vat_rate_bp`, podrazumevano 2000), grupna izmena (pregled, token,
+      limiti, jedna transakcija). Cene se čuvaju NETO; `Support/Vat` / `lib/vat.js` sa zajedničkim fixture-ima
+      (`tests/fixtures`); bruto se zaokružuje na ceo evro (pola naviše) i iz njega se izvodi neto.
 - [ ] 3.5 Admin CRUD za modele, pakete, motore, verzije i opremu
 
 ## Faza 4 - Ponude i konfigurator
@@ -78,7 +77,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       Zaštita klijenata sa ponudama: `offers.user_id` sa `restrictOnDelete`; brisanje klijenta (2.4) se
       blokira porukom ako ima ponude, a kasnije opciono anonimizacija (ponude čuvaju snimak podataka).
 - [ ] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima
-- [ ] 4.3 PDV stopa kao admin podešavanje (podrazumevana vrednost: odluka D3)
+- [ ] 4.3 PDV stopa: skladište podešavanja je stiglo u 3.4 (`settings`, `vat_rate_bp`, podrazumevano 2000). Ovde:
+      ponuda samo SNIMA stopu (i cene stavki) pri kreiranju; kasnija promena stope ne menja postojeće ponude.
 - [ ] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)
 - [ ] 4.5 UI konfiguratora: model -> paket -> motor, serijska/dodatna oprema, broj vozila,
       "Snimi model" dodaje stavku, zbirovi bez i sa PDV-om uživo
@@ -109,7 +109,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - D1 (ODLUČENO): svaki klijent je registrovan korisnik (`users` + `client_profiles`, 1:1).
 - D2 (ODLUČENO): JMBG šifrovan (`encrypted` cast) + `jmbg_hash` (HMAC, `JMBG_HASH_KEY`) za tačnu pretragu
   i unique; PIB nije šifrovan (javan podatak), ali se u dnevniku beleži samo naziv polja.
-- D3 (ODLUČENO): podrazumevana stopa PDV-a je 20%; ostaje admin podešavanje (4.3).
+- D3 (ODLUČENO): podrazumevana stopa PDV-a je 20%; admin podešavanje je od 3.4 (`settings`).
 - D4 (ODLUČENO): UI je samo na srpskom.
 - D5 (ODLUČENO): valuta je EUR. Stara aplikacija prikazuje €, pa `resources/js/lib/money.js` formatira EUR (iznosi u
   centima), a valuta je na jednom mestu.
