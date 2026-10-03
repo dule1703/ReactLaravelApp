@@ -14,6 +14,8 @@ use Illuminate\Validation\Rule;
  * Validates a client profile update. Required identifiers depend on the type: JMBG for an
  * individual, PIB for a company; the other one is optional. A field that is absent from the
  * input is left out of validated(), so switching the type never wipes a stored JMBG/PIB.
+ * JMBG is required for an individual only while none is stored, and a blank input never
+ * clears a stored one.
  */
 class UpdateClientProfileRequest extends FormRequest
 {
@@ -63,6 +65,12 @@ class UpdateClientProfileRequest extends FormRequest
         }
 
         $this->merge($clean);
+
+        // A blank JMBG means "keep the stored one": drop it so validated() never carries a
+        // null that would erase it. Whether it is required is decided in rules().
+        if ($this->has('jmbg') && $this->input('jmbg') === null) {
+            $this->getInputSource()->remove('jmbg');
+        }
     }
 
     /**
@@ -77,7 +85,9 @@ class UpdateClientProfileRequest extends FormRequest
             // Free text on purpose: company names carry digits and symbols, names carry diacritics.
             'full_name' => ['required', 'string', 'max:255', 'regex:/^[^\p{C}]+$/u'],
             'jmbg' => [
-                $isCompany ? 'sometimes' : 'required',
+                'bail',
+                // Required for an individual only while the profile has no JMBG yet.
+                Rule::requiredIf(fn () => ! $isCompany && $this->clientProfile()?->jmbg_hash === null),
                 'nullable',
                 'digits:13',
                 $this->validJmbg(...),

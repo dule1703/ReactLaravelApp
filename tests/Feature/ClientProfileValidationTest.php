@@ -254,17 +254,21 @@ class ClientProfileValidationTest extends TestCase
         $this->assertSame(self::JMBG, $profile->jmbg);
         $this->assertNotNull($profile->jmbg_hash);
 
-        // company -> individual: JMBG required again, PIB left out is preserved.
+        // company -> individual: the stored JMBG satisfies "required", a blank one keeps it,
+        // and a PIB left out is preserved.
         $toIndividual = $this->individual(['jmbg' => null]);
         unset($toIndividual['pib']);
-        $this->assertArrayHasKey('jmbg', $this->errors($toIndividual, $profile));
-
-        $toIndividual['jmbg'] = self::JMBG;
         $validated = $this->passes($toIndividual, $profile);
+        $this->assertArrayNotHasKey('jmbg', $validated);
         $this->assertArrayNotHasKey('pib', $validated);
 
         $profile->update($validated);
-        $this->assertSame('123456789', $profile->fresh()->pib);
+        $profile = $profile->fresh();
+        $this->assertSame(self::JMBG, $profile->jmbg);
+        $this->assertSame('123456789', $profile->pib);
+
+        // ...but an individual without any stored JMBG still has to provide one.
+        $this->assertArrayHasKey('jmbg', $this->errors($toIndividual, $this->profile()));
     }
 
     public function test_request_is_authorized_only_for_owner_or_admin(): void
