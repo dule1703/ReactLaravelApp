@@ -19,6 +19,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
       Provera: `php artisan schedule:list`. MORA biti gotovo pre produkcije (`activitylog:prune` je
       zakazan dnevno); do tada se `php artisan activitylog:prune` pokreće ručno.
+- [ ] 0.11 Reset opcache-a posle deploy-a (`OPCACHE_RESET_URL` u `finish-release.sh`): staging je posle
+      deploy-a prikazivao stari kod. Menja `deploy/*.sh`, pa samo uz potvrdu.
 
 ## Faza 1 - Autentifikacija i uloge
 
@@ -31,13 +33,14 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       guest layout sa dizajn tokenima u duhu Škode (Tailwind); logo (`public/images/logo.svg` +
       `logo.png` za PDF, favicon, izmena `ApplicationLogo.jsx`, naslov i `APP_NAME`)
 - [x] 1.4 Middleware za uloge + Policy skelet, Feature testovi pristupa
-- [ ] 1.5 Dnevnik aktivnosti SVIH korisnika (i admina), samo za dopisivanje: tabela `activity_logs`
+- [x] 1.5 Dnevnik aktivnosti SVIH korisnika (i admina), samo za dopisivanje: tabela `activity_logs`
       (snimak korisnika, akcija, predmet + oznaka, izmene stara/nova vrednost, IP, uređaj),
       `ActivityLogger` + trait `LogsActivity`, događaji prijave/odjave/neuspele prijave/reseta/
       promene lozinke i profila; osetljiva polja (lozinka, JMBG, PIB) samo kao naziv polja;
       admin stranica `/admin/activity-log` (filteri, pretraga, detalji); retencija 365 dana
       (`ACTIVITY_LOG_RETENTION_DAYS`, `activitylog:prune`). Klijent ne vidi istoriju.
-- [ ] 1.6 Shell aplikacije: navigacija (Home, Klijenti, Ponude), odjava, flash poruke
+- [ ] 1.6 Shell aplikacije: navigacija po ulozi iz deljenih podataka (stavke bez rute su onemogućene
+      sa oznakom „uskoro“ i same se aktiviraju), vidljiva odjava (desktop i mobilni), flash poruke
 
 ## Faza 2 - Profili klijenata
 

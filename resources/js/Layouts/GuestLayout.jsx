@@ -1,4 +1,5 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
+import FlashMessages from '@/Components/FlashMessages';
 import { t } from '@/lib/i18n';
 import { Link } from '@inertiajs/react';
 
@@ -11,6 +12,10 @@ export default function GuestLayout({ children }) {
                     {t('Škoda Configurator')}
                 </span>
             </Link>
+
+            <div className="mt-4 w-full sm:max-w-md">
+                <FlashMessages />
+            </div>
 
             <div className="mt-6 w-full overflow-hidden border-t-4 border-brand-500 bg-white px-6 py-6 shadow-md sm:max-w-md sm:rounded-lg">
                 {children}
