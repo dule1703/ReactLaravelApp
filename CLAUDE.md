@@ -36,6 +36,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
 - Katalog: cene su NETO (bez PDV-a); katalog se ne briše nego deaktivira (`is_active`, FK restrict); šta se sme ponuditi odlučuje samo `Version::available()`.
   Cena opreme paketa (`TrimEquipment`): standard => bez cene, optional => cena >= 0; menja se samo kroz model (ne `attach`/`sync`/query builder), da pravilo i dnevnik važe. Nazivi polja u dnevniku: pravilo samo u `resources/js/lib/activity.js`.
   Seederi kataloga: samo `firstOrCreate` po prirodnom ključu (nikad `updateOrCreate` nad cenom/`is_active`), kroz modele; masovni upis u konzoli kroz `ActivityLogger::withoutLogging()` + jedan zbirni zapis.
+  Katalog admin (3.5+): red se ne briše dok ima zavisnih redova (provera brojeva pre brisanja, `QueryException` kao rezerva), nego se deaktivira; "šta je dostupno" računa samo `Version::available()` (i za brojače u UI); unikatnost naziva bez razlike u velikim/malim slovima ide kroz `lower()` u bazi (isto na MySQL i SQLite); LIKE pretraga kroz `Support\Like` + `escape '!'`.
   PDV i novac: samo kroz `App/Support/Vat` / `Money` i `resources/js/lib/vat.js` / `money.js` (zajednički fixture-i u `tests/fixtures`, PHP i JS moraju davati isto); iznose i procente parsirati kao string, bez float-a. Server sam izvodi neto iz unosa i nikad ne veruje klijentskom neto; stopa i cene se snimaju u ponudu pri kreiranju (4.x).
 - Svaka funkcionalnost ide sa PHPUnit Feature testom. Kalkulacije cena imaju i vitest testove;
   PHP i JS implementacija moraju davati identičan rezultat.
