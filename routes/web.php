@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\Catalog\CarModelController;
+use App\Http\Controllers\Admin\Catalog\EngineController;
+use App\Http\Controllers\Admin\Catalog\TransmissionController;
+use App\Http\Controllers\Admin\Catalog\TrimController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\ClientProfileController;
@@ -34,6 +38,32 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         ->middleware('throttle:20,1')->name('clients.reveal');
     Route::delete('/clients/{clientProfile}/jmbg', [ClientController::class, 'destroyJmbg'])->name('clients.jmbg.destroy');
 
+    Route::redirect('/catalog', '/admin/catalog/models');
+    Route::prefix('catalog')->name('catalog.')->group(function () {
+        Route::get('/models', [CarModelController::class, 'index'])->name('models.index');
+        Route::post('/models', [CarModelController::class, 'store'])->name('models.store');
+        Route::patch('/models/{carModel}', [CarModelController::class, 'update'])->name('models.update');
+        Route::patch('/models/{carModel}/active', [CarModelController::class, 'active'])->name('models.active');
+        Route::delete('/models/{carModel}', [CarModelController::class, 'destroy'])->name('models.destroy');
+
+        Route::get('/trims', [TrimController::class, 'index'])->name('trims.index');
+        Route::post('/trims', [TrimController::class, 'store'])->name('trims.store');
+        Route::patch('/trims/{trim}', [TrimController::class, 'update'])->name('trims.update');
+        Route::patch('/trims/{trim}/active', [TrimController::class, 'active'])->name('trims.active');
+        Route::delete('/trims/{trim}', [TrimController::class, 'destroy'])->name('trims.destroy');
+
+        Route::get('/engines', [EngineController::class, 'index'])->name('engines.index');
+        Route::post('/engines', [EngineController::class, 'store'])->name('engines.store');
+        Route::patch('/engines/{engine}', [EngineController::class, 'update'])->name('engines.update');
+        Route::patch('/engines/{engine}/active', [EngineController::class, 'active'])->name('engines.active');
+        Route::delete('/engines/{engine}', [EngineController::class, 'destroy'])->name('engines.destroy');
+
+        Route::get('/transmissions', [TransmissionController::class, 'index'])->name('transmissions.index');
+        Route::post('/transmissions', [TransmissionController::class, 'store'])->name('transmissions.store');
+        Route::patch('/transmissions/{transmission}', [TransmissionController::class, 'update'])->name('transmissions.update');
+        Route::patch('/transmissions/{transmission}/active', [TransmissionController::class, 'active'])->name('transmissions.active');
+        Route::delete('/transmissions/{transmission}', [TransmissionController::class, 'destroy'])->name('transmissions.destroy');
+    });
     Route::get('/prices', [PriceController::class, 'index'])->name('prices.index');
     Route::patch('/prices/versions/{version}', [PriceController::class, 'updateVersion'])->name('prices.versions.update');
     Route::patch('/prices/equipment/{trimEquipment}', [PriceController::class, 'updateEquipment'])->name('prices.equipment.update');

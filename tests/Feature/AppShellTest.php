@@ -40,10 +40,10 @@ class AppShellTest extends TestCase
     {
         $nav = $this->navFor(User::factory()->admin()->create());
 
-        $this->assertSame(['admin', 'activity-log', 'clients', 'prices', 'offers'], array_column($nav, 'key'));
-        $this->assertSame(['Administracija', 'Dnevnik aktivnosti', 'Klijenti', 'Cene', 'Ponude'], array_column($nav, 'label'));
-        $this->assertSame(['/admin', '/admin/activity-log', '/admin/clients', '/admin/prices', null], array_column($nav, 'href'));
-        $this->assertSame([false, false, false, false, true], array_column($nav, 'soon'));
+        $this->assertSame(['admin', 'activity-log', 'clients', 'catalog', 'prices', 'offers'], array_column($nav, 'key'));
+        $this->assertSame(['Administracija', 'Dnevnik aktivnosti', 'Klijenti', 'Katalog', 'Cene', 'Ponude'], array_column($nav, 'label'));
+        $this->assertSame(['/admin', '/admin/activity-log', '/admin/clients', '/admin/catalog/models', '/admin/prices', null], array_column($nav, 'href'));
+        $this->assertSame([false, false, false, false, false, true], array_column($nav, 'soon'));
     }
 
     public function test_clients_do_not_get_admin_links(): void
