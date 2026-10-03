@@ -9,11 +9,11 @@ export default function Edit({ mustVerifyEmail, status }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-ink">
-                    {t('Profile')}
+                    {t('Account')}
                 </h2>
             }
         >
-            <Head title={t('Profile')} />
+            <Head title={t('Account')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">

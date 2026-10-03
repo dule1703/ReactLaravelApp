@@ -50,7 +50,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       tipu radi 2.2.
 - [x] 2.2 Form Request validacija (`UpdateClientProfileRequest`, obaveznost po tipu) + `ClientProfilePolicy`
       (klijent: samo svoj profil, admin: svi) + `User::profile()` + `config/countries.php` + testovi
-- [ ] 2.3 Klijent menja svoj profil
+- [x] 2.3 Klijent menja svoj profil (`/client-profile`, bez id-a u ruti; JMBG samo kao maska, prazan unos ga ne briše)
 - [ ] 2.4 Admin: tabela klijenata sa pretragom, brojem redova po strani, paginacijom, izmenom, brisanjem
       Beleži se pregled osetljivih podataka klijenta (JMBG, PIB) kroz `ActivityLogger`.
 

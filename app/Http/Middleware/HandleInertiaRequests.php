@@ -67,7 +67,7 @@ class HandleInertiaRequests extends Middleware
             ]
             : [
                 ['dashboard', 'Dashboard', 'dashboard', 'dashboard'],
-                ['profile', 'My profile', 'profile.edit', 'profile.*'],
+                ['profile', 'My profile', 'client-profile.edit', 'client-profile.*'],
                 ['offers', 'Offers', 'offers.index', 'offers.*'],
             ];
 
