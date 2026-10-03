@@ -39,13 +39,15 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       promene lozinke i profila; osetljiva polja (lozinka, JMBG, PIB) samo kao naziv polja;
       admin stranica `/admin/activity-log` (filteri, pretraga, detalji); retencija 365 dana
       (`ACTIVITY_LOG_RETENTION_DAYS`, `activitylog:prune`). Klijent ne vidi istoriju.
-- [ ] 1.6 Shell aplikacije: navigacija po ulozi iz deljenih podataka (stavke bez rute su onemogućene
+- [x] 1.6 Shell aplikacije: navigacija po ulozi iz deljenih podataka (stavke bez rute su onemogućene
       sa oznakom „uskoro“ i same se aktiviraju), vidljiva odjava (desktop i mobilni), flash poruke
 
 ## Faza 2 - Profili klijenata
 
-- [ ] 2.1 Migracija profila: ime i prezime / naziv firme, JMBG (13 cifara + kontrolna cifra),
-      PIB (9 cifara), adresa, poštanski broj (5 cifara), grad, zemlja
+- [x] 2.1 Migracija profila (`client_profiles`, 1:1 sa korisnikom): tip klijenta (fizičko/pravno lice), ime i
+      prezime / naziv firme, JMBG (šifrovan + hash), PIB (9 cifara), adresa, poštanski broj (5 cifara),
+      grad, zemlja; prazan profil pri registraciji + backfill postojećih klijenata. Obaveznost polja po
+      tipu radi 2.2.
 - [ ] 2.2 Form Request validacija + Policy (klijent: samo svoj profil, admin: svi) + testovi
 - [ ] 2.3 Klijent menja svoj profil
 - [ ] 2.4 Admin: tabela klijenata sa pretragom, brojem redova po strani, paginacijom, izmenom, brisanjem
@@ -93,9 +95,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 ## Otvorene odluke
 
 - D1 (ODLUČENO): svaki klijent je registrovan korisnik (`users` + `client_profiles`, 1:1).
-- D2: JMBG je osetljiv. Šifrovati u bazi (Laravel `encrypted` cast) ili ostaviti pretraživ?
-  Šifrovanje onemogućava pretragu po JMBG-u.
+- D2 (ODLUČENO): JMBG šifrovan (`encrypted` cast) + `jmbg_hash` (HMAC, `JMBG_HASH_KEY`) za tačnu pretragu
+  i unique; PIB nije šifrovan (javan podatak), ali se u dnevniku beleži samo naziv polja.
 - D3 (ODLUČENO): podrazumevana stopa PDV-a je 20%; ostaje admin podešavanje (4.3).
-- D4: Da li je UI samo na srpskom ili i na engleskom?
-- D5: Valuta. Stara aplikacija prikazuje €, pa `resources/js/lib/money.js` formatira EUR (iznosi u
-  centima), a valuta je na jednom mestu. Potvrditi pre faze 4 da je EUR (a ne RSD) konačan.
+- D4 (ODLUČENO): UI je samo na srpskom.
+- D5 (ODLUČENO): valuta je EUR. Stara aplikacija prikazuje €, pa `resources/js/lib/money.js` formatira EUR (iznosi u
+  centima), a valuta je na jednom mestu.

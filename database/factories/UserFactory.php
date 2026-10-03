@@ -55,6 +55,11 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => UserRole::Client,
-        ]);
+        ])->afterCreating(function (User $user) {
+            // Mirrors registration: every client has a (possibly empty) profile.
+            if (! $user->clientProfile()->exists()) {
+                $user->clientProfile()->create(['full_name' => $user->name]);
+            }
+        });
     }
 }

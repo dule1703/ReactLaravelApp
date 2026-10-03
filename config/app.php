@@ -87,6 +87,10 @@ return [
     // Read via config() so seeding also works when the config is cached (env() would be null).
     'seed_admin_password' => env('SEED_ADMIN_PASSWORD'),
 
+    // HMAC key for client_profiles.jmbg_hash (at least 32 characters). Independent of APP_KEY;
+    // changing it invalidates every stored hash, so see CLAUDE.md before touching it.
+    'jmbg_hash_key' => env('JMBG_HASH_KEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
