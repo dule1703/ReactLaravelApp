@@ -402,5 +402,9 @@
     "activity.field.car_model.categories": "Kategorije",
     "activity.field.car_model.image_path": "Slika (putanja)",
     "activity.field.image_path": "Slika (putanja)",
-    "activity.field.category_id": "Kategorija"
+    "activity.field.category_id": "Kategorija",
+    "activity.action.catalog.real_seeded": "Učitani realni podaci kataloga",
+    "activity.action.catalog.purged": "Obrisan katalog",
+    "activity.field.catalog.category": "Kategorije",
+    "activity.field.catalog.car_model_category": "Veze model-kategorija"
 }
