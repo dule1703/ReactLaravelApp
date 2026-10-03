@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -38,9 +39,17 @@ abstract class CatalogController extends Controller
      * foreign key RESTRICT (QueryException) is the safety net for a race.
      *
      * @param  array<string, int>  $dependencies  dependency key (see "dependency.*" translations) => count
+     * @param  (callable(Model): mixed)|null  $beforeDelete  runs in the same transaction as the delete
+     *                                                       (e.g. detaching links that do not block it)
+     * @param  (callable(): mixed)|null  $afterDelete  runs only after the delete committed (e.g. removing a file)
      */
-    protected function deleteIfUnused(Model $model, string $entityKey, array $dependencies): RedirectResponse
-    {
+    protected function deleteIfUnused(
+        Model $model,
+        string $entityKey,
+        array $dependencies,
+        ?callable $beforeDelete = null,
+        ?callable $afterDelete = null,
+    ): RedirectResponse {
         Gate::authorize('delete', $model);
 
         $used = array_filter($dependencies);
@@ -50,9 +59,19 @@ abstract class CatalogController extends Controller
         }
 
         try {
-            $model->delete();
+            DB::transaction(function () use ($model, $beforeDelete) {
+                if ($beforeDelete !== null) {
+                    $beforeDelete($model);
+                }
+
+                $model->delete();
+            });
         } catch (QueryException) {
             return back()->with('error', $this->blockedMessage($entityKey, []));
+        }
+
+        if ($afterDelete !== null) {
+            $afterDelete();
         }
 
         return back()->with('success', __('Deleted.'));

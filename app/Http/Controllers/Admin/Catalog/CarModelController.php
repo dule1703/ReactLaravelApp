@@ -5,27 +5,38 @@ namespace App\Http\Controllers\Admin\Catalog;
 use App\Http\Requests\Admin\Catalog\CarModelRequest;
 use App\Http\Requests\Admin\Catalog\SetActiveRequest;
 use App\Models\CarModel;
+use App\Models\Category;
 use App\Models\Version;
+use App\Services\CarModelCategories;
 use App\Support\Like;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use RuntimeException;
+use Throwable;
 
 class CarModelController extends CatalogController
 {
+    public function __construct(private readonly CarModelCategories $categories) {}
+
     public function index(Request $request): Response
     {
         Gate::authorize('viewAny', CarModel::class);
 
         $term = $this->term($request);
+        $categoryId = $request->integer('category') ?: null;
 
         $models = CarModel::query()
+            ->with('categories')
             ->withCount(['trims', 'versions'])
             ->when($term !== '', fn ($query) => $query->whereRaw("name like ? escape '!'", [Like::contains($term)]))
+            ->when($categoryId, fn ($query, $id) => $query->whereHas('categories', fn ($category) => $category->where('categories.id', $id)))
             ->orderBy('sort_order')->orderBy('name')->orderBy('id')
             ->paginate(self::PER_PAGE)
             ->withQueryString()
@@ -33,8 +44,14 @@ class CarModelController extends CatalogController
                 'id' => $model->id,
                 'name' => $model->name,
                 'slug' => $model->slug,
+                'image_url' => $model->imageUrl(),
                 'is_active' => $model->is_active,
                 'sort_order' => $model->sort_order,
+                'categories' => $model->categories->map(fn (Category $category) => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'is_active' => $category->is_active,
+                ])->values(),
                 'trims_count' => $model->trims_count,
                 'versions_count' => $model->versions_count,
                 // Versions that are offered now and would drop out if this model were deactivated.
@@ -45,23 +62,24 @@ class CarModelController extends CatalogController
 
         return Inertia::render('Admin/Catalog/Models', [
             'items' => $models,
-            'filters' => ['q' => $term],
+            'filters' => ['q' => $term, 'category' => $categoryId],
+            'categories' => Category::query()->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'is_active']),
         ]);
     }
 
     public function store(CarModelRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $attributes = [
+            'name' => $data['name'],
+            'is_active' => $data['is_active'] ?? true,
+            'sort_order' => $data['sort_order'] ?? min(65535, (int) CarModel::max('sort_order') + 1),
+        ];
 
         // The unique index decides when two requests pick the same slug; retry with the next one.
         for ($attempt = 1; ; $attempt++) {
             try {
-                CarModel::create([
-                    'name' => $data['name'],
-                    'slug' => $this->uniqueSlug($data['name']),
-                    'is_active' => $data['is_active'] ?? true,
-                    'sort_order' => $data['sort_order'] ?? min(65535, (int) CarModel::max('sort_order') + 1),
-                ]);
+                $this->persist($request, null, $attributes + ['slug' => $this->uniqueSlug($data['name'])]);
 
                 break;
             } catch (UniqueConstraintViolationException $e) {
@@ -76,9 +94,13 @@ class CarModelController extends CatalogController
 
     public function update(CarModelRequest $request, CarModel $carModel): RedirectResponse
     {
-        // The slug never changes after creation, not even when the name does.
-        // An empty sort_order means "keep the current one".
-        $carModel->update(array_filter($request->safe()->only(['name', 'is_active', 'sort_order']), fn ($value) => $value !== null));
+        // The slug never changes after creation; an empty sort_order keeps the current one.
+        $attributes = array_filter(
+            $request->safe()->only(['name', 'is_active', 'sort_order']),
+            fn ($value) => $value !== null,
+        );
+
+        $this->persist($request, $carModel, $attributes);
 
         return back()->with('success', __('Saved.'));
     }
@@ -90,10 +112,76 @@ class CarModelController extends CatalogController
 
     public function destroy(CarModel $carModel): RedirectResponse
     {
-        return $this->deleteIfUnused($carModel, 'car_model', [
-            'trims' => $carModel->trims()->count(),
-            'versions' => $carModel->versions()->count(),
-        ]);
+        $imagePath = $carModel->image_path;
+
+        return $this->deleteIfUnused(
+            $carModel,
+            'car_model',
+            // Only trims and versions block; category links are detached together with the delete.
+            ['trims' => $carModel->trims()->count(), 'versions' => $carModel->versions()->count()],
+            beforeDelete: fn (CarModel $model) => $this->categories->sync($model, []),
+            afterDelete: fn () => $imagePath !== null ? Storage::disk('public')->delete($imagePath) : null,
+        );
+    }
+
+    /**
+     * Save the model, its categories and its image as one unit.
+     *
+     * The new file is stored first, then the database is written in a transaction (model fields,
+     * image path, categories). The OLD file is deleted only after that commit; if the write
+     * fails, the NEW file is removed and the old image stays.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    private function persist(CarModelRequest $request, ?CarModel $model, array $attributes): CarModel
+    {
+        $disk = Storage::disk('public');
+        $oldPath = $model?->image_path;
+        $newPath = null;
+
+        try {
+            if ($request->file('image') !== null) {
+                // hashName(): a random name; the extension comes from the DETECTED mime type,
+                // never from the name the client sent.
+                $stored = $request->file('image')->store('catalog/models', 'public');
+
+                if ($stored === false) {
+                    throw new RuntimeException('The uploaded image could not be stored.');
+                }
+
+                $newPath = $stored;
+                $attributes['image_path'] = $newPath;
+            } elseif ($request->boolean('remove_image')) {
+                $attributes['image_path'] = null;
+            }
+
+            $saved = DB::transaction(function () use ($request, $model, $attributes) {
+                if ($model === null) {
+                    $saved = CarModel::create($attributes);
+                } else {
+                    $model->update($attributes);
+                    $saved = $model;
+                }
+
+                if ($request->boolean('sync_categories')) {
+                    $this->categories->sync($saved, $request->input('category_ids', []));
+                }
+
+                return $saved;
+            });
+        } catch (Throwable $e) {
+            if ($newPath !== null) {
+                $disk->delete($newPath);
+            }
+
+            throw $e;
+        }
+
+        if ($oldPath !== null && $oldPath !== $saved->image_path) {
+            $disk->delete($oldPath);
+        }
+
+        return $saved;
     }
 
     /**

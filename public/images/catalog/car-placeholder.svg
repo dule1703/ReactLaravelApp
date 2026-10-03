@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Vozilo bez slike">
+  <!-- Neutral, original silhouette used when a car model has no uploaded image. -->
+  <rect width="320" height="200" fill="#F4F6F5"/>
+  <path d="M38 138 L46 118 Q52 104 68 100 L108 96 Q126 66 156 62 L198 62 Q226 66 240 94 L268 100 Q284 104 286 120 L288 138 Z" fill="#C9D1CD"/>
+  <path d="M122 94 Q136 74 158 71 L192 71 Q212 74 224 94 Z" fill="#F4F6F5"/>
+  <rect x="36" y="134" width="254" height="10" rx="4" fill="#B3BDB8"/>
+  <circle cx="92" cy="140" r="24" fill="#6B7570"/>
+  <circle cx="92" cy="140" r="11" fill="#E3E8E5"/>
+  <circle cx="234" cy="140" r="24" fill="#6B7570"/>
+  <circle cx="234" cy="140" r="11" fill="#E3E8E5"/>
+</svg>
