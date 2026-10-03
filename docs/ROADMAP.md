@@ -62,7 +62,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 3.2 Oprema po paketu (`equipment_items`, `trim_equipment`): serijska (bez cene) / dodatna (cena >= 0,
       neto) / nedostupna (nema reda); pravilo cene u `TrimEquipment` modelu; prevodi dnevnika za ceo katalog.
       Kasnije (van obima demoa): izuzeci opreme po motoru i izbori „jedno od više“ (boja, felne).
-- [ ] 3.3 Seederi: 3-4 modela sa realnim paketima, motorima i opremom
+- [x] 3.3 Seederi kataloga (`CatalogSeeder`, podaci u `database/seeders/data/catalog.php`): 4 modela, 12 paketa,
+      9 motora, 6 menjača (uklj. `rwd`), 30 verzija, 30 stavki opreme; idempotentno (`firstOrCreate`), jedan
+      zbirni zapis `catalog.seeded`. Na serveru ručno: `php artisan db:seed --class=CatalogSeeder --force`.
 - [ ] 3.4 Admin dashboard: izmena svih cena (pojedinačno i grupno), sa testovima. Cene se čuvaju NETO; unos
       preko bruto polja sa preračunom: neto = intdiv(bruto_cents * 10000 + intdiv(10000 + rate_bp, 2),
       10000 + rate_bp), rate_bp iz admin podešavanja (D3, 2000 = 20%). PHP i vitest testovi: za sve cene
