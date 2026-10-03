@@ -48,7 +48,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       prezime / naziv firme, JMBG (šifrovan + hash), PIB (9 cifara), adresa, poštanski broj (5 cifara),
       grad, zemlja; prazan profil pri registraciji + backfill postojećih klijenata. Obaveznost polja po
       tipu radi 2.2.
-- [ ] 2.2 Form Request validacija + Policy (klijent: samo svoj profil, admin: svi) + testovi
+- [x] 2.2 Form Request validacija (`UpdateClientProfileRequest`, obaveznost po tipu) + `ClientProfilePolicy`
+      (klijent: samo svoj profil, admin: svi) + `User::profile()` + `config/countries.php` + testovi
 - [ ] 2.3 Klijent menja svoj profil
 - [ ] 2.4 Admin: tabela klijenata sa pretragom, brojem redova po strani, paginacijom, izmenom, brisanjem
       Beleži se pregled osetljivih podataka klijenta (JMBG, PIB) kroz `ActivityLogger`.
