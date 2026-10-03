@@ -21,5 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // A rejected JMBG must not be stored in the session as "old input".
+        $exceptions->dontFlash(['jmbg']);
     })->create();

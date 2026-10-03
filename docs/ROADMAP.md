@@ -51,7 +51,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 2.2 Form Request validacija (`UpdateClientProfileRequest`, obaveznost po tipu) + `ClientProfilePolicy`
       (klijent: samo svoj profil, admin: svi) + `User::profile()` + `config/countries.php` + testovi
 - [x] 2.3 Klijent menja svoj profil (`/client-profile`, bez id-a u ruti; JMBG samo kao maska, prazan unos ga ne briše)
-- [ ] 2.4 Admin: tabela klijenata sa pretragom, brojem redova po strani, paginacijom, izmenom, brisanjem
+- [x] 2.4 Admin: tabela klijenata sa pretragom, brojem redova po strani, paginacijom, izmenom, brisanjem
       Beleži se pregled osetljivih podataka klijenta (JMBG, PIB) kroz `ActivityLogger`.
 
 ## Faza 3 - Katalog (admin)
@@ -66,6 +66,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 ## Faza 4 - Ponude i konfigurator
 
 - [ ] 4.1 Šema: ponude + stavke ponude sa snimkom cena
+      Zaštita klijenata sa ponudama: `offers.user_id` sa `restrictOnDelete`; brisanje klijenta (2.4) se
+      blokira porukom ako ima ponude, a kasnije opciono anonimizacija (ponude čuvaju snimak podataka).
 - [ ] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima
 - [ ] 4.3 PDV stopa kao admin podešavanje (podrazumevana vrednost: odluka D3)
 - [ ] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)

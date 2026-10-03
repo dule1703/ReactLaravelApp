@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\ClientProfileController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,14 @@ Route::get('/admin', function () {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('admin.activity-log');
+
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('/clients/{clientProfile}', [ClientController::class, 'edit'])->name('clients.edit');
+    Route::patch('/clients/{clientProfile}', [ClientController::class, 'update'])->name('clients.update');
+    Route::delete('/clients/{clientProfile}', [ClientController::class, 'destroy'])->name('clients.destroy');
+    Route::post('/clients/{clientProfile}/reveal', [ClientController::class, 'reveal'])
+        ->middleware('throttle:20,1')->name('clients.reveal');
+    Route::delete('/clients/{clientProfile}/jmbg', [ClientController::class, 'destroyJmbg'])->name('clients.jmbg.destroy');
 });
 
 Route::middleware(['auth', 'role:client'])->group(function () {

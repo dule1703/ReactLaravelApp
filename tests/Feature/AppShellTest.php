@@ -42,8 +42,8 @@ class AppShellTest extends TestCase
 
         $this->assertSame(['admin', 'activity-log', 'clients', 'offers'], array_column($nav, 'key'));
         $this->assertSame(['Administracija', 'Dnevnik aktivnosti', 'Klijenti', 'Ponude'], array_column($nav, 'label'));
-        $this->assertSame(['/admin', '/admin/activity-log', null, null], array_column($nav, 'href'));
-        $this->assertSame([false, false, true, true], array_column($nav, 'soon'));
+        $this->assertSame(['/admin', '/admin/activity-log', '/admin/clients', null], array_column($nav, 'href'));
+        $this->assertSame([false, false, false, true], array_column($nav, 'soon'));
     }
 
     public function test_clients_do_not_get_admin_links(): void

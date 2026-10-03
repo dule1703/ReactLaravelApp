@@ -43,6 +43,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
   JMBG se menja samo kroz model (ne query builder), da hash ostane usklađen. Ne vraćati ga preko
   `toArray()`/Inertia propsa; vlasniku ga vraća eksplicitno 2.3. Seederi ne koriste `WithoutModelEvents`.
   Profil klijenta se uzima kroz `User::profile()` (firstOrCreate; admin nema profil). Dozvoljene države: `config/countries.php`, nazivi `country.<ISO>` u `lang/sr_Latn.json`.
+  Pun JMBG/PIB samo kroz admin `clients.reveal` (POST, JSON, `no-store`, throttle, zapis `client_profile.sensitive_viewed` bez vrednosti); admin ne briše sebe ni druge admine.
   Forma profila nikad ne prikazuje JMBG kao `value`: samo maska (`ClientProfile::maskedJmbg()`) kao tekst uz polje; prazan unos znači „ne menjaj“.
 - Testove uvek proveri i sa `CI=true` (CI okruženje se ponaša drugačije od lokalnog).
 - Frontend: funkcionalne komponente + hooks, Tailwind, Ziggy `route()`.
