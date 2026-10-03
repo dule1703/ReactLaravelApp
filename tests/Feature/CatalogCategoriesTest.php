@@ -444,12 +444,13 @@ class CatalogCategoriesTest extends TestCase
         $this->assertSame(1, ActivityLog::where('action', 'category.seeded')->count());
     }
 
-    public function test_the_database_seeder_runs_with_categories(): void
+    public function test_the_database_seeder_leaves_the_demo_categories_to_the_demo_seeders(): void
     {
+        // The real catalog file creates its own categories; with the empty frame there are none.
         $this->seed(DatabaseSeeder::class);
 
-        $this->assertSame(6, Category::count());
-        $this->assertSame(7, DB::table('car_model_category')->count());
+        $this->assertSame(0, Category::count());
+        $this->assertSame(0, DB::table('car_model_category')->count());
     }
 
     // --- translations ---

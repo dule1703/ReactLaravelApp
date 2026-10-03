@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(ClientProfileSeeder::class);
-        $this->call(CatalogSeeder::class);
-        $this->call(CategorySeeder::class);
+        // Real catalog from database/seeders/data/real_catalog.php (an empty frame does nothing).
+        // The demo catalog stays available for development: CatalogSeeder, then CategorySeeder.
+        $this->call(RealCatalogSeeder::class);
     }
 }
