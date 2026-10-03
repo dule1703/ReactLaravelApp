@@ -8,22 +8,23 @@ use App\Models\CarModel;
 use App\Models\Category;
 use App\Models\Version;
 use App\Services\CarModelCategories;
+use App\Services\CatalogImages;
 use App\Support\Like;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use RuntimeException;
-use Throwable;
 
 class CarModelController extends CatalogController
 {
-    public function __construct(private readonly CarModelCategories $categories) {}
+    public function __construct(
+        private readonly CarModelCategories $categories,
+        private readonly CatalogImages $images,
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -120,42 +121,29 @@ class CarModelController extends CatalogController
             // Only trims and versions block; category links are detached together with the delete.
             ['trims' => $carModel->trims()->count(), 'versions' => $carModel->versions()->count()],
             beforeDelete: fn (CarModel $model) => $this->categories->sync($model, []),
-            afterDelete: fn () => $imagePath !== null ? Storage::disk('public')->delete($imagePath) : null,
+            afterDelete: fn () => $this->images->forget($imagePath),
         );
     }
 
     /**
      * Save the model, its categories and its image as one unit.
      *
-     * The new file is stored first, then the database is written in a transaction (model fields,
-     * image path, categories). The OLD file is deleted only after that commit; if the write
-     * fails, the NEW file is removed and the old image stays.
+     * CatalogImages stores the new file first, then the database is written in a transaction
+     * (model fields, image path, categories). The OLD file is deleted only after that commit; if
+     * the write fails, the NEW file is removed and the old image stays.
      *
      * @param  array<string, mixed>  $attributes
      */
     private function persist(CarModelRequest $request, ?CarModel $model, array $attributes): CarModel
     {
-        $disk = Storage::disk('public');
-        $oldPath = $model?->image_path;
-        $newPath = null;
+        return $this->images->save(
+            'catalog/models',
+            $request->file('image'),
+            $request->boolean('remove_image'),
+            $model?->image_path,
+            fn (array $imageAttributes) => DB::transaction(function () use ($request, $model, $attributes, $imageAttributes) {
+                $attributes += $imageAttributes;
 
-        try {
-            if ($request->file('image') !== null) {
-                // hashName(): a random name; the extension comes from the DETECTED mime type,
-                // never from the name the client sent.
-                $stored = $request->file('image')->store('catalog/models', 'public');
-
-                if ($stored === false) {
-                    throw new RuntimeException('The uploaded image could not be stored.');
-                }
-
-                $newPath = $stored;
-                $attributes['image_path'] = $newPath;
-            } elseif ($request->boolean('remove_image')) {
-                $attributes['image_path'] = null;
-            }
-
-            $saved = DB::transaction(function () use ($request, $model, $attributes) {
                 if ($model === null) {
                     $saved = CarModel::create($attributes);
                 } else {
@@ -168,20 +156,8 @@ class CarModelController extends CatalogController
                 }
 
                 return $saved;
-            });
-        } catch (Throwable $e) {
-            if ($newPath !== null) {
-                $disk->delete($newPath);
-            }
-
-            throw $e;
-        }
-
-        if ($oldPath !== null && $oldPath !== $saved->image_path) {
-            $disk->delete($oldPath);
-        }
-
-        return $saved;
+            }),
+        );
     }
 
     /**

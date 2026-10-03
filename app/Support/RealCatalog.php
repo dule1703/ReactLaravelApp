@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Enums\DriveType;
 use App\Enums\EquipmentCategory;
 use App\Enums\FuelType;
+use App\Enums\OptionSelection;
 use App\Enums\TransmissionType;
 use DateTimeImmutable;
 use RuntimeException;
@@ -18,7 +19,7 @@ use RuntimeException;
 class RealCatalog
 {
     /** The lists of the file. An empty frame has all of them empty. */
-    private const LISTS = ['categories', 'models', 'engines', 'transmissions', 'versions', 'equipment'];
+    private const LISTS = ['categories', 'groups', 'models', 'engines', 'transmissions', 'versions', 'equipment'];
 
     /**
      * @return array<string, mixed>
@@ -100,11 +101,12 @@ class RealCatalog
 
         self::meta($catalog['meta'] ?? null, $add);
         $categories = self::categories($catalog['categories'], $add);
+        $groups = self::groups($catalog['groups'], $add);
         $trims = self::models($catalog['models'], $categories, $add);
         $engines = self::engines($catalog['engines'], $add);
         $transmissions = self::transmissions($catalog['transmissions'], $add);
         self::versions($catalog['versions'], $trims, $engines, $transmissions, $add);
-        self::equipment($catalog['equipment'], $trims, $add);
+        self::equipment($catalog['equipment'], $trims, $groups, $add);
 
         return $errors;
     }
@@ -166,6 +168,59 @@ class RealCatalog
                 $add("categories[$i]", "kategorija '$name' je duplirana");
             } else {
                 $known[self::lower($name)] = $name;
+            }
+        }
+
+        return $known;
+    }
+
+    /**
+     * @param  array<int, mixed>  $list
+     * @param  callable(string, string): void  $add
+     * @return array<string, array{name: string, selection: string, category: string, swatch: bool}> lowercase name => group
+     */
+    private static function groups(array $list, callable $add): array
+    {
+        $known = [];
+
+        foreach ($list as $i => $group) {
+            if (! is_array($group)) {
+                $add("groups[$i]", 'mora biti niz');
+
+                continue;
+            }
+
+            $name = $group['name'] ?? null;
+            if (! self::text($name, 100)) {
+                $add("groups[$i].name", 'naziv mora biti neprazan tekst do 100 znakova');
+                $name = null;
+            } elseif (isset($known[self::lower($name)])) {
+                $add("groups[$i].name", "grupa '$name' je duplirana (nazivi su jedinstveni bez razlike u velikim/malim slovima)");
+                $name = null;
+            }
+
+            $selection = OptionSelection::tryFrom((string) ($group['selection'] ?? ''));
+            if ($selection === null) {
+                $add("groups[$i].selection", "nepoznat izbor '".self::show($group['selection'] ?? null)."' (dozvoljeno: ".implode('|', array_column(OptionSelection::cases(), 'value')).')');
+            }
+
+            $category = EquipmentCategory::tryFrom((string) ($group['category'] ?? ''));
+            if ($category === null) {
+                $add("groups[$i].category", "nepoznata kategorija opreme '".self::show($group['category'] ?? null)."' (dozvoljeno: ".implode('|', array_column(EquipmentCategory::cases(), 'value')).')');
+            }
+
+            if (array_key_exists('swatch', $group) && ! is_bool($group['swatch'])) {
+                $add("groups[$i].swatch", 'mora biti true ili false (grupa sa uzorcima boja)');
+            }
+
+            if ($name !== null) {
+                // Known even when half-broken, so its equipment is not reported a second time.
+                $known[self::lower($name)] = [
+                    'name' => $name,
+                    'selection' => $selection?->value ?? 'multiple',
+                    'category' => $category?->value ?? '',
+                    'swatch' => ($group['swatch'] ?? false) === true,
+                ];
             }
         }
 
@@ -397,11 +452,14 @@ class RealCatalog
     /**
      * @param  array<int, mixed>  $list
      * @param  array<string, array<string, true>>  $trims
+     * @param  array<string, array{name: string, selection: string, category: string, swatch: bool}>  $groups
      * @param  callable(string, string): void  $add
      */
-    private static function equipment(array $list, array $trims, callable $add): void
+    private static function equipment(array $list, array $trims, array $groups, callable $add): void
     {
         $names = [];
+        // group (lowercase name) => 'model / trim' => entries of that group on that trim
+        $lines = [];
 
         foreach ($list as $i => $item) {
             if (! is_array($item)) {
@@ -420,6 +478,28 @@ class RealCatalog
 
             if (EquipmentCategory::tryFrom((string) ($item['category'] ?? '')) === null) {
                 $add("equipment[$i].category", "nepoznata kategorija opreme '".self::show($item['category'] ?? null)."' (dozvoljeno: ".implode('|', array_column(EquipmentCategory::cases(), 'value')).')');
+            }
+
+            $groupKey = null;
+            if (($item['group'] ?? null) !== null) {
+                if (! is_string($item['group']) || ! isset($groups[self::lower($item['group'])])) {
+                    $add("equipment[$i].group", "nepoznata grupa '".self::show($item['group'])."' (mora biti navedena u listi groups)");
+                } else {
+                    $groupKey = self::lower($item['group']);
+                    $category = $item['category'] ?? null;
+
+                    if (is_string($category) && EquipmentCategory::tryFrom($category) !== null && $category !== $groups[$groupKey]['category']) {
+                        $add("equipment[$i].category", "kategorija '$category' se ne slaže sa kategorijom grupe '{$groups[$groupKey]['name']}' ({$groups[$groupKey]['category']})");
+                    }
+                }
+            }
+
+            if (($item['swatch_hex'] ?? null) !== null) {
+                if (! is_string($item['swatch_hex']) || ! preg_match('/^#[0-9A-Fa-f]{6}$/', $item['swatch_hex'])) {
+                    $add("equipment[$i].swatch_hex", 'mora biti boja u obliku #RRGGBB');
+                } elseif ($groupKey === null || ! $groups[$groupKey]['swatch']) {
+                    $add("equipment[$i].swatch_hex", "dozvoljeno samo za stavke grupe sa uzorcima boja (u groups: 'swatch' => true)");
+                }
             }
 
             if (! is_array($item['models'] ?? null)) {
@@ -446,15 +526,50 @@ class RealCatalog
                     if (! isset($trims[$model][self::lower((string) $trim)])) {
                         $add($path, "nepoznat paket '$trim' u modelu '$model'");
                     } elseif ($entry === 'S') {
-                        continue;
+                        if ($groupKey !== null && is_string($item['name'] ?? null)) {
+                            $lines[$groupKey]["$model / $trim"][] = ['item' => $item['name'], 'availability' => 'standard', 'price' => null];
+                        }
                     } elseif (is_array($entry) && ($entry[0] ?? null) === 'S') {
                         $add($path, 'standardna oprema ne sme imati cenu (koristite samo \'S\')');
                     } elseif (is_array($entry) && ($entry[0] ?? null) === 'O' && count($entry) === 2) {
                         if (! self::price($entry[1] ?? null, 0)) {
                             $add($path, 'cena dodatne opreme mora biti ceo broj centi 0 ili veći (bruto)');
+                        } elseif ($groupKey !== null && is_string($item['name'] ?? null)) {
+                            $lines[$groupKey]["$model / $trim"][] = ['item' => $item['name'], 'availability' => 'optional', 'price' => $entry[1]];
                         }
                     } else {
                         $add($path, "vrednost mora biti 'S' ili ['O', cena u centima]");
+                    }
+                }
+            }
+        }
+
+        self::groupLines($lines, $groups, $add);
+    }
+
+    /**
+     * A single-choice group on a trim that offers it needs EXACTLY ONE standard item.
+     *
+     * @param  array<string, array<string, list<array{item: string, availability: string, price: int|null}>>>  $lines
+     * @param  array<string, array{name: string, selection: string, category: string, swatch: bool}>  $groups
+     * @param  callable(string, string): void  $add
+     */
+    private static function groupLines(array $lines, array $groups, callable $add): void
+    {
+        foreach ($lines as $groupKey => $byLine) {
+            if (($groups[$groupKey]['selection'] ?? null) !== 'single') {
+                continue;
+            }
+
+            foreach ($byLine as $line => $entries) {
+                foreach (OptionGroupRule::problems($entries) as $problem) {
+                    $items = implode(', ', $problem['items']);
+                    $path = "groups[{$groups[$groupKey]['name']}] $line";
+
+                    if ($problem['code'] === OptionGroupRule::NO_STANDARD) {
+                        $add($path, "nijedna standardna stavka, a mora biti tačno jedna (stavke: $items)");
+                    } elseif ($problem['code'] === OptionGroupRule::MANY_STANDARD) {
+                        $add($path, "više standardnih stavki ($items), a mora biti tačno jedna");
                     }
                 }
             }

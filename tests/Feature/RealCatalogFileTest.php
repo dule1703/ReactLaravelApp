@@ -197,12 +197,12 @@ class RealCatalogFileTest extends TestCase
 
     public function test_the_same_equipment_name_with_another_category_is_reported(): void
     {
-        $this->assertError("equipment[4]: naziv 'PROBNA SIGURNOST' već postoji u equipment[0]", function (array $c) {
+        $this->assertError("equipment[9]: naziv 'PROBNA SIGURNOST' već postoji u equipment[0]", function (array $c) {
             $c['equipment'][] = ['name' => 'PROBNA SIGURNOST', 'category' => 'comfort', 'models' => ['alfa' => ['Plus' => 'S']]];
 
             return $c;
         });
-        $this->assertError("equipment[4]: naziv 'Probna sigurnost' već postoji", function (array $c) {
+        $this->assertError("equipment[9]: naziv 'Probna sigurnost' već postoji", function (array $c) {
             $c['equipment'][] = ['name' => 'Probna sigurnost', 'category' => 'safety', 'models' => []];
 
             return $c;
@@ -321,7 +321,7 @@ class RealCatalogFileTest extends TestCase
 
         $this->artisan('catalog:validate-real')
             ->expectsOutputToContain('Izvor: Izmišljeni probni podaci (nije stvaran cenovnik) (pročitano 2026-01-15), PDV 10%.')
-            ->expectsOutputToContain('Kategorije: 3, modeli: 2, motori: 3, menjači: 2, verzije: 6, stavke opreme: 4 (unosa u matrici: 12).')
+            ->expectsOutputToContain('Kategorije: 3, grupe opcija: 2, modeli: 2, motori: 3, menjači: 2, verzije: 6, stavke opreme: 9 (unosa u matrici: 33).')
             ->expectsOutputToContain('Fajl je ispravan.')
             ->assertExitCode(0);
 
