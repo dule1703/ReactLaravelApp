@@ -69,7 +69,11 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       preračunava), PDV stopa (`settings`, `vat_rate_bp`, podrazumevano 2000), grupna izmena (pregled, token,
       limiti, jedna transakcija). Cene se čuvaju NETO; `Support/Vat` / `lib/vat.js` sa zajedničkim fixture-ima
       (`tests/fixtures`); bruto se zaokružuje na ceo evro (pola naviše) i iz njega se izvodi neto.
-- [ ] 3.5 Admin CRUD za modele, pakete, motore, verzije i opremu
+- [x] 3.5 Admin CRUD kataloga, prvi deo: modeli, paketi, motori, menjači (`/admin/catalog/*`, kartice,
+      izmena u modalu; deaktivacija umesto brisanja, brisanje samo bez zavisnih redova; slug se pravi na
+      serveru i ne menja; nazivi jedinstveni bez razlike u velikim/malim slovima). Motori i menjači nemaju
+      `sort_order` (sortirani po nazivu).
+- [ ] 3.6 Admin CRUD kataloga, drugi deo: verzije, stavke opreme i matrica opreme po paketu
 
 ## Faza 4 - Ponude i konfigurator
 
