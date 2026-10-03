@@ -33,6 +33,7 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
 - Svaka promena šeme je migracija, unazad kompatibilna (expand/contract): rollback samo
   pomera symlink, baza se NE vraća.
 - Novac: celobrojni iznosi u centima, nikad float. Stavke ponude čuvaju snimak cena.
+- Katalog: cene su NETO (bez PDV-a); katalog se ne briše nego deaktivira (`is_active`, FK restrict); šta se sme ponuditi odlučuje samo `Version::available()`.
 - Svaka funkcionalnost ide sa PHPUnit Feature testom. Kalkulacije cena imaju i vitest testove;
   PHP i JS implementacija moraju davati identičan rezultat.
 - Seederi za demo podatke. Podaci su lažni: repo je JAVAN.
