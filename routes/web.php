@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Catalog\CarModelController;
+use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\EngineController;
 use App\Http\Controllers\Admin\Catalog\TransmissionController;
 use App\Http\Controllers\Admin\Catalog\TrimController;
@@ -46,6 +47,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::patch('/models/{carModel}/active', [CarModelController::class, 'active'])->name('models.active');
         Route::delete('/models/{carModel}', [CarModelController::class, 'destroy'])->name('models.destroy');
 
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::patch('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::patch('/categories/{category}/active', [CategoryController::class, 'active'])->name('categories.active');
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
         Route::get('/trims', [TrimController::class, 'index'])->name('trims.index');
         Route::post('/trims', [TrimController::class, 'store'])->name('trims.store');
         Route::patch('/trims/{trim}', [TrimController::class, 'update'])->name('trims.update');

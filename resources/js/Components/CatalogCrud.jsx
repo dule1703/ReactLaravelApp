@@ -10,9 +10,9 @@ import { useState } from 'react';
 
 // Add / edit form inside a modal. `Form` renders the fields; the server validates and the
 // errors come back per field. Re-mounted per row (key), so every open starts from that row.
-function EntityForm({ resource, row, entity, initialData, Form, formContext, usageWarning, onClose }) {
+function EntityForm({ resource, row, entity, initialData, Form, formContext, usageWarning, multipart, onClose }) {
     const editing = row !== null;
-    const { data, setData, post, patch, errors, processing } = useForm(initialData(row));
+    const { data, setData, post, patch, transform, errors, processing } = useForm(initialData(row));
     const warning = editing ? usageWarning?.(row) : null;
 
     const submit = (e) => {
@@ -20,7 +20,14 @@ function EntityForm({ resource, row, entity, initialData, Form, formContext, usa
 
         const options = { preserveScroll: true, onSuccess: onClose };
 
-        if (editing) {
+        if (multipart) {
+            // Files need multipart; PHP does not parse a multipart PATCH, so an edit is a POST with _method.
+            transform((current) => (editing ? { ...current, _method: 'patch' } : current));
+            post(editing ? route(`${resource}.update`, row.id) : route(`${resource}.store`), {
+                ...options,
+                forceFormData: true,
+            });
+        } else if (editing) {
             patch(route(`${resource}.update`, row.id), options);
         } else {
             post(route(`${resource}.store`), options);
@@ -89,8 +96,13 @@ export default function CatalogCrud({
     initialData,
     usageWarning,
     rowNote,
+    filterFields = [],
+    multipart = false,
 }) {
     const [q, setQ] = useState(filters.q ?? '');
+    const [extra, setExtra] = useState(() =>
+        Object.fromEntries(filterFields.map((field) => [field.name, filters[field.name] ?? ''])),
+    );
     const [form, setForm] = useState(null); // { row } | null
     const [deactivating, setDeactivating] = useState(null);
     const [removing, setRemoving] = useState(null);
@@ -98,7 +110,11 @@ export default function CatalogCrud({
 
     const search = (e) => {
         e.preventDefault();
-        router.get(route(`${resource}.index`), q ? { q } : {}, { preserveState: true, replace: true });
+        const params = {
+            ...(q ? { q } : {}),
+            ...Object.fromEntries(Object.entries(extra).filter(([, value]) => value !== '')),
+        };
+        router.get(route(`${resource}.index`), params, { preserveState: true, replace: true });
     };
 
     const setActive = (row, isActive, onFinish) =>
@@ -141,6 +157,26 @@ export default function CatalogCrud({
                             onChange={(e) => setQ(e.target.value)}
                         />
                     </div>
+                    {filterFields.map((field) => (
+                        <div key={field.name}>
+                            <label htmlFor={`filter_${field.name}`} className="block text-sm font-medium text-gray-700">
+                                {field.label}
+                            </label>
+                            <select
+                                id={`filter_${field.name}`}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+                                value={extra[field.name]}
+                                onChange={(e) => setExtra({ ...extra, [field.name]: e.target.value })}
+                            >
+                                <option value="">{t('All')}</option>
+                                {field.options.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    ))}
                     <PrimaryButton type="submit">{t('Search')}</PrimaryButton>
                 </form>
                 <PrimaryButton type="button" onClick={() => setForm({ row: null })}>
@@ -225,6 +261,7 @@ export default function CatalogCrud({
                         Form={Form}
                         formContext={formContext}
                         usageWarning={usageWarning}
+                        multipart={multipart}
                         onClose={() => setForm(null)}
                     />
                 )}
