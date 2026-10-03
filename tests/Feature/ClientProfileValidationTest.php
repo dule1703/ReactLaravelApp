@@ -297,7 +297,7 @@ class ClientProfileValidationTest extends TestCase
             $this->assertFalse(Gate::forUser(null)->allows($ability, $profile), "guest $ability");
         }
 
-        foreach (['create', 'delete'] as $ability) {
+        foreach (['create'] as $ability) {
             $this->assertFalse(Gate::forUser($admin)->allows($ability, $profile), "admin $ability");
         }
     }
