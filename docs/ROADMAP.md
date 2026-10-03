@@ -73,11 +73,20 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       izmena u modalu; deaktivacija umesto brisanja, brisanje samo bez zavisnih redova; slug se pravi na
       serveru i ne menja; nazivi jedinstveni bez razlike u velikim/malim slovima). Motori i menjači nemaju
       `sort_order` (sortirani po nazivu).
-- [ ] 3.6 Admin CRUD kataloga, drugi deo: verzije, stavke opreme i matrica opreme po paketu
+- [x] 3.6 Osnova kataloga: kategorije modela (`categories`, `car_model_category`, many-to-many; kartica
+      „Kategorije“, višestruki izbor u formi modela, filter liste; promena kroz `CarModelCategories`, jedan
+      zapis u dnevniku) i slika modela (`car_models.image_path`, otpremanje kroz admin u storage, nikad u git).
+- [ ] 3.7 Realni podaci kataloga: nazive paketa, motora, menjača, cene i opremu čita vlasnik iz zvaničnog
+      konfiguratora i dostavlja kao podatke za seeder (zamenjuju demo podatke iz 3.3 i 3.6). Ništa se ne
+      preuzima automatski sa skoda-auto sajtova.
+- [ ] 3.8 Kartice Verzije i Oprema (stavke opreme): admin CRUD
+- [ ] 3.9 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno)
 
 ## Faza 4 - Ponude i konfigurator
 
 - [ ] 4.1 Šema: ponude + stavke ponude sa snimkom cena
+      Stavke ponude snimaju NAZIVE i CENE opreme (tekst i iznosi u centima), ne reference na `trim_equipment`:
+      kasnija izmena ili brisanje kataloga ne sme da promeni postojeću ponudu.
       Zaštita klijenata sa ponudama: `offers.user_id` sa `restrictOnDelete`; brisanje klijenta (2.4) se
       blokira porukom ako ima ponude, a kasnije opciono anonimizacija (ponude čuvaju snimak podataka).
 - [ ] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima

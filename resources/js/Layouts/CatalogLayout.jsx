@@ -4,6 +4,7 @@ import { Head, Link } from '@inertiajs/react';
 
 const TABS = [
     { key: 'models', label: 'Models', route: 'catalog.models.index' },
+    { key: 'categories', label: 'Categories', route: 'catalog.categories.index' },
     { key: 'trims', label: 'Trims', route: 'catalog.trims.index' },
     { key: 'engines', label: 'Engines', route: 'catalog.engines.index' },
     { key: 'transmissions', label: 'Transmissions', route: 'catalog.transmissions.index' },
