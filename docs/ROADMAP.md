@@ -127,8 +127,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima
       `OfferNumber::assign()` (tabela `offer_counters`, godina iz `offer_date`); brisanje ponude ostavlja rupu, broj se ne koristi ponovo.
       Istovremenost se ne može testirati na SQLite (nema lockova): zaštita je atomski UPDATE reda godine + `unique` na `offers`.
-- [ ] 4.3 PDV stopa: skladište podešavanja je stiglo u 3.4 (`settings`, `vat_rate_bp`, podrazumevano 2000). Ovde:
+- [x] 4.3 PDV stopa: skladište podešavanja je stiglo u 3.4 (`settings`, `vat_rate_bp`, podrazumevano 2000). Ovde:
       ponuda samo SNIMA stopu (i cene stavki) pri kreiranju; kasnija promena stope ne menja postojeće ponude.
+      Urađeno u 4.3: `OfferCreator::create(User $client, ?string $note)` (zaglavlje; 4.5 dodaje `array $items = []` u istu transakciju), `VatRate::current()` (strogo čitanje), `ClientSnapshot`, `OfferClientRules::missing()`.
 - [ ] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)
 - [ ] 4.5 UI konfiguratora: model -> paket -> motor, serijska/dodatna oprema, broj vozila,
       "Snimi model" dodaje stavku, zbirovi bez i sa PDV-om uživo

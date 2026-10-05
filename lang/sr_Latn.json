@@ -557,5 +557,11 @@
     "activity.field.line_net_cents": "Zbir stavke (u centima, bez PDV-a)",
     "activity.field.offer_item_option.name": "Naziv opreme",
     "activity.field.group_name": "Grupa opcija",
-    "activity.field.is_surcharge": "Doplata"
+    "activity.field.is_surcharge": "Doplata",
+    "offer.profile.full_name": "Dopunite profil: ime ili naziv firme je obavezno za ponudu.",
+    "offer.profile.address": "Dopunite profil: adresa je obavezna za ponudu.",
+    "offer.profile.postal_code": "Dopunite profil: poštanski broj je obavezan za ponudu.",
+    "offer.profile.city": "Dopunite profil: grad je obavezan za ponudu.",
+    "offer.profile.country": "Dopunite profil: država je obavezna za ponudu.",
+    "offer.profile.pib": "Dopunite profil: PIB je obavezan za pravno lice."
 }

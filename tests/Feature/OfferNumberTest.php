@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\OfferNumber;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
@@ -159,12 +160,14 @@ class OfferNumberTest extends TestCase
 
     public function test_the_year_of_the_current_timezone_is_the_limit(): void
     {
-        // 23:30 on New Year's Eve in Belgrade is still 2026 there, whatever the clock of UTC says.
-        $this->travelTo('2026-12-31 23:30:00');
-        $this->assertSame('001/2026', $this->create()->number);
+        // 00:30 on New Year's Day in Belgrade is still 2026 in UTC: the app timezone decides.
+        $this->travelTo(Carbon::parse('2027-01-01 00:30:00', config('app.timezone')));
+        $this->assertSame('2026', now('UTC')->format('Y'));
+
+        $this->assertSame('001/2027', $this->create(2027)->number);
 
         $this->expectException(InvalidArgumentException::class);
-        DB::transaction(fn () => $this->numbers->assign(new Offer, 2027));
+        DB::transaction(fn () => $this->numbers->assign(new Offer, 2028));
     }
 
     public function test_the_assign_method_does_not_save_but_sets_the_fields_that_cannot_be_mass_assigned(): void
@@ -226,7 +229,6 @@ class OfferNumberTest extends TestCase
     {
         $this->assertNotContains('offer_counters', config('catalog.offer_tables'));
         $this->assertTrue(Schema::hasColumns('offer_counters', ['year', 'last_seq']));
-        $this->assertFalse(in_array('Illuminate\\Database\\Eloquent\\Model', class_uses(OfferCounter::class), true));
         $this->assertArrayNotHasKey('App\\Models\\Concerns\\LogsActivity', class_uses(OfferCounter::class));
     }
 }
