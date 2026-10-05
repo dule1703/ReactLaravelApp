@@ -101,15 +101,19 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       jednoj transakciji; `EquipmentItem::scopeOfferable()` je jedino mesto šta se nudi (neaktivna grupa sklanja
       stavke iz novih ponuda). Provera zavisnosti verzije (`VersionController::dependencies()`) se proširuje
       ponudama u fazi 4.
-- [ ] 3.11 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno): jedini način da se
-      menjaju stavke grupe na liniji (servis u jednoj transakciji, provera konačnog stanja kroz
-      `OptionGroupRule`).
+- [x] 3.11 Matrica opreme po liniji (`/admin/catalog/matrix`): stavke x linije modela, ćelija nedostupno / serijska /
+      dodatna sa cenom; jedino mesto izmene je `EquipmentMatrix` (transakcija, `lockForUpdate`, provera stanja ćelije
+      => 409, konačno stanje kroz `OptionGroupRule`). FAZA 3 JE ZAVRŠENA.
+- [ ] 3.12 (kasnije) „Kopiraj opremu iz linije ...“ sa pregledom promena pre primene (korisno za „Plus“ linije);
+      mora poštovati pravila grupa nad ciljnom linijom (kroz `EquipmentMatrix`).
 
 ## Faza 4 - Ponude i konfigurator
 
 - [ ] 4.1 Šema: ponude + stavke ponude sa snimkom cena
       Stavke ponude snimaju NAZIVE i CENE opreme (tekst i iznosi u centima), ne reference na `trim_equipment`:
-      kasnija izmena ili brisanje kataloga ne sme da promeni postojeću ponudu.
+      kasnija izmena ili brisanje kataloga ne sme da promeni postojeću ponudu. Matrica (3.11) BRIŠE red kad ćelija
+      postane „nedostupno“, pa ponuda nikad ne sme da referencira `trim_equipment`; doplata stavke `single` grupe
+      se u ponudi ZBRAJA na cenu linije.
       `catalog:purge-demo` odbija da radi dok ponude imaju redove: spisak tabela ponuda je u
       `config/catalog.php` (`offer_tables`, podrazumevano `offers` i `offer_items`) i MORA se uskladiti sa stvarnim
       nazivima tabela koje faza 4 napravi.

@@ -11,6 +11,7 @@ const TABS = [
     { key: 'versions', label: 'Versions', route: 'catalog.versions.index' },
     { key: 'equipment', label: 'Equipment', route: 'catalog.equipment.index' },
     { key: 'option-groups', label: 'Option groups', route: 'catalog.option-groups.index' },
+    { key: 'matrix', label: 'Matrix', route: 'catalog.matrix.index' },
 ];
 
 // Shared frame of the catalog screens: one navigation item "Catalog", one tab per entity
