@@ -66,11 +66,13 @@ class OfferCalculatorTest extends TestCase
 
     public function test_the_limits_match_the_js_constants(): void
     {
-        $this->assertSame([1_000_000_000, 999, 200, 100_000_000_000], [
+        $this->assertSame([1_000_000_000, 999, 200, 100_000_000_000, 20, 500], [
             OfferCalculator::MAX_PRICE_CENTS,
             OfferCalculator::MAX_QUANTITY,
             OfferCalculator::MAX_OPTIONS,
             OfferCalculator::MAX_TOTAL_NET_CENTS,
+            OfferCalculator::MAX_ITEMS,
+            OfferCalculator::MAX_TOTAL_OPTIONS,
         ]);
     }
 
