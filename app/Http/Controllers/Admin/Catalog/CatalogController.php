@@ -20,6 +20,9 @@ abstract class CatalogController extends Controller
 {
     protected const PER_PAGE = 25;
 
+    /** Entities whose Serbian name is feminine (the blocked-delete message differs). */
+    private const FEMININE = ['category', 'version', 'equipment_item', 'option_group'];
+
     protected function term(Request $request): string
     {
         return mb_substr(trim((string) $request->query('q', '')), 0, 100);
@@ -87,6 +90,13 @@ abstract class CatalogController extends Controller
             ->implode(', ');
 
         $entity = __("catalog.entity.$entityKey");
+
+        // Serbian needs the gender of the entity: "deaktivirajte ga" / "deaktivirajte je".
+        if (in_array($entityKey, self::FEMININE, true)) {
+            return $details === ''
+                ? __(':entity has dependent rows. Deactivate it (f.) instead of deleting.', ['entity' => $entity])
+                : __(':entity has dependent rows (:details). Deactivate it (f.) instead of deleting.', ['entity' => $entity, 'details' => $details]);
+        }
 
         return $details === ''
             ? __(':entity has dependent rows. Deactivate it instead of deleting.', ['entity' => $entity])

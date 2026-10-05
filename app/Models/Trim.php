@@ -62,13 +62,14 @@ class Trim extends Model
     }
 
     /**
-     * Only active equipment, in category (enum) order, then sort_order.
+     * Only equipment that can be offered (EquipmentItem::scopeOfferable), in category (enum)
+     * order, then sort_order.
      *
      * @return BelongsToMany<EquipmentItem, $this, TrimEquipment>
      */
     public function activeEquipment(): BelongsToMany
     {
-        return $this->equipment()->active()->ordered();
+        return $this->equipment()->offerable()->ordered();
     }
 
     /**

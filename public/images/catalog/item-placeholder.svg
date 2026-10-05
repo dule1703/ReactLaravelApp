@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Stavka bez slike">
+  <!-- Neutral, original placeholder used when an equipment item has no uploaded image. -->
+  <rect width="160" height="100" fill="#F4F6F5"/>
+  <rect x="52" y="22" width="56" height="56" rx="8" fill="#C9D1CD"/>
+  <circle cx="80" cy="50" r="16" fill="#F4F6F5"/>
+  <circle cx="80" cy="50" r="7" fill="#6B7570"/>
+</svg>

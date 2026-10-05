@@ -4,8 +4,11 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Catalog\CarModelController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\EngineController;
+use App\Http\Controllers\Admin\Catalog\EquipmentItemController;
+use App\Http\Controllers\Admin\Catalog\OptionGroupController;
 use App\Http\Controllers\Admin\Catalog\TransmissionController;
 use App\Http\Controllers\Admin\Catalog\TrimController;
+use App\Http\Controllers\Admin\Catalog\VersionController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\ClientProfileController;
@@ -52,6 +55,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::patch('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::patch('/categories/{category}/active', [CategoryController::class, 'active'])->name('categories.active');
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/versions', [VersionController::class, 'index'])->name('versions.index');
+        Route::post('/versions', [VersionController::class, 'store'])->name('versions.store');
+        Route::patch('/versions/{version}/active', [VersionController::class, 'active'])->name('versions.active');
+        Route::delete('/versions/{version}', [VersionController::class, 'destroy'])->name('versions.destroy');
+
+        Route::get('/equipment', [EquipmentItemController::class, 'index'])->name('equipment.index');
+        Route::post('/equipment', [EquipmentItemController::class, 'store'])->name('equipment.store');
+        Route::patch('/equipment/{equipmentItem}', [EquipmentItemController::class, 'update'])->name('equipment.update');
+        Route::patch('/equipment/{equipmentItem}/active', [EquipmentItemController::class, 'active'])->name('equipment.active');
+        Route::delete('/equipment/{equipmentItem}', [EquipmentItemController::class, 'destroy'])->name('equipment.destroy');
+
+        Route::get('/option-groups', [OptionGroupController::class, 'index'])->name('option-groups.index');
+        Route::post('/option-groups', [OptionGroupController::class, 'store'])->name('option-groups.store');
+        Route::patch('/option-groups/{optionGroup}', [OptionGroupController::class, 'update'])->name('option-groups.update');
+        Route::patch('/option-groups/{optionGroup}/active', [OptionGroupController::class, 'active'])->name('option-groups.active');
+        Route::delete('/option-groups/{optionGroup}', [OptionGroupController::class, 'destroy'])->name('option-groups.destroy');
+
         Route::get('/trims', [TrimController::class, 'index'])->name('trims.index');
         Route::post('/trims', [TrimController::class, 'store'])->name('trims.store');
         Route::patch('/trims/{trim}', [TrimController::class, 'update'])->name('trims.update');

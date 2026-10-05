@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\EquipmentCategory;
+use App\Enums\OptionSelection;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\EquipmentItemFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,6 +84,35 @@ class EquipmentItem extends Model
     public function scopeActive(Builder $query): void
     {
         $query->where('equipment_items.is_active', true);
+    }
+
+    /**
+     * The ONLY place that decides which equipment can be offered (new offers): the item is active
+     * and it either has no group or its group is active. A deactivated group takes its items out
+     * of the configurator; existing offers are snapshots and are not affected.
+     *
+     * @param  Builder<EquipmentItem>  $query
+     */
+    public function scopeOfferable(Builder $query): void
+    {
+        $query->where('equipment_items.is_active', true)
+            ->where(fn (Builder $inner) => $inner
+                ->whereNull('equipment_items.group_id')
+                ->orWhereHas('group', fn (Builder $group) => $group->where('is_active', true)));
+    }
+
+    /**
+     * On how many trims this item is the STANDARD item of a single-choice group. Such an item
+     * cannot be deactivated or moved out of its group directly: the group would be left without
+     * a standard item on those trims (replace it in the equipment matrix first).
+     */
+    public function standardLinesInSingleGroup(): int
+    {
+        if ($this->group_id === null || $this->group?->selection !== OptionSelection::Single) {
+            return 0;
+        }
+
+        return $this->trimEquipment()->where('availability', 'standard')->count();
     }
 
     /**

@@ -60,13 +60,14 @@ class OptionGroupRule
     }
 
     /**
-     * The same check on the database state of one group on one trim.
+     * The same check on the database state of one group on one trim. $asSingle judges a group as
+     * if it were single-choice (used before switching a group from multiple to single).
      *
      * @return list<array{code: string, items: list<string>}>
      */
-    public static function problemsFor(OptionGroup $group, Trim $trim): array
+    public static function problemsFor(OptionGroup $group, Trim $trim, bool $asSingle = false): array
     {
-        if ($group->selection->value !== 'single') {
+        if (! $asSingle && $group->selection->value !== 'single') {
             return [];
         }
 

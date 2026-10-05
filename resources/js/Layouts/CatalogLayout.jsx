@@ -8,6 +8,9 @@ const TABS = [
     { key: 'trims', label: 'Trims', route: 'catalog.trims.index' },
     { key: 'engines', label: 'Engines', route: 'catalog.engines.index' },
     { key: 'transmissions', label: 'Transmissions', route: 'catalog.transmissions.index' },
+    { key: 'versions', label: 'Versions', route: 'catalog.versions.index' },
+    { key: 'equipment', label: 'Equipment', route: 'catalog.equipment.index' },
+    { key: 'option-groups', label: 'Option groups', route: 'catalog.option-groups.index' },
 ];
 
 // Shared frame of the catalog screens: one navigation item "Catalog", one tab per entity
