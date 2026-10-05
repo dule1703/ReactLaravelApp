@@ -162,8 +162,10 @@ class VersionController extends CatalogController
     }
 
     /**
-     * What depends on a version. Nothing yet: phase 4 adds the offers that reference it here, in
-     * this one place, and the delete is then blocked with their number.
+     * What depends on a version. Nothing, on purpose: an offer is a snapshot (names and prices
+     * as text) and has no foreign key or id of a version, so deleting or deactivating a version
+     * cannot affect any offer. If a later phase ever stores a reference to a version, its check
+     * goes here, in this one place.
      *
      * @return array<string, int>
      */

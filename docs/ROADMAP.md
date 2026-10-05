@@ -109,7 +109,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 ## Faza 4 - Ponude i konfigurator
 
-- [ ] 4.1 Šema: ponude + stavke ponude sa snimkom cena
+- [x] 4.1 Šema: ponude + stavke ponude sa snimkom cena
       Stavke ponude snimaju NAZIVE i CENE opreme (tekst i iznosi u centima), ne reference na `trim_equipment`:
       kasnija izmena ili brisanje kataloga ne sme da promeni postojeću ponudu. Matrica (3.11) BRIŠE red kad ćelija
       postane „nedostupno“, pa ponuda nikad ne sme da referencira `trim_equipment`; doplata stavke `single` grupe
@@ -119,6 +119,11 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       nazivima tabela koje faza 4 napravi.
       Zaštita klijenata sa ponudama: `offers.user_id` sa `restrictOnDelete`; brisanje klijenta (2.4) se
       blokira porukom ako ima ponude, a kasnije opciono anonimizacija (ponude čuvaju snimak podataka).
+      Urađeno u 4.1: `offers` (`year`+`seq` unikatno, `number` unikatno, `vat_rate_bp`, snimak klijenta BEZ JMBG-a, ukupni iznosi
+      nullable), `offer_items` (snimak teksta + `version_price_cents`, `line_net_cents` nullable), `offer_item_options`
+      (`is_surcharge` + `group_name`). Nema FK ka katalogu pa `VersionController::dependencies()` ostaje prazan.
+      Za kasnije: status ponude (draft/final) dolazi kad se zna šta znači; serijska oprema u snimku po potrebi u fazi 5.
+      4.2 popunjava `year`/`seq`/`number`, 4.3 `vat_rate_bp` i snimak klijenta, 4.4 `total_*`, `vat_cents`, `line_net_cents`.
 - [ ] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima
 - [ ] 4.3 PDV stopa: skladište podešavanja je stiglo u 3.4 (`settings`, `vat_rate_bp`, podrazumevano 2000). Ovde:
       ponuda samo SNIMA stopu (i cene stavki) pri kreiranju; kasnija promena stope ne menja postojeće ponude.

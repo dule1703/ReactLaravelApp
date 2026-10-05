@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\CarModel;
 use App\Models\Category;
 use App\Models\Engine;
+use App\Models\Offer;
 use App\Models\Setting;
 use Database\Seeders\CatalogSeeder;
 use Database\Seeders\CategorySeeder;
@@ -82,10 +83,8 @@ class CatalogPurgeCommandTest extends TestCase
 
     public function test_offers_block_everything_and_come_first(): void
     {
-        Schema::create('offers', function ($table) {
-            $table->id();
-        });
-        DB::table('offers')->insert(['id' => 1]);
+        // The real offers table comes from the migration (4.1).
+        Offer::factory()->create();
 
         // Even the most permissive combination cannot get past an offer.
         $this->level('all');
@@ -101,10 +100,8 @@ class CatalogPurgeCommandTest extends TestCase
 
     public function test_the_offer_check_comes_before_the_level_check(): void
     {
-        Schema::create('offers', function ($table) {
-            $table->id();
-        });
-        DB::table('offers')->insert(['id' => 1]);
+        // The real offers table comes from the migration (4.1).
+        Offer::factory()->create();
 
         $this->artisan('catalog:purge-demo', ['--confirm' => true])
             ->expectsOutputToContain("Odbijeno: postoje ponude (tabela 'offers'")
@@ -114,10 +111,7 @@ class CatalogPurgeCommandTest extends TestCase
 
     public function test_an_empty_offers_table_does_not_block_and_the_tables_come_from_the_configuration(): void
     {
-        Schema::create('offers', function ($table) {
-            $table->id();
-        });
-
+        // The real offers table is empty here.
         $this->level('demo');
         $this->artisan('catalog:purge-demo', ['--confirm' => true])->assertExitCode(0);
         $this->assertSame(0, CarModel::count());

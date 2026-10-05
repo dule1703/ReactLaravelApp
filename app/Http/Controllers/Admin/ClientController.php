@@ -10,6 +10,7 @@ use App\Models\ClientProfile;
 use App\Services\ActivityLogger;
 use App\Support\Jmbg;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -142,13 +143,25 @@ class ClientController extends Controller
     {
         Gate::authorize('delete', $clientProfile);
 
+        // Offers are snapshot documents of the client: a client with offers is not deleted (the
+        // foreign key offers.user_id RESTRICT is the safety net for a race).
+        $offers = $clientProfile->user->offers()->count();
+
+        if ($offers > 0) {
+            return back()->with('error', __('The client has offers (:count) and cannot be deleted.', ['count' => $offers]));
+        }
+
         // Explicitly, profile first, so both deletions reach the activity log (a database
         // cascade would not fire model events). The log itself is never touched.
-        DB::transaction(function () use ($clientProfile) {
-            $user = $clientProfile->user;
-            $clientProfile->delete();
-            $user->delete();
-        });
+        try {
+            DB::transaction(function () use ($clientProfile) {
+                $user = $clientProfile->user;
+                $clientProfile->delete();
+                $user->delete();
+            });
+        } catch (QueryException) {
+            return back()->with('error', __('The client has offers and cannot be deleted.'));
+        }
 
         return redirect()->route('clients.index')->with('success', __('Client deleted.'));
     }

@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -67,6 +68,14 @@ class User extends Authenticatable
     public function clientProfile(): HasOne
     {
         return $this->hasOne(ClientProfile::class);
+    }
+
+    /**
+     * @return HasMany<Offer, $this>
+     */
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class);
     }
 
     /**
