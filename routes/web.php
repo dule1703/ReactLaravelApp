@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\Catalog\VersionController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\ClientProfileController;
+use App\Http\Controllers\OfferCatalogController;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -106,6 +108,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/client-profile', [ClientProfileController::class, 'edit'])->name('client-profile.edit');
     Route::patch('/client-profile', [ClientProfileController::class, 'update'])->name('client-profile.update');
+
+    // Offer configurator of a client (4.5b). Keep /offers/new and /offers/catalog/* before any future
+    // /offers/{offer} route, and give that parameter whereNumber('offer').
+    Route::get('/offers/new', [OfferController::class, 'create'])->name('offers.create');
+    Route::post('/offers', [OfferController::class, 'store'])->middleware('throttle:10,1')->name('offers.store');
+    Route::prefix('offers/catalog')->name('offers.catalog.')->middleware('throttle:60,1')->group(function () {
+        Route::get('/models/{carModel}/versions', [OfferCatalogController::class, 'versions'])->whereNumber('carModel')->name('versions');
+        Route::get('/versions/{version}', [OfferCatalogController::class, 'version'])->whereNumber('version')->name('version');
+    });
 });
 
 Route::middleware('auth')->group(function () {

@@ -71,6 +71,24 @@ class Version extends Model
     }
 
     /**
+     * Standard (priced into the version) equipment of the trim that can still be shown: the item
+     * passes EquipmentItem::scopeOfferable(). For display only; it is never chosen or priced.
+     *
+     * @return Builder<EquipmentItem>
+     */
+    public function standardEquipment(): Builder
+    {
+        return EquipmentItem::query()
+            ->offerable()
+            ->join('trim_equipment', 'trim_equipment.equipment_item_id', '=', 'equipment_items.id')
+            ->where('trim_equipment.trim_id', $this->trim_id)
+            ->where('trim_equipment.availability', EquipmentAvailability::Standard->value)
+            ->select('equipment_items.*')
+            ->with('group')
+            ->ordered();
+    }
+
+    /**
      * @return BelongsTo<Trim, $this>
      */
     public function trim(): BelongsTo
