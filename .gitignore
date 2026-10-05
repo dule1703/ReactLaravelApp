@@ -22,3 +22,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Real catalog data is NEVER committed (the repository is public): keep it here or outside the repo
+/database/seeders/data/private/
