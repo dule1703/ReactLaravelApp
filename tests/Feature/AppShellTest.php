@@ -30,10 +30,10 @@ class AppShellTest extends TestCase
     {
         $nav = $this->navFor(User::factory()->client()->create());
 
-        $this->assertSame(['dashboard', 'profile', 'offers'], array_column($nav, 'key'));
-        $this->assertSame(['Početna', 'Moj profil', 'Ponude'], array_column($nav, 'label'));
-        $this->assertSame(['/dashboard', '/client-profile', null], array_column($nav, 'href'));
-        $this->assertSame([false, false, true], array_column($nav, 'soon'));
+        $this->assertSame(['dashboard', 'profile', 'new-offer', 'offers'], array_column($nav, 'key'));
+        $this->assertSame(['Početna', 'Moj profil', 'Nova ponuda', 'Ponude'], array_column($nav, 'label'));
+        $this->assertSame(['/dashboard', '/client-profile', '/offers/new', null], array_column($nav, 'href'));
+        $this->assertSame([false, false, false, true], array_column($nav, 'soon'));
     }
 
     public function test_admin_navigation(): void
