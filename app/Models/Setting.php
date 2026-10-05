@@ -26,7 +26,8 @@ class Setting extends Model
     protected $fillable = ['key', 'value'];
 
     /**
-     * Current VAT rate in basis points (2000 = 20%).
+     * Current VAT rate in basis points (2000 = 20%). Lenient on purpose (it only shows the value
+     * on admin screens); an offer snapshots the rate with the strict App\Support\VatRate::current().
      */
     public static function vatRateBp(): int
     {
