@@ -21,6 +21,8 @@
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CATALOG_REAL_PATH" value=""/>
+        <env name="CATALOG_PURGE" value="off"/>
         <env name="JMBG_HASH_KEY" value="phpunit-only-jmbg-hash-key-not-a-secret-0123456789"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>

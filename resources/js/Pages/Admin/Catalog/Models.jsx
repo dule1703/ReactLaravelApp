@@ -1,13 +1,11 @@
 import CatalogCrud from '@/Components/CatalogCrud';
 import FormField from '@/Components/FormField';
+import ImageField from '@/Components/ImageField';
 import TextInput from '@/Components/TextInput';
 import CatalogLayout from '@/Layouts/CatalogLayout';
 import { t } from '@/lib/i18n';
-import { useState } from 'react';
 
 const PLACEHOLDER = '/images/catalog/car-placeholder.svg';
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 const columns = [
     {
@@ -51,36 +49,11 @@ const columns = [
 ];
 
 function Fields({ data, setData, errors, row, context }) {
-    const [clientError, setClientError] = useState(null);
-
-    const chooseFile = (e) => {
-        const file = e.target.files?.[0] ?? null;
-        setClientError(null);
-
-        // Quick feedback only; the server decides from the real file content.
-        if (file && !ALLOWED_TYPES.includes(file.type)) {
-            setClientError(t('The image must be a JPG, PNG or WEBP file.'));
-        } else if (file && file.size > MAX_IMAGE_BYTES) {
-            setClientError(t('The image is larger than the allowed 2 MB.'));
-        }
-
-        if (file && (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_IMAGE_BYTES)) {
-            e.target.value = '';
-            setData('image', null);
-
-            return;
-        }
-
-        setData((current) => ({ ...current, image: file, remove_image: false }));
-    };
-
     const toggleCategory = (id) =>
         setData(
             'category_ids',
             data.category_ids.includes(id) ? data.category_ids.filter((item) => item !== id) : [...data.category_ids, id],
         );
-
-    const currentImage = row?.image_url && !data.remove_image ? row.image_url : null;
 
     return (
         <>
@@ -131,44 +104,7 @@ function Fields({ data, setData, errors, row, context }) {
                 {errors.category_ids && <p className="mt-2 text-sm text-danger">{errors.category_ids}</p>}
             </fieldset>
 
-            <FormField
-                id="image"
-                label={t('Image')}
-                error={clientError ?? errors.image}
-                hint={t('JPG, PNG or WEBP, up to 2 MB, from 400x250 to 4000x4000 pixels.')}
-            >
-                {currentImage && (
-                    <div className="mt-2 flex items-center gap-3">
-                        <img src={currentImage} alt={row.name} className="h-16 w-24 rounded bg-surface object-cover" />
-                        <button
-                            type="button"
-                            onClick={() => setData((current) => ({ ...current, remove_image: true, image: null }))}
-                            className="text-sm font-medium text-danger hover:underline"
-                        >
-                            {t('Remove image')}
-                        </button>
-                    </div>
-                )}
-                {row?.image_url && data.remove_image && (
-                    <p className="mt-2 text-sm italic text-gray-600">
-                        {t('The image will be removed when you save.')}{' '}
-                        <button
-                            type="button"
-                            onClick={() => setData('remove_image', false)}
-                            className="font-medium text-brand-700 hover:underline"
-                        >
-                            {t('Undo')}
-                        </button>
-                    </p>
-                )}
-                <input
-                    id="image"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="mt-2 block w-full text-sm"
-                    onChange={chooseFile}
-                />
-            </FormField>
+            <ImageField currentUrl={row?.image_url} alt={row?.name ?? ''} data={data} setData={setData} error={errors.image} />
         </>
     );
 }
@@ -199,7 +135,7 @@ export default function Models({ items, filters, categories }) {
                     sync_categories: 1,
                     category_ids: row ? row.categories.map((category) => category.id) : [],
                     image: null,
-                    remove_image: false,
+                    remove_image: 0,
                 })}
             />
         </CatalogLayout>
