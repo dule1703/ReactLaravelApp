@@ -130,7 +130,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 4.3 PDV stopa: skladište podešavanja je stiglo u 3.4 (`settings`, `vat_rate_bp`, podrazumevano 2000). Ovde:
       ponuda samo SNIMA stopu (i cene stavki) pri kreiranju; kasnija promena stope ne menja postojeće ponude.
       Urađeno u 4.3: `OfferCreator::create(User $client, ?string $note)` (zaglavlje; 4.5 dodaje `array $items = []` u istu transakciju), `VatRate::current()` (strogo čitanje), `ClientSnapshot`, `OfferClientRules::missing()`.
-- [ ] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)
+- [x] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)
+      `App\Support\OfferCalculator` + `lib/offer.js`, fixture `tests/fixtures/offer-calc-cases.json` (ručno izračunat). PDV jednom na ukupno neto.
+      Granice: cena <= 1e9 centi, quantity 1..999, opcija <= 200, ukupno neto <= 1e11. Otvoreno za 4.5a: šta kad total klijenta != serverski (predlog: 409 + novi iznosi, server upisuje samo svoj).
 - [ ] 4.5 UI konfiguratora: model -> paket -> motor, serijska/dodatna oprema, broj vozila,
       "Snimi model" dodaje stavku, zbirovi bez i sa PDV-om uživo
 - [ ] 4.6 Lista ponuda: pretraga, broj po strani, paginacija, izmena, brisanje

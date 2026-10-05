@@ -1,0 +1,1916 @@
+{
+  "valid": [
+    {
+      "name": "one item without options",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 2000000,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "line = 2000000. VAT 20% = 2000000 * 2000 / 10000 = 400000. Gross = 2400000.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 2000000
+          }
+        ],
+        "total_net_cents": 2000000,
+        "vat_cents": 400000,
+        "total_gross_cents": 2400000
+      }
+    },
+    {
+      "name": "options are added to the version price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 2000000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 150000
+            },
+            {
+              "price_cents": 85050
+            }
+          ]
+        }
+      ],
+      "why": "line = 2000000 + 150000 + 85050 = 2235050. VAT = 2235050 * 0.2 = 447010 exactly. Gross = 2682060.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 2235050
+          }
+        ],
+        "total_net_cents": 2235050,
+        "vat_cents": 447010,
+        "total_gross_cents": 2682060
+      }
+    },
+    {
+      "name": "single group surcharge is added to the line, not a replacement",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1500000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 120000,
+              "is_surcharge": true,
+              "group_name": "Boja"
+            }
+          ]
+        }
+      ],
+      "why": "Standard equipment has no price and is not passed in. The surcharge 120000 is ADDED: line = 1500000 + 120000 = 1620000 (not 120000). VAT = 324000. Gross = 1944000. Extra keys (is_surcharge, group_name) are ignored.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 1620000
+          }
+        ],
+        "total_net_cents": 1620000,
+        "vat_cents": 324000,
+        "total_gross_cents": 1944000
+      }
+    },
+    {
+      "name": "quantity multiplies the whole line",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000000,
+          "quantity": 3,
+          "options": [
+            {
+              "price_cents": 50000
+            }
+          ]
+        }
+      ],
+      "why": "line = (1000000 + 50000) * 3 = 3150000. VAT = 630000. Gross = 3780000.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 3150000
+          }
+        ],
+        "total_net_cents": 3150000,
+        "vat_cents": 630000,
+        "total_gross_cents": 3780000
+      }
+    },
+    {
+      "name": "several items",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000000,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 2500000,
+          "quantity": 2,
+          "options": [
+            {
+              "price_cents": 100000
+            }
+          ]
+        }
+      ],
+      "why": "line 1 = 1000000. line 2 = (2500000 + 100000) * 2 = 5200000. Net = 6200000. VAT = 1240000. Gross = 7440000.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 1000000
+          },
+          {
+            "line_net_cents": 5200000
+          }
+        ],
+        "total_net_cents": 6200000,
+        "vat_cents": 1240000,
+        "total_gross_cents": 7440000
+      }
+    },
+    {
+      "name": "rate 0",
+      "vat_rate_bp": 0,
+      "items": [
+        {
+          "version_price_cents": 1234567,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "VAT = 0, gross = net = 1234567.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 1234567
+          }
+        ],
+        "total_net_cents": 1234567,
+        "vat_cents": 0,
+        "total_gross_cents": 1234567
+      }
+    },
+    {
+      "name": "VAT on the total, not per line (differs by one cent)",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 3,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 3,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "Lines 3 and 3, net 6. Per line: 3 * 0.2 = 0.6 -> 1 each, sum 2. On the total: 6 * 0.2 = 1.2 -> 1. The total is authoritative: VAT 1, gross 7.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 3
+          },
+          {
+            "line_net_cents": 3
+          }
+        ],
+        "total_net_cents": 6,
+        "vat_cents": 1,
+        "total_gross_cents": 7
+      }
+    },
+    {
+      "name": "VAT rounds half up (exactly half)",
+      "vat_rate_bp": 500,
+      "items": [
+        {
+          "version_price_cents": 10,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "5% of 10 = 0.5 -> rounds up to 1. Gross = 11. (At 20% no net gives an exact half: net * 0.2 never ends in .5.)",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 10
+          }
+        ],
+        "total_net_cents": 10,
+        "vat_cents": 1,
+        "total_gross_cents": 11
+      }
+    },
+    {
+      "name": "VAT rounds half up at rate 5000",
+      "vat_rate_bp": 5000,
+      "items": [
+        {
+          "version_price_cents": 1,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "50% of 1 = 0.5 -> 1. Gross = 2.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 1
+          }
+        ],
+        "total_net_cents": 1,
+        "vat_cents": 1,
+        "total_gross_cents": 2
+      }
+    },
+    {
+      "name": "VAT just under half rounds down",
+      "vat_rate_bp": 500,
+      "items": [
+        {
+          "version_price_cents": 9,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "5% of 9 = 0.45 -> 0. Gross = 9.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 9
+          }
+        ],
+        "total_net_cents": 9,
+        "vat_cents": 0,
+        "total_gross_cents": 9
+      }
+    },
+    {
+      "name": "maximum rate",
+      "vat_rate_bp": 10000,
+      "items": [
+        {
+          "version_price_cents": 12345,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "100% of 12345 = 12345. Gross = 24690.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 12345
+          }
+        ],
+        "total_net_cents": 12345,
+        "vat_cents": 12345,
+        "total_gross_cents": 24690
+      }
+    },
+    {
+      "name": "zero prices are allowed",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 0,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 0
+            }
+          ]
+        }
+      ],
+      "why": "Everything is 0.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 0
+          }
+        ],
+        "total_net_cents": 0,
+        "vat_cents": 0,
+        "total_gross_cents": 0
+      }
+    },
+    {
+      "name": "empty offer",
+      "vat_rate_bp": 2000,
+      "items": [],
+      "why": "No items: all zeros, no lines.",
+      "expected": {
+        "items": [],
+        "total_net_cents": 0,
+        "vat_cents": 0,
+        "total_gross_cents": 0
+      }
+    },
+    {
+      "name": "total at the limit (1e11)",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000000000,
+          "quantity": 100,
+          "options": []
+        }
+      ],
+      "why": "line = 1000000000 * 100 = 100000000000 (the allowed maximum). VAT = 20000000000. Gross = 120000000000.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 100000000000
+          }
+        ],
+        "total_net_cents": 100000000000,
+        "vat_cents": 20000000000,
+        "total_gross_cents": 120000000000
+      }
+    },
+    {
+      "name": "200 options (the limit) and a large quantity",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000000,
+          "quantity": 400,
+          "options": [
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            },
+            {
+              "price_cents": 1000000
+            }
+          ]
+        }
+      ],
+      "why": "Unit price = 1000000 + 200 * 1000000 = 201000000. line = 201000000 * 400 = 80400000000. VAT = 16080000000. Gross = 96480000000.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 80400000000
+          }
+        ],
+        "total_net_cents": 80400000000,
+        "vat_cents": 16080000000,
+        "total_gross_cents": 96480000000
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "name": "fractional version price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1.5,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "string version price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": "5",
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "null version price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": null,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "string quantity",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": "2",
+          "options": []
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "fractional quantity",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1.5,
+          "options": []
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "fractional option price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 2.5
+            }
+          ]
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "string option price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": "5"
+            }
+          ]
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "fractional rate",
+      "vat_rate_bp": 20.5,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "string rate",
+      "vat_rate_bp": "2000",
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "item is not an object",
+      "vat_rate_bp": 2000,
+      "items": [
+        5
+      ],
+      "category": "type"
+    },
+    {
+      "name": "options is not a list",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": 5
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "option is not an object",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": [
+            5
+          ]
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "negative version price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": -1,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "negative option price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": -1
+            }
+          ]
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "quantity 0",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 0,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "quantity 1000",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1000,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "version price above 1e9",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000000001,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "option price above 1e9",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1000000001
+            }
+          ]
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "201 options",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            }
+          ]
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "one item above the total limit",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000000000,
+          "quantity": 101,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "two items that together pass the total limit",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000000000,
+          "quantity": 60,
+          "options": []
+        },
+        {
+          "version_price_cents": 1000000000,
+          "quantity": 41,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "rate above 10000",
+      "vat_rate_bp": 10001,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "negative rate",
+      "vat_rate_bp": -1,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "missing options key",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1
+        }
+      ],
+      "category": "missing"
+    },
+    {
+      "name": "missing quantity",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "options": []
+        }
+      ],
+      "category": "missing"
+    },
+    {
+      "name": "missing version price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "missing"
+    },
+    {
+      "name": "missing option price",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": [
+            {
+              "name": "x"
+            }
+          ]
+        }
+      ],
+      "category": "missing"
+    }
+  ]
+}
