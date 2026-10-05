@@ -17,6 +17,7 @@ use App\Services\CarModelCategories;
 use App\Support\InvalidRealCatalogException;
 use App\Support\Money;
 use App\Support\RealCatalog;
+use App\Support\RealCatalogLocationException;
 use App\Support\Vat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
@@ -29,6 +30,8 @@ use Illuminate\Support\Str;
  * NET with Support\Vat::netFromGross and meta.vat_rate_bp FROM THE FILE (the admin setting may
  * change, the file is the source of truth).
  *
+ * - A non-empty file inside the repository folder (outside database/seeders/data/private/) is
+ *   refused: the repository is public and real data must never end up in git.
  * - The file is validated completely BEFORE anything is written; a bad file writes nothing.
  * - Everything is written in one transaction, only through the models (hooks apply).
  * - Idempotent and non-destructive: firstOrCreate by natural key, attributes (price, is_active,
@@ -57,6 +60,11 @@ class RealCatalogSeeder extends Seeder
             $this->command?->info('Fajl sa realnim podacima je prazan okvir: ništa nije upisano.');
 
             return;
+        }
+
+        // The repository is public: real data must never be loaded from a file that could be committed.
+        if (RealCatalog::location($path) === 'repository') {
+            throw new RealCatalogLocationException($path);
         }
 
         $errors = RealCatalog::validate($catalog);

@@ -88,9 +88,12 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       (`OptionGroupRule`; hook `TrimEquipment` garantuje samo „najviše jedna“). Format `real_catalog.php`
       proširen (`groups`, `group`, `swatch_hex`); servis i validacija slike stavke bez ekrana.
       Kasnije (van prve verzije): pravila zavisnosti između opcija i paketi opreme.
-- [ ] 3.9 Realni podaci kataloga: 4 modela, ručno ih priprema i dostavlja vlasnik (ništa se ne preuzima sa
-      skoda-auto sajtova); redosled: `catalog:validate-real`, `catalog:purge-demo` (samo lokalno/staging),
-      `db:seed --class=RealCatalogSeeder`.
+- [x] 3.9 Realni podaci kataloga u PRIVATNOM fajlu van gita (mehanizam): izvor dozvoljava samo ličnu,
+      nekomercijalnu upotrebu, a repo je JAVAN. Fajl živi u `database/seeders/data/private/` (u `.gitignore`)
+      ili van repoa (server: `deploy/<env>/shared/real_catalog.php`), bira se preko `CATALOG_REAL_PATH`; u repou
+      ostaju prazan okvir i izmišljen uzorak. Zaštite: test da je praćeni fajl prazan okvir, `git ls-files`
+      test za `private/`, seeder odbija nepraznu putanju unutar repoa van `private/`, upozorenje u
+      `catalog:validate-real`. Uputstvo: `docs/real-catalog.md`. Podatke učitava vlasnik ručno.
 - [ ] 3.10 Kartice Verzije i Oprema (stavke opreme) sa grupama opcija: admin CRUD, uključuje otpremanje
       slike stavke (servis `EquipmentItemImages` već postoji).
 - [ ] 3.11 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno): jedini način da se
