@@ -961,6 +961,1721 @@
         "vat_cents": 16080000000,
         "total_gross_cents": 96480000000
       }
+    },
+    {
+      "name": "20 items (the limit)",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "why": "Twenty lines of 100 each: net = 20 * 100 = 2000. VAT = 400. Gross = 2400.",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          },
+          {
+            "line_net_cents": 100
+          }
+        ],
+        "total_net_cents": 2000,
+        "vat_cents": 400,
+        "total_gross_cents": 2400
+      }
+    },
+    {
+      "name": "500 options in total (the limit)",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            }
+          ]
+        },
+        {
+          "version_price_cents": 1000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            }
+          ]
+        },
+        {
+          "version_price_cents": 1000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            }
+          ]
+        }
+      ],
+      "why": "Lines: 1000 + 200 = 1200, 1000 + 200 = 1200, 1000 + 100 = 1100. Net = 3500. VAT = 700. Gross = 4200. Options in total: 200 + 200 + 100 = 500 (allowed).",
+      "expected": {
+        "items": [
+          {
+            "line_net_cents": 1200
+          },
+          {
+            "line_net_cents": 1200
+          },
+          {
+            "line_net_cents": 1100
+          }
+        ],
+        "total_net_cents": 3500,
+        "vat_cents": 700,
+        "total_gross_cents": 4200
+      }
     }
   ],
   "invalid": [
@@ -1911,6 +3626,1674 @@
         }
       ],
       "category": "missing"
+    },
+    {
+      "name": "items is an object, not a list",
+      "vat_rate_bp": 2000,
+      "items": {
+        "first": {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        }
+      },
+      "category": "type"
+    },
+    {
+      "name": "options is an object, not a list",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": {
+            "first": {
+              "price_cents": 5
+            }
+          }
+        }
+      ],
+      "category": "type"
+    },
+    {
+      "name": "21 items",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        },
+        {
+          "version_price_cents": 100,
+          "quantity": 1,
+          "options": []
+        }
+      ],
+      "category": "range"
+    },
+    {
+      "name": "501 options in total",
+      "vat_rate_bp": 2000,
+      "items": [
+        {
+          "version_price_cents": 1000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            }
+          ]
+        },
+        {
+          "version_price_cents": 1000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            }
+          ]
+        },
+        {
+          "version_price_cents": 1000,
+          "quantity": 1,
+          "options": [
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            },
+            {
+              "price_cents": 1
+            }
+          ]
+        }
+      ],
+      "category": "range"
     }
   ]
 }

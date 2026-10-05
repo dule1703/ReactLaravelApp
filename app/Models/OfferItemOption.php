@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\LogsActivity;
+use App\Models\Concerns\MutesCreationLog;
 use Database\Factories\OfferItemOptionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use InvalidArgumentException;
 class OfferItemOption extends Model
 {
     /** @use HasFactory<OfferItemOptionFactory> */
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, MutesCreationLog;
 
     /**
      * @var list<string>
