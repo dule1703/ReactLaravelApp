@@ -406,5 +406,17 @@
     "activity.action.catalog.real_seeded": "Učitani realni podaci kataloga",
     "activity.action.catalog.purged": "Obrisan katalog",
     "activity.field.catalog.category": "Kategorije",
-    "activity.field.catalog.car_model_category": "Veze model-kategorija"
+    "activity.field.catalog.car_model_category": "Veze model-kategorija",
+    "activity.action.option_group.created": "Kreirana grupa opcija",
+    "activity.action.option_group.updated": "Izmenjena grupa opcija",
+    "activity.action.option_group.deleted": "Obrisana grupa opcija",
+    "activity.field.option_group.name": "Naziv",
+    "activity.field.selection": "Izbor",
+    "activity.field.uses_swatch": "Uzorak boje",
+    "activity.field.group_id": "Grupa opcija",
+    "activity.field.swatch_hex": "Boja (hex)",
+    "activity.field.catalog.option_group": "Grupe opcija",
+    "option.selection.single": "Jedno od više",
+    "option.selection.multiple": "Više izbora",
+    "The swatch must be a color in the form #RRGGBB.": "Boja mora biti u obliku #RRGGBB."
 }

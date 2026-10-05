@@ -6,6 +6,7 @@ use App\Models\CarModel;
 use App\Models\Category;
 use App\Models\Engine;
 use App\Models\EquipmentItem;
+use App\Models\OptionGroup;
 use App\Models\Setting;
 use App\Models\Transmission;
 use App\Models\Trim;
@@ -108,6 +109,7 @@ class RealCatalogSeeder extends Seeder
     private function seed(array $catalog, int $rate): void
     {
         $categories = $this->categories($catalog['categories']);
+        $groups = $this->groups($catalog['groups']);
         $trims = [];
 
         foreach ($catalog['models'] as $position => $model) {
@@ -163,8 +165,11 @@ class RealCatalogSeeder extends Seeder
         foreach ($catalog['equipment'] as $item) {
             $positions[$item['category']] = ($positions[$item['category']] ?? 0) + 1;
 
+            // Group and swatch are applied only when the item is created, like every other attribute.
             $equipment = $this->make(EquipmentItem::class, [], [
                 'category' => $item['category'],
+                'group_id' => isset($item['group']) ? $groups[mb_strtolower($item['group'])]->id : null,
+                'swatch_hex' => isset($item['swatch_hex']) ? strtoupper($item['swatch_hex']) : null,
                 'is_active' => true,
                 'sort_order' => $positions[$item['category']],
             ], 'equipment_item', $item['name']);
@@ -183,6 +188,28 @@ class RealCatalogSeeder extends Seeder
                 }
             }
         }
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $list
+     * @return array<string, OptionGroup> lowercase name => group
+     */
+    private function groups(array $list): array
+    {
+        $groups = [];
+
+        foreach ($list as $position => $group) {
+            $groups[mb_strtolower($group['name'])] = $this->make(OptionGroup::class, ['slug' => Str::slug($group['name'])], [
+                'name' => $group['name'],
+                'category' => $group['category'],
+                'selection' => $group['selection'],
+                'uses_swatch' => ($group['swatch'] ?? false) === true,
+                'sort_order' => $position + 1,
+                'is_active' => true,
+            ], 'option_group');
+        }
+
+        return $groups;
     }
 
     /**
