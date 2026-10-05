@@ -9,7 +9,7 @@ return [
     // was loaded) or all (also real data, with --include-real). Never set it on production.
     'purge' => env('CATALOG_PURGE', 'off'),
 
-    // Tables of phase 4 offers: the purge command refuses while any of them has rows. Add the
-    // new offer tables here when phase 4 creates them.
-    'offer_tables' => ['offers', 'offer_items'],
+    // Tables of the offers (4.1): the purge command refuses while any of them has rows. Keep it
+    // in sync with the migrations when an offer table is added.
+    'offer_tables' => ['offers', 'offer_items', 'offer_item_options'],
 ];
