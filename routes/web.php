@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Catalog\CarModelController;
 use App\Http\Controllers\Admin\Catalog\CategoryController;
 use App\Http\Controllers\Admin\Catalog\EngineController;
 use App\Http\Controllers\Admin\Catalog\EquipmentItemController;
+use App\Http\Controllers\Admin\Catalog\MatrixController;
 use App\Http\Controllers\Admin\Catalog\OptionGroupController;
 use App\Http\Controllers\Admin\Catalog\TransmissionController;
 use App\Http\Controllers\Admin\Catalog\TrimController;
@@ -71,6 +72,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::patch('/option-groups/{optionGroup}', [OptionGroupController::class, 'update'])->name('option-groups.update');
         Route::patch('/option-groups/{optionGroup}/active', [OptionGroupController::class, 'active'])->name('option-groups.active');
         Route::delete('/option-groups/{optionGroup}', [OptionGroupController::class, 'destroy'])->name('option-groups.destroy');
+
+        Route::get('/matrix', [MatrixController::class, 'index'])->name('matrix.index');
+        Route::put('/matrix/cell', [MatrixController::class, 'cell'])->name('matrix.cell');
+        Route::delete('/matrix/group', [MatrixController::class, 'group'])->name('matrix.group');
 
         Route::get('/trims', [TrimController::class, 'index'])->name('trims.index');
         Route::post('/trims', [TrimController::class, 'store'])->name('trims.store');

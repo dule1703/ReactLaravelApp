@@ -45,7 +45,17 @@ class TrimEquipment extends Pivot
         return [
             'availability' => EquipmentAvailability::class,
             'price_cents' => 'integer',
+            'trim_id' => 'integer',
+            'equipment_item_id' => 'integer',
         ];
+    }
+
+    /**
+     * The log entry names the trim and the item, not their ids: "Essence · Climatronic".
+     */
+    public function activityLabel(): string
+    {
+        return $this->trim?->name.' · '.$this->equipmentItem?->name;
     }
 
     protected static function booted(): void
