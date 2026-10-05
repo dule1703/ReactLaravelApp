@@ -96,8 +96,12 @@ export default function CatalogCrud({
     initialData,
     usageWarning,
     rowNote,
+    rowExtra,
     filterFields = [],
     multipart = false,
+    canEdit = true,
+    deleteNote = null,
+    deactivationBlock,
 }) {
     const [q, setQ] = useState(filters.q ?? '');
     const [extra, setExtra] = useState(() =>
@@ -106,6 +110,7 @@ export default function CatalogCrud({
     const [form, setForm] = useState(null); // { row } | null
     const [deactivating, setDeactivating] = useState(null);
     const [removing, setRemoving] = useState(null);
+    const [blocked, setBlocked] = useState(null);
     const [busy, setBusy] = useState(false);
 
     const search = (e) => {
@@ -125,7 +130,12 @@ export default function CatalogCrud({
         );
 
     const toggle = (row) => {
-        if (row.is_active && row.available_versions > 0) {
+        // A row that cannot be deactivated says why (e.g. the standard item of a single-choice group).
+        const reason = row.is_active ? deactivationBlock?.(row) : null;
+
+        if (reason) {
+            setBlocked({ name: row.name, reason });
+        } else if (row.is_active && row.available_versions > 0) {
             setDeactivating(row);
         } else {
             setActive(row, !row.is_active);
@@ -219,13 +229,16 @@ export default function CatalogCrud({
                                     {rowNote?.(row)}
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setForm({ row })}
-                                        className="me-3 font-medium text-brand-700 hover:text-brand-800"
-                                    >
-                                        {t('Edit')}
-                                    </button>
+                                    {canEdit && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setForm({ row })}
+                                            className="me-3 font-medium text-brand-700 hover:text-brand-800"
+                                        >
+                                            {t('Edit')}
+                                        </button>
+                                    )}
+                                    {rowExtra?.(row)}
                                     <button
                                         type="button"
                                         onClick={() => toggle(row)}
@@ -279,13 +292,27 @@ export default function CatalogCrud({
                 onClose={() => setDeactivating(null)}
             />
 
+            <Modal show={blocked !== null} onClose={() => setBlocked(null)} maxWidth="md">
+                {blocked && (
+                    <div className="p-6">
+                        <h3 className="text-lg font-medium text-ink">{t('Cannot deactivate: :name', { name: blocked.name })}</h3>
+                        <p className="mt-2 text-sm text-gray-600">{blocked.reason}</p>
+                        <div className="mt-6 flex justify-end">
+                            <SecondaryButton onClick={() => setBlocked(null)}>{t('Close')}</SecondaryButton>
+                        </div>
+                    </div>
+                )}
+            </Modal>
+
             <ConfirmModal
                 show={removing !== null}
                 danger
                 title={t('Delete: :name', { name: removing?.name ?? '' })}
-                text={t('A row that is in use cannot be deleted; deactivate it instead. Delete :name?', {
-                    name: removing?.name ?? '',
-                })}
+                text={
+                    t('A row that is in use cannot be deleted; deactivate it instead. Delete :name?', {
+                        name: removing?.name ?? '',
+                    }) + (deleteNote ? ' ' + deleteNote : '')
+                }
                 confirmLabel={t('Delete')}
                 busy={busy}
                 onConfirm={remove}

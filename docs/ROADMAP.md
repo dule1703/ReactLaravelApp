@@ -94,8 +94,13 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       ostaju prazan okvir i izmišljen uzorak. Zaštite: test da je praćeni fajl prazan okvir, `git ls-files`
       test za `private/`, seeder odbija nepraznu putanju unutar repoa van `private/`, upozorenje u
       `catalog:validate-real`. Uputstvo: `docs/real-catalog.md`. Podatke učitava vlasnik ručno.
-- [ ] 3.10 Kartice Verzije i Oprema (stavke opreme) sa grupama opcija: admin CRUD, uključuje otpremanje
-      slike stavke (servis `EquipmentItemImages` već postoji).
+- [x] 3.10 Kartice Verzije, Oprema i Grupe opcija (`/admin/catalog/versions|equipment|option-groups`): lista sa
+      filterima, dodavanje (verzija sa cenom neto ILI bruto, kombinacija se ne menja), stavka opreme sa grupom,
+      uzorkom boje i slikom, grupa sa slugom iz naziva; promena grupe stavke koja je u linijama se odbija,
+      standardna stavka `single` grupe se ne deaktivira, promena kategorije grupe (uz potvrdu) menja i stavke u
+      jednoj transakciji; `EquipmentItem::scopeOfferable()` je jedino mesto šta se nudi (neaktivna grupa sklanja
+      stavke iz novih ponuda). Provera zavisnosti verzije (`VersionController::dependencies()`) se proširuje
+      ponudama u fazi 4.
 - [ ] 3.11 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno): jedini način da se
       menjaju stavke grupe na liniji (servis u jednoj transakciji, provera konačnog stanja kroz
       `OptionGroupRule`).

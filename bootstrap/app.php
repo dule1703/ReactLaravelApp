@@ -32,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // A request body above post_max_size is rejected before validation (413). On the car model
         // form it becomes a message next to the image field instead of an error page.
         $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, \Illuminate\Http\Request $request) {
-            if (! $request->is('admin/catalog/models', 'admin/catalog/models/*')) {
+            if (! $request->is('admin/catalog/models', 'admin/catalog/models/*', 'admin/catalog/equipment', 'admin/catalog/equipment/*')) {
                 return null;
             }
 

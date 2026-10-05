@@ -164,7 +164,7 @@ class CatalogCategoriesTest extends TestCase
         CarModel::factory()->count(2)->create()->each(fn (CarModel $model) => $model->categories()->attach($used));
 
         $this->as()->delete("/admin/catalog/categories/{$used->id}")
-            ->assertSessionHas('error', 'Kategorija ima zavisne redove (modela: 2). Deaktivirajte ga umesto brisanja.');
+            ->assertSessionHas('error', 'Kategorija ima zavisne redove (modela: 2). Deaktivirajte je umesto brisanja.');
         $this->assertNotNull($used->fresh());
 
         $this->as()->delete("/admin/catalog/categories/{$unused->id}")->assertSessionHas('success', 'Obrisano.');
