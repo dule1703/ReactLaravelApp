@@ -124,7 +124,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       (`is_surcharge` + `group_name`). Nema FK ka katalogu pa `VersionController::dependencies()` ostaje prazan.
       Za kasnije: status ponude (draft/final) dolazi kad se zna šta znači; serijska oprema u snimku po potrebi u fazi 5.
       4.2 popunjava `year`/`seq`/`number`, 4.3 `vat_rate_bp` i snimak klijenta, 4.4 `total_*`, `vat_cents`, `line_net_cents`.
-- [ ] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima
+- [x] 4.2 Broj ponude NNN/GGGG, resetuje se svake godine, bezbedno pri istovremenim zahtevima
+      `OfferNumber::assign()` (tabela `offer_counters`, godina iz `offer_date`); brisanje ponude ostavlja rupu, broj se ne koristi ponovo.
+      Istovremenost se ne može testirati na SQLite (nema lockova): zaštita je atomski UPDATE reda godine + `unique` na `offers`.
 - [ ] 4.3 PDV stopa: skladište podešavanja je stiglo u 3.4 (`settings`, `vat_rate_bp`, podrazumevano 2000). Ovde:
       ponuda samo SNIMA stopu (i cene stavki) pri kreiranju; kasnija promena stope ne menja postojeće ponude.
 - [ ] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)
