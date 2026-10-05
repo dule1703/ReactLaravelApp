@@ -8,12 +8,18 @@ use Database\Factories\EquipmentItemFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use InvalidArgumentException;
 
 /**
  * An equipment item shared by all car models; what a trim offers (and at what price) is in
- * TrimEquipment.
+ * TrimEquipment. An item without a group is an independent extra; an item of an OptionGroup is
+ * one choice of a "one of several" set (colors, wheels, ...).
+ *
+ * Local rules on every save: the category must match the group's category, and a color swatch
+ * (#RRGGBB) is allowed only for items of a group that uses swatches.
  */
 class EquipmentItem extends Model
 {
@@ -23,7 +29,7 @@ class EquipmentItem extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['name', 'category', 'is_active', 'sort_order'];
+    protected $fillable = ['name', 'category', 'group_id', 'image_path', 'swatch_hex', 'is_active', 'sort_order'];
 
     protected function casts(): array
     {
@@ -32,6 +38,43 @@ class EquipmentItem extends Model
             'is_active' => 'boolean',
             'sort_order' => 'integer',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $item) {
+            $group = $item->group_id !== null ? OptionGroup::find($item->group_id) : null;
+
+            if ($group !== null && $item->category !== $group->category) {
+                throw new InvalidArgumentException('The category of an item must match the category of its option group.');
+            }
+
+            if ($item->swatch_hex !== null) {
+                if (! preg_match('/^#[0-9A-Fa-f]{6}$/', $item->swatch_hex)) {
+                    throw new InvalidArgumentException('The swatch must be a color in the form #RRGGBB.');
+                }
+
+                if ($group === null || ! $group->uses_swatch) {
+                    throw new InvalidArgumentException('A swatch is allowed only for items of a group that uses swatches.');
+                }
+            }
+        });
+    }
+
+    /**
+     * Public URL of the uploaded image (relative to the current host), or null.
+     */
+    public function imageUrl(): ?string
+    {
+        return $this->image_path ? asset('storage/'.$this->image_path) : null;
+    }
+
+    /**
+     * @return BelongsTo<OptionGroup, $this>
+     */
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(OptionGroup::class, 'group_id');
     }
 
     /**

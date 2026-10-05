@@ -81,11 +81,22 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       (validacija sve-ili-ništa, idempotentno, zbirni zapis `catalog.real_seeded`, marker
       `catalog_real_seeded_at`), `catalog:validate-real` i `catalog:purge-demo` (nivo `CATALOG_PURGE`,
       samo dok nema ponuda). `DatabaseSeeder` učitava realni fajl; demo seederi ostaju za razvoj.
-- [ ] 3.8 Realni podaci kataloga: 4 modela, ručno ih priprema i dostavlja vlasnik (ništa se ne preuzima sa
+- [x] 3.8 Grupe opcija i slika stavke opreme (šema, modeli, format): boje, točkovi i enterijer su izbori
+      „jedno od više“. `option_groups` (`selection` single|multiple, `category`, `uses_swatch`),
+      `equipment_items.group_id/image_path/swatch_hex`. Za `single` grupu svaka linija koja je nudi ima TAČNO
+      JEDNU standardnu stavku, a ostale su dodatne sa DOPLATOM (razlika), ne ukupnom cenom
+      (`OptionGroupRule`; hook `TrimEquipment` garantuje samo „najviše jedna“). Format `real_catalog.php`
+      proširen (`groups`, `group`, `swatch_hex`); servis i validacija slike stavke bez ekrana.
+      Kasnije (van prve verzije): pravila zavisnosti između opcija i paketi opreme.
+- [ ] 3.9 Realni podaci kataloga: 4 modela, ručno ih priprema i dostavlja vlasnik (ništa se ne preuzima sa
       skoda-auto sajtova); redosled: `catalog:validate-real`, `catalog:purge-demo` (samo lokalno/staging),
       `db:seed --class=RealCatalogSeeder`.
-- [ ] 3.9 Kartice Verzije i Oprema (stavke opreme): admin CRUD
-- [ ] 3.10 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno)
+- [ ] 3.10 Kartice Verzije i Oprema (stavke opreme) sa grupama opcija: admin CRUD, uključuje otpremanje
+      slike stavke (servis `EquipmentItemImages` već postoji).
+- [ ] 3.11 Matrica opreme po paketu (standardno / dodatno sa cenom / nedostupno): jedini način da se
+      menjaju stavke grupe na liniji (servis u jednoj transakciji, provera konačnog stanja kroz
+      `OptionGroupRule`).
+
 ## Faza 4 - Ponude i konfigurator
 
 - [ ] 4.1 Šema: ponude + stavke ponude sa snimkom cena

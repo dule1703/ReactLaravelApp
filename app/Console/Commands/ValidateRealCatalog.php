@@ -48,8 +48,9 @@ class ValidateRealCatalog extends Command
 
         $this->line(sprintf('Izvor: %s (pročitano %s), PDV %s%%.', $catalog['meta']['source'], $catalog['meta']['read_on'], Money::formatPercentBp($catalog['meta']['vat_rate_bp'])));
         $this->line(sprintf(
-            'Kategorije: %d, modeli: %d, motori: %d, menjači: %d, verzije: %d, stavke opreme: %d (unosa u matrici: %d).',
+            'Kategorije: %d, grupe opcija: %d, modeli: %d, motori: %d, menjači: %d, verzije: %d, stavke opreme: %d (unosa u matrici: %d).',
             $counts['categories'],
+            $counts['groups'],
             $counts['models'],
             $counts['engines'],
             $counts['transmissions'],

@@ -59,8 +59,8 @@ class RealCatalogSeederTest extends TestCase
         $this->seedReal();
 
         $this->assertSame([
-            'category' => 3, 'car_model' => 2, 'trim' => 5, 'engine' => 3, 'transmission' => 2,
-            'version' => 6, 'equipment_item' => 4, 'trim_equipment' => 12,
+            'category' => 3, 'option_group' => 2, 'car_model' => 2, 'trim' => 5, 'engine' => 3, 'transmission' => 2,
+            'version' => 6, 'equipment_item' => 9, 'trim_equipment' => 33,
         ], $this->catalogCounts());
         $this->assertSame(3, DB::table('car_model_category')->count());
         $this->assertSame(6, Version::available()->count());
@@ -234,9 +234,9 @@ class RealCatalogSeederTest extends TestCase
         $log = ActivityLog::where('action', 'catalog.real_seeded')->sole();
         $this->assertSame('system', $log->actor_type);
         $this->assertEquals([
-            'category' => ['new' => 3], 'car_model' => ['new' => 2], 'trim' => ['new' => 5], 'engine' => ['new' => 3],
-            'transmission' => ['new' => 2], 'version' => ['new' => 6], 'equipment_item' => ['new' => 4],
-            'trim_equipment' => ['new' => 12], 'car_model_category' => ['new' => 3],
+            'category' => ['new' => 3], 'option_group' => ['new' => 2], 'car_model' => ['new' => 2], 'trim' => ['new' => 5],
+            'engine' => ['new' => 3], 'transmission' => ['new' => 2], 'version' => ['new' => 6], 'equipment_item' => ['new' => 9],
+            'trim_equipment' => ['new' => 33], 'car_model_category' => ['new' => 3],
         ], $log->changes);
         $this->assertStringContainsString('Izmišljeni probni podaci', $log->description);
         $this->assertStringContainsString('read_on: 2026-01-15', $log->description);

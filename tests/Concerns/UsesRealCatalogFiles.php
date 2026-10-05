@@ -7,6 +7,7 @@ use App\Models\CarModel;
 use App\Models\Category;
 use App\Models\Engine;
 use App\Models\EquipmentItem;
+use App\Models\OptionGroup;
 use App\Models\Setting;
 use App\Models\Transmission;
 use App\Models\Trim;
@@ -45,6 +46,7 @@ trait UsesRealCatalogFiles
     {
         return [
             'category' => Category::count(),
+            'option_group' => OptionGroup::count(),
             'car_model' => CarModel::count(),
             'trim' => Trim::count(),
             'engine' => Engine::count(),
