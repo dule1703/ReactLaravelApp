@@ -70,6 +70,7 @@ class HandleInertiaRequests extends Middleware
             : [
                 ['dashboard', 'Dashboard', 'dashboard', 'dashboard'],
                 ['profile', 'My profile', 'client-profile.edit', 'client-profile.*'],
+                ['new-offer', 'New offer', 'offers.create', 'offers.create'],
                 ['offers', 'Offers', 'offers.index', 'offers.*'],
             ];
 

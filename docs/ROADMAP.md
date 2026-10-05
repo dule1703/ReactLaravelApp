@@ -137,8 +137,11 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       `OfferCreator::create($client, $note, $items, $expected)` (stopa -> razrešavanje -> kalkulator -> poređenje `expected_total_*` -> broj -> upis).
       Greške izbora: `OfferItemsException` (422, ključ po stavci); neslaganje totala: `OfferTotalMismatchException` (409 u 4.5b, sa serverskim iznosima).
       Granice: 20 stavki, 500 opcija ukupno. Dnevnik: jedan zapis `offer.items_created`, stavke/opcije mutirane samo pri `created` (`MutesCreationLog`).
-- [ ] 4.5b UI konfiguratora: model -> paket -> motor, serijska/dodatna oprema, broj vozila,
-      "Snimi model" dodaje stavku, zbirovi bez i sa PDV-om uživo; rute, Form Request (odbija prazan izbor), 409 sa potvrdom novih iznosa
+- [x] 4.5b UI konfiguratora za KLIJENTA: `/offers/new` (`offers.create`), JSON `offers/catalog/*` (verzije modela, detalji verzije), `POST /offers` (`offers.store`, throttle 10/min, 201 ili 409/422 JSON).
+      Stranica `Offers/Create` + `lib/configurator.js` (reducer, izbor `single` grupe, payload samo ID-evi, expected_*). 409 = eksplicitna potvrda novih iznosa (bez ponavljanja).
+      Posle snimanja redirect na `offers.create` (kad stigne 4.6: na listu). Nav: "Nova ponuda" za klijenta, "Ponude" onemogućeno do 4.6. Slike stavki kasnije (uzorci boja već tu).
+- [ ] 4.5c Admin kreira nalog i profil klijenta (mejl za postavljanje lozinke)
+- [ ] 4.5d Admin bira klijenta i pravi mu ponudu (OfferPolicy::create za admina + konfigurator sa izborom klijenta)
 - [ ] 4.6 Lista ponuda: pretraga, broj po strani, paginacija, izmena, brisanje
 - [ ] 4.7 Policy: klijent vidi samo svoje ponude, admin sve; Feature testovi
 
