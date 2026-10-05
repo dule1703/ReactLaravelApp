@@ -30,6 +30,12 @@ class OfferCalculator
 
     public const MAX_TOTAL_NET_CENTS = 100_000_000_000;
 
+    /** Lines per offer; keeps one request (and the held offer counter row) small. */
+    public const MAX_ITEMS = 20;
+
+    /** All options of all lines of an offer: the counter row stays locked until the rows are written. */
+    public const MAX_TOTAL_OPTIONS = 500;
+
     /**
      * @param  array<array-key, mixed>  $items
      * @return array{items: list<array{line_net_cents: int}>, total_net_cents: int, vat_cents: int, total_gross_cents: int}
@@ -38,11 +44,26 @@ class OfferCalculator
     {
         $rate = self::integer($vatRateBp, 'vat_rate_bp', Vat::RATE_MIN_BP, Vat::RATE_MAX_BP);
 
+        if (! array_is_list($items)) {
+            throw new OfferCalculationException(OfferCalculationException::TYPE, 'items must be a list.');
+        }
+
+        if (count($items) > self::MAX_ITEMS) {
+            throw new OfferCalculationException(OfferCalculationException::RANGE, 'Too many items in one offer.');
+        }
+
         $lines = [];
         $totalNet = 0;
+        $totalOptions = 0;
 
         foreach ($items as $item) {
             $line = self::lineNet($item);
+            $totalOptions += count($item['options']);
+
+            if ($totalOptions > self::MAX_TOTAL_OPTIONS) {
+                throw new OfferCalculationException(OfferCalculationException::RANGE, 'Too many options in one offer.');
+            }
+
             $totalNet += $line;
 
             if ($totalNet > self::MAX_TOTAL_NET_CENTS) {
@@ -72,7 +93,7 @@ class OfferCalculator
         $quantity = self::integer(self::key($item, 'quantity'), 'quantity', 1, self::MAX_QUANTITY);
         $options = self::key($item, 'options');
 
-        if (! is_array($options)) {
+        if (! is_array($options) || ! array_is_list($options)) {
             throw new OfferCalculationException(OfferCalculationException::TYPE, 'options must be a list.');
         }
 

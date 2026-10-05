@@ -563,5 +563,21 @@
     "offer.profile.postal_code": "Dopunite profil: poštanski broj je obavezan za ponudu.",
     "offer.profile.city": "Dopunite profil: grad je obavezan za ponudu.",
     "offer.profile.country": "Dopunite profil: država je obavezna za ponudu.",
-    "offer.profile.pib": "Dopunite profil: PIB je obavezan za pravno lice."
+    "offer.profile.pib": "Dopunite profil: PIB je obavezan za pravno lice.",
+    "offer.item.invalid": "Neispravan izbor stavki ponude.",
+    "offer.item.version_invalid": "Izaberite verziju vozila.",
+    "offer.item.version_unavailable": "Izabrana verzija vozila više nije dostupna.",
+    "offer.item.quantity_invalid": "Broj vozila mora biti ceo broj od 1 do :max.",
+    "offer.item.options_invalid": "Neispravan spisak opreme (najviše :max stavki).",
+    "offer.item.option_unavailable": "Izabrana oprema nije dostupna za ovu verziju.",
+    "offer.item.option_standard": "Oprema je već u standardu i ne bira se posebno.",
+    "offer.item.option_duplicate": "Ista oprema je izabrana više puta.",
+    "offer.item.option_group_duplicate": "Iz iste grupe može da se izabere samo jedna stavka.",
+    "offer.item.too_many_items": "Ponuda može imati najviše :max stavki.",
+    "offer.item.too_many_options": "Ponuda može imati najviše :max stavki opreme ukupno.",
+    "offer.item.total_too_large": "Ukupan iznos ponude je prevelik.",
+    "offer.items_summary": "Stavki: :items, opreme: :options",
+    "activity.action.offer.items_created": "Dodate stavke ponude",
+    "activity.field.items_count": "Broj stavki",
+    "activity.field.options_count": "Broj stavki opreme"
 }

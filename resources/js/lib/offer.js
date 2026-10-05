@@ -17,6 +17,8 @@ export const MAX_PRICE_CENTS = 1_000_000_000;
 export const MAX_QUANTITY = 999;
 export const MAX_OPTIONS = 200;
 export const MAX_TOTAL_NET_CENTS = 100_000_000_000;
+export const MAX_ITEMS = 20;
+export const MAX_TOTAL_OPTIONS = 500;
 
 const RATE_MIN_BP = 0;
 const RATE_MAX_BP = 10000;
@@ -93,11 +95,22 @@ export function calculateOffer(items, vatRateBp) {
         throw new OfferCalculationError('type', 'items must be a list.');
     }
 
+    if (items.length > MAX_ITEMS) {
+        throw new OfferCalculationError('range', 'Too many items in one offer.');
+    }
+
     const lines = [];
     let totalNet = 0;
+    let totalOptions = 0;
 
     for (const item of items) {
         const line = lineNet(item);
+        totalOptions += item.options.length;
+
+        if (totalOptions > MAX_TOTAL_OPTIONS) {
+            throw new OfferCalculationError('range', 'Too many options in one offer.');
+        }
+
         totalNet += line;
 
         if (totalNet > MAX_TOTAL_NET_CENTS) {

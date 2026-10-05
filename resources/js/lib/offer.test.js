@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import cases from '../../../tests/fixtures/offer-calc-cases.json';
-import { calculateOffer, MAX_OPTIONS, MAX_PRICE_CENTS, MAX_QUANTITY, MAX_TOTAL_NET_CENTS, OfferCalculationError } from './offer';
+import { calculateOffer, MAX_ITEMS, MAX_OPTIONS, MAX_TOTAL_OPTIONS, MAX_PRICE_CENTS, MAX_QUANTITY, MAX_TOTAL_NET_CENTS, OfferCalculationError } from './offer';
 import { vatAmount } from './vat';
 
 describe('calculateOffer (shared fixture cases)', () => {
@@ -44,7 +44,7 @@ describe('calculateOffer guards', () => {
     });
 
     it('keeps the limits in step with the server', () => {
-        expect([MAX_PRICE_CENTS, MAX_QUANTITY, MAX_OPTIONS, MAX_TOTAL_NET_CENTS]).toEqual([1e9, 999, 200, 1e11]);
+        expect([MAX_PRICE_CENTS, MAX_QUANTITY, MAX_OPTIONS, MAX_TOTAL_NET_CENTS, MAX_ITEMS, MAX_TOTAL_OPTIONS]).toEqual([1e9, 999, 200, 1e11, 20, 500]);
     });
 
     it('stays within safe integers at the worst case before the total limit is checked', () => {

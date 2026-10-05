@@ -132,9 +132,13 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       Urađeno u 4.3: `OfferCreator::create(User $client, ?string $note)` (zaglavlje; 4.5 dodaje `array $items = []` u istu transakciju), `VatRate::current()` (strogo čitanje), `ClientSnapshot`, `OfferClientRules::missing()`.
 - [x] 4.4 Kalkulacija cena: PHP servis + JS util sa identičnim rezultatom (PHPUnit + vitest)
       `App\Support\OfferCalculator` + `lib/offer.js`, fixture `tests/fixtures/offer-calc-cases.json` (ručno izračunat). PDV jednom na ukupno neto.
-      Granice: cena <= 1e9 centi, quantity 1..999, opcija <= 200, ukupno neto <= 1e11. Otvoreno za 4.5a: šta kad total klijenta != serverski (predlog: 409 + novi iznosi, server upisuje samo svoj).
-- [ ] 4.5 UI konfiguratora: model -> paket -> motor, serijska/dodatna oprema, broj vozila,
-      "Snimi model" dodaje stavku, zbirovi bez i sa PDV-om uživo
+      Granice: cena <= 1e9 centi, quantity 1..999, opcija <= 200, ukupno neto <= 1e11. Neslaganje totala klijenta i servera rešeno u 4.5a.
+- [x] 4.5a Server: stavke ponude. `OfferItemResolver` (izbor klijenta: samo ID-evi + quantity -> snimak iz kataloga), `Version::offerableExtras()`,
+      `OfferCreator::create($client, $note, $items, $expected)` (stopa -> razrešavanje -> kalkulator -> poređenje `expected_total_*` -> broj -> upis).
+      Greške izbora: `OfferItemsException` (422, ključ po stavci); neslaganje totala: `OfferTotalMismatchException` (409 u 4.5b, sa serverskim iznosima).
+      Granice: 20 stavki, 500 opcija ukupno. Dnevnik: jedan zapis `offer.items_created`, stavke/opcije mutirane samo pri `created` (`MutesCreationLog`).
+- [ ] 4.5b UI konfiguratora: model -> paket -> motor, serijska/dodatna oprema, broj vozila,
+      "Snimi model" dodaje stavku, zbirovi bez i sa PDV-om uživo; rute, Form Request (odbija prazan izbor), 409 sa potvrdom novih iznosa
 - [ ] 4.6 Lista ponuda: pretraga, broj po strani, paginacija, izmena, brisanje
 - [ ] 4.7 Policy: klijent vidi samo svoje ponude, admin sve; Feature testovi
 
