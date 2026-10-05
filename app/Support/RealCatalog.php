@@ -39,6 +39,60 @@ class RealCatalog
         return $data;
     }
 
+    /** Directory for the private real catalog file: ignored by git, inside the repository folder. */
+    public const PRIVATE_DIRECTORY = 'database/seeders/data/private';
+
+    /**
+     * Where a catalog file lives relative to the (public) repository:
+     *  - 'private': inside database/seeders/data/private/ (ignored by git),
+     *  - 'repository': inside the repository folder anywhere else (could be committed),
+     *  - 'outside': outside the repository (temp files, the server's shared/ folder).
+     *
+     * Paths are compared after realpath(), so symbolic links are resolved.
+     */
+    public static function location(string $path): string
+    {
+        $file = realpath($path);
+
+        if ($file === false) {
+            return 'outside';
+        }
+
+        $private = realpath(base_path(self::PRIVATE_DIRECTORY));
+        $base = realpath(base_path());
+
+        if ($private !== false && self::isInside($file, $private)) {
+            return 'private';
+        }
+
+        return $base !== false && self::isInside($file, $base) ? 'repository' : 'outside';
+    }
+
+    /**
+     * Whether $path is inside $directory (a sibling such as "private-evil" is NOT inside "private").
+     * Case-insensitive on Windows.
+     */
+    public static function isInside(string $path, string $directory): bool
+    {
+        $normalize = function (string $value): string {
+            $value = str_replace('\\', '/', $value);
+
+            return rtrim(PHP_OS_FAMILY === 'Windows' ? strtolower($value) : $value, '/').'/';
+        };
+
+        return str_starts_with($normalize($path), $normalize($directory));
+    }
+
+    /**
+     * What to do with a file that sits inside the repository outside the private directory.
+     */
+    public static function locationAdvice(): string
+    {
+        return 'Repozitorijum je JAVAN i realni podaci ne smeju u git. Premestite fajl u '.self::PRIVATE_DIRECTORY.'/real_catalog.php '
+            .'(ignoriše se u gitu) ili van repozitorijuma (na serveru deploy/<okruženje>/shared/real_catalog.php) '
+            .'i podesite CATALOG_REAL_PATH u .env.';
+    }
+
     /**
      * An empty frame: nothing to load. It is valid and the seeder does nothing.
      *

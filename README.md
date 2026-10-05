@@ -1,3 +1,12 @@
+# Škoda konfigurator (demo)
+
+> **Napomena o sadržaju.** Ovaj projekat je demo aplikacija i nije povezan sa Škoda Auto a.s. niti sa njenim
+> zastupnicima. Nazivi modela, paketa i motora u demo podacima služe samo kao ilustracija, a cene su
+> izmišljene i neslužbene. Logotipi, fotografije i zvanični cenovnici nisu deo repozitorijuma. Realni podaci se
+> ne čuvaju u gitu (vidi [docs/real-catalog.md](docs/real-catalog.md)).
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

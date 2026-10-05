@@ -33,6 +33,10 @@ class ValidateRealCatalog extends Command
             return self::SUCCESS;
         }
 
+        if (RealCatalog::location($path) === 'repository') {
+            $this->warn('Upozorenje: fajl sa podacima je unutar repozitorijuma, a nije u '.RealCatalog::PRIVATE_DIRECTORY.'/. '.RealCatalog::locationAdvice().' RealCatalogSeeder ga neće upisati.');
+        }
+
         $errors = RealCatalog::validate($catalog);
 
         if ($errors !== []) {
