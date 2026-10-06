@@ -7,12 +7,18 @@ use App\Models\User;
 
 /**
  * Owner or admin may view/update a profile. Listing, revealing sensitive values, deleting
- * the JMBG and deleting the client are admin-only. There is no create: a profile is created
- * with the client.
+ * the JMBG and deleting the client are admin-only. A profile is created with its user: by the
+ * registration (an empty profile) or by an admin in the salon flow (create).
  */
 class ClientProfilePolicy
 {
     public function viewAny(User $user): bool
+    {
+        return $user->isAdmin();
+    }
+
+    /** The salon flow: only an admin creates a client (user and profile together). */
+    public function create(User $user): bool
     {
         return $user->isAdmin();
     }

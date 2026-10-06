@@ -39,6 +39,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('admin.activity-log');
 
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+    // The salon flow (4.5c). /clients/create goes BEFORE /clients/{clientProfile}.
+    Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
+    Route::post('/clients', [ClientController::class, 'store'])->middleware('throttle:20,1')->name('clients.store');
     Route::get('/clients/{clientProfile}', [ClientController::class, 'edit'])->name('clients.edit');
     Route::patch('/clients/{clientProfile}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{clientProfile}', [ClientController::class, 'destroy'])->name('clients.destroy');

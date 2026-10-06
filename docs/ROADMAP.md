@@ -140,7 +140,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 4.5b UI konfiguratora za KLIJENTA: `/offers/new` (`offers.create`), JSON `offers/catalog/*` (verzije modela, detalji verzije), `POST /offers` (`offers.store`, throttle 10/min, 201 ili 409/422 JSON).
       Stranica `Offers/Create` + `lib/configurator.js` (reducer, izbor `single` grupe, payload samo ID-evi, expected_*). 409 = eksplicitna potvrda novih iznosa (bez ponavljanja).
       Redirect posle snimanja: od 4.6 na `offers.show`. Nav: "Nova ponuda" za klijenta. Slike stavki kasnije (uzorci boja već tu).
-- [ ] 4.5c Admin kreira nalog i profil klijenta (mejl za postavljanje lozinke)
+- [x] 4.5c Admin kreira klijenta (salonski tok): `Admin/Clients` "Novi klijent" (`clients.create` / `clients.store`), `ClientCreator` (user role=client postavljen na serveru + profil, jedna transakcija sa proverom duplikata), nasumična lozinka koju niko ne zna,
+      mejl `ClientAccountCreated` sa linkom standardnog password brokera (rok `auth.passwords.users.expire`, bez ShouldQueue dok 0.10 nije gotov), JMBG opcioni; duplikat email (bez razlike u slovima) i `jmbg_hash` = tvrda blokada, PIB = upozorenje sa potvrdom; jedan zapis `client.created_by_admin`.
+      Napomena: `email_verified_at` ostaje `null`; kad se uključi `MustVerifyEmail`, uspešno postavljanje lozinke preko ovog mejla je prirodno mesto da se polje popuni. Izmena profila u adminu (2.4) više ne traži JMBG.
 - [ ] 4.5d Admin bira klijenta i pravi mu ponudu (OfferPolicy::create za admina + konfigurator sa izborom klijenta)
 - [x] 4.6 Lista ponuda i prikaz jedne ponude (samo čitanje): `/offers` (`offers.index`) i `/offers/{offer}` (`offers.show`, `whereNumber`), pretraga (broj, naziv klijenta iz snimka, napomena; PIB samo admin), broj po strani 10/25/50.
       `OfferPolicy::viewAny/view` (admin sve, klijent svoje; tuđa ponuda = 404 jer su brojevi uzastopni), lista sužena upitom po ulozi; sastavljanje props-a samo kroz `App\Support\OfferPresenter` (whitelist). Posle snimanja redirect na `offers.show`. "Ponude" u navigaciji je aktivna.

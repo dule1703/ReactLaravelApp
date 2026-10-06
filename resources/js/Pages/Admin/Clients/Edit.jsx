@@ -60,6 +60,7 @@ export default function Edit({ client, profile, countries }) {
                             countries={countries}
                             action={route('clients.update', client.id)}
                             jmbgExtra={jmbgExtra}
+                            jmbgOptional
                         />
                     </div>
                 </div>
