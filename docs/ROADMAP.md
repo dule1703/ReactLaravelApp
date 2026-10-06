@@ -24,11 +24,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       Izlaz ide u `/dev/null` (`schedule:run` svaki minut piše "No scheduled commands are ready"), a greške u `cron-errors.log`.
       `queue:work` se ne zakazuje dok ne postoji prvi `ShouldQueue` posao (danas red ne nosi ništa; mejl iz 4.5c je sinhron).
       Štiklira se kad se potvrdi da se u dnevniku aktivnosti pojavio "Čišćenje dnevnika" posle ponoći.
-- [ ] 0.11 Reset opcache-a posle deploy-a (`OPCACHE_RESET_URL` u `finish-release.sh`): staging je posle
-      deploy-a prikazivao stari kod. Menja `deploy/*.sh`, pa samo uz potvrdu.
-      Odluka u toku. Server koristi CloudLinux PHP Selector (nema MultiPHP INI Editora), pa se `opcache.validate_timestamps`
-      i `realpath_cache_ttl` ne mogu menjati. Prvo se meri koliko dugo posle deploy-a ostaje stari kod. Ruta za reset
-      (token u `shared/.env`, nikad u javnom repou; skripte čitaju URL i token iz `shared/.env`) pravi se samo ako simptom ostane.
+- [x] 0.11 Reset opcache-a posle deploy-a (`OPCACHE_RESET_URL` ostaje prazan, `deploy/*.sh` se ne menja).
+      Zatvoreno bez rute: izmereno na stagingu, nova verzija vidljiva nekoliko sekundi posle deploy-a;
+      ako se simptom ponovi, ponovo otvoriti.
 
 ## Faza 1 - Autentifikacija i uloge
 
@@ -169,11 +167,11 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       subjekt ponuda, bez ličnih podataka u zapisu. Svaki zahtev je jedan zapis (bez deduplikacije).
 - [x] 5.3 Izdavalac ponude u PDF-u i doterivanje izgleda: admin ekran `/admin/issuer` (`IssuerProfile`, jedan red; naziv obavezan), podaci se SNIMAJU u ponudu (`offers.issuer_*`, `IssuerSnapshot` u `OfferCreator`), PDF ih čita iz `OfferPresenter::issuer()` (stara ponuda bez snimka ima zaglavlje "Škoda konfigurator").
       Izgled: stavka je zasebna tabela (`page-break-inside: avoid`), "Strana X/Y" u podnožju (canvas), naslov dokumenta, bez "+ -" i " kW" za nepoznate vrednosti. Demo izdavalac samo za local i staging (`IssuerProfileSeeder`). Izgled se proverava ručno (nema rasterizatora u razvoju).
-- [ ] 5.4 Otpremanje loga dilera (do tada se štampa naš `public/images/logo.png`; isto pravilo kao slike modela: samo kroz admin, disk `public`, nikad u git).
+- [ ] 5.4 ODLOŽENO: koristi se postojeći `logo.png` (nije urađeno). Otpremanje loga dilera (do tada se štampa naš `public/images/logo.png`; isto pravilo kao slike modela: samo kroz admin, disk `public`, nikad u git).
 
 ## Faza 6 - Admin dashboard i poliranje
 
-- [ ] 6.1 Dashboard: broj klijenata/ponuda, poslednje aktivnosti, prečice do izmene cena
+- [x] 6.1 Dashboard `/admin`: brojevi (klijenti, aktivne, povučene, ponude u 30 dana), poslednjih 5 ponuda i 8 aktivnosti (bez `auth.*` i PDF zapisa), prečice; `App\Support\AdminDashboard` (whitelist, 4 upita).
 - [ ] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost
 - [ ] 6.3 Bezbednosni pregled: rate limiting, pokrivenost Policy-ja, bez osetljivih podataka u logovima
 

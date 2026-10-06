@@ -15,6 +15,19 @@ final class Like
      */
     public static function contains(string $term): string
     {
-        return '%'.preg_replace('/[!%_]/', '!$0', $term).'%';
+        return '%'.self::escape($term).'%';
+    }
+
+    /**
+     * "term%" with "!", "%" and "_" in the term escaped by "!".
+     */
+    public static function startsWith(string $term): string
+    {
+        return self::escape($term).'%';
+    }
+
+    private static function escape(string $term): string
+    {
+        return preg_replace('/[!%_]/', '!$0', $term);
     }
 }

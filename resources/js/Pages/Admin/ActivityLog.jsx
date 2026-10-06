@@ -5,7 +5,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { activityFieldLabel } from '@/lib/activity';
+import { activityActionLabel, activityFieldLabel } from '@/lib/activity';
 import { t, tOr } from '@/lib/i18n';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
@@ -20,7 +20,6 @@ const EMPTY_FILTERS = {
     q: '',
 };
 
-const actionLabel = (action) => tOr(`activity.action.${action}`, action);
 const roleLabel = (role) => tOr(`role.${role}`, role);
 
 function Actor({ log }) {
@@ -55,7 +54,7 @@ function Details({ log, onClose }) {
         <Modal show={log !== null} onClose={onClose} maxWidth="xl">
             {log && (
                 <div className="p-6">
-                    <h3 className="text-lg font-medium text-ink">{actionLabel(log.action)}</h3>
+                    <h3 className="text-lg font-medium text-ink">{activityActionLabel(log.action)}</h3>
                     <p className="mt-1 text-sm text-gray-600">
                         {log.time} · {log.subject_label}
                     </p>
@@ -185,7 +184,7 @@ export default function ActivityLog({ logs, filters, users, actions }) {
                                 <option value="">{t('All actions')}</option>
                                 {actions.map((a) => (
                                     <option key={a} value={a}>
-                                        {actionLabel(a)}
+                                        {activityActionLabel(a)}
                                     </option>
                                 ))}
                             </select>
@@ -243,7 +242,7 @@ export default function ActivityLog({ logs, filters, users, actions }) {
                                             <Actor log={log} />
                                         </td>
                                         <td className="px-4 py-3">{log.user_role ? roleLabel(log.user_role) : '—'}</td>
-                                        <td className="px-4 py-3">{actionLabel(log.action)}</td>
+                                        <td className="px-4 py-3">{activityActionLabel(log.action)}</td>
                                         <td className="px-4 py-3">{log.subject_label ?? '—'}</td>
                                         <td className="whitespace-nowrap px-4 py-3">{log.ip ?? '—'}</td>
                                         <td className="whitespace-nowrap px-4 py-3">{log.device ?? '—'}</td>
