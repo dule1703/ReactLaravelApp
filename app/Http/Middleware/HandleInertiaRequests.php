@@ -65,6 +65,7 @@ class HandleInertiaRequests extends Middleware
                 ['clients', 'Clients', 'clients.index', 'clients.*'],
                 ['catalog', 'Catalog', 'catalog.models.index', 'catalog.*'],
                 ['prices', 'Prices', 'prices.index', 'prices.*'],
+                ['new-offer', 'New offer', 'offers.create', 'offers.create'],
                 ['offers', 'Offers', 'offers.index', 'offers.*'],
             ]
             : [

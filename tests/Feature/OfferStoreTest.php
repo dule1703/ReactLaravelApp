@@ -171,10 +171,12 @@ class OfferStoreTest extends TestCase
         $this->assertNothingWritten();
     }
 
-    public function test_an_admin_and_a_guest_are_refused(): void
+    public function test_a_guest_is_refused_and_an_admin_needs_a_client(): void
     {
-        $this->save($this->payload(), User::factory()->admin()->create())->assertForbidden();
-        $this->actingAs(User::factory()->admin()->create())->get(route('offers.create'))->assertForbidden();
+        // Changed on purpose in 4.5d: an admin may open the configurator and save an offer, but only
+        // on behalf of a chosen client (see AdminOfferForClientTest); without one it is a 422.
+        $this->actingAs(User::factory()->admin()->create())->get(route('offers.create'))->assertOk();
+        $this->save($this->payload(), User::factory()->admin()->create())->assertUnprocessable()->assertJsonValidationErrors(['client_id']);
 
         auth()->logout();
         $this->postJson(route('offers.store'), $this->payload())->assertUnauthorized();

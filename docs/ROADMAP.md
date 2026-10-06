@@ -143,7 +143,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 4.5c Admin kreira klijenta (salonski tok): `Admin/Clients` "Novi klijent" (`clients.create` / `clients.store`), `ClientCreator` (user role=client postavljen na serveru + profil, jedna transakcija sa proverom duplikata), nasumična lozinka koju niko ne zna,
       mejl `ClientAccountCreated` sa linkom standardnog password brokera (rok `auth.passwords.users.expire`, bez ShouldQueue dok 0.10 nije gotov), JMBG opcioni; duplikat email (bez razlike u slovima) i `jmbg_hash` = tvrda blokada, PIB = upozorenje sa potvrdom; jedan zapis `client.created_by_admin`.
       Napomena: `email_verified_at` ostaje `null`; kad se uključi `MustVerifyEmail`, uspešno postavljanje lozinke preko ovog mejla je prirodno mesto da se polje popuni. Izmena profila u adminu (2.4) više ne traži JMBG.
-- [ ] 4.5d Admin bira klijenta i pravi mu ponudu (OfferPolicy::create za admina + konfigurator sa izborom klijenta)
+- [x] 4.5d Admin bira klijenta (pretraga po imenu/emailu, `ClientPicker`) i pravi ponudu na njegovo ime: vlasnik je klijent, snimak iz njegovog profila; `OfferPolicy::create` za admina i klijenta, `chooseClient` samo admin; nepotpun profil = 422 (UI blokira unapred); klijentov tok nepromenjen.
+      Admin ima i "Nova ponuda" u navigaciji. Dnevnik: isti zapisi, akter admin.
 - [x] 4.6 Lista ponuda i prikaz jedne ponude (samo čitanje): `/offers` (`offers.index`) i `/offers/{offer}` (`offers.show`, `whereNumber`), pretraga (broj, naziv klijenta iz snimka, napomena; PIB samo admin), broj po strani 10/25/50.
       `OfferPolicy::viewAny/view` (admin sve, klijent svoje; tuđa ponuda = 404 jer su brojevi uzastopni), lista sužena upitom po ulozi; sastavljanje props-a samo kroz `App\Support\OfferPresenter` (whitelist). Posle snimanja redirect na `offers.show`. "Ponude" u navigaciji je aktivna.
 - [ ] 4.6b Povlačenje i brisanje ponude, izmena ponude, pojedinačno logovanje izmena stavki

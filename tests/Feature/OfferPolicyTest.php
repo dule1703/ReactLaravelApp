@@ -40,9 +40,18 @@ class OfferPolicyTest extends TestCase
         $this->assertSame(404, $response->status());
     }
 
-    public function test_only_a_client_creates(): void
+    public function test_a_client_and_an_admin_create_and_a_guest_does_not(): void
     {
+        // Changed on purpose in 4.5d: an admin creates an offer on behalf of a client.
         $this->assertTrue(Gate::forUser(User::factory()->client()->create())->allows('create', Offer::class));
-        $this->assertFalse(Gate::forUser(User::factory()->admin()->create())->allows('create', Offer::class));
+        $this->assertTrue(Gate::forUser(User::factory()->admin()->create())->allows('create', Offer::class));
+        $this->assertFalse(Gate::forUser(null)->allows('create', Offer::class));
+    }
+
+    public function test_only_an_admin_chooses_a_client(): void
+    {
+        $this->assertTrue(Gate::forUser(User::factory()->admin()->create())->allows('chooseClient', Offer::class));
+        $this->assertFalse(Gate::forUser(User::factory()->client()->create())->allows('chooseClient', Offer::class));
+        $this->assertFalse(Gate::forUser(null)->allows('chooseClient', Offer::class));
     }
 }
