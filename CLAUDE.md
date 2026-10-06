@@ -22,7 +22,8 @@ Laravel 12 (PHP 8.2+), Inertia 2, React 18, Breeze, Sanctum, Ziggy (`@routes` + 
 - Setup: `composer run setup`
 - Dev (Windows): `php artisan serve` i `npm run dev` u dva terminala
   (`composer run dev` pada na Windowsu jer `artisan pail` traži `pcntl`)
-- PHP testovi: `composer test` (CI; ceo skup oko 17-20 min na Windowsu) ili `composer test:parallel` (paratest, 8 procesa, oko 6 min; isti testovi, ispis kao tačkice) · JS testovi: `npm run test` (vitest)
+- PHP testovi: `composer test` (sekvencijalno; to pokreće CI) ili `composer test:parallel` (paratest, isti testovi, mnogo brže, ispis kao tačkice) · JS testovi: `npm run test` (vitest)
+  Tok testiranja: tokom rada samo pogođene klase sekvencijalno (`php artisan test putanja/Fajl.php` ili `--filter`); ceo PHP skup jednom po zadatku, pre commita, sa `composer test:parallel`. Ako test pada samo u paralelnom režimu, ponovi ga sekvencijalno pre zaključka (testovi dele `storage/app/pdf`); CI (`composer test`) je konačni sudija. `--profile` uvek sekvencijalno.
 - Format: `./vendor/bin/pint` · Build: `npm run build`
 
 ## Pravila
@@ -80,7 +81,7 @@ Nema Node-a ni supervisora na serveru, nema headless Chrome-a (PDF preko dompdf)
 1. `git checkout develop && git pull`, pa nova grana `feature/<podfaza>-<opis>`
    (npr. `feature/1-1-user-roles`). Jedna podfaza = jedna grana = jedan PR.
 2. Radi u malim koracima. Pre koda pokaži kratak plan i sačekaj potvrdu.
-3. Pre commita: `composer test`, `npm run build` (i `npm run test` kad postoji), `pint`.
+3. Pre commita: ceo PHP skup jednom (`composer test:parallel`), `npm run build` (i `npm run test` kad postoji), `pint`.
 4. Commit (Conventional Commits: feat, fix, chore, refactor, test, ci, docs) i
    `git push -u origin <grana>`.
 5. Napravi Pull request prema `develop` (`gh pr create`). Naslov na engleskom; opis na
