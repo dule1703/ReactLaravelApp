@@ -52,6 +52,9 @@ class OfferPdf
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
+        $this->addPageNumbers($dompdf);
+        $dompdf->addInfo('Title', __('Offer :number', ['number' => $offer->number]));
+
         return $dompdf->output();
     }
 
@@ -62,6 +65,7 @@ class OfferPdf
 
         return view('pdf.offer', [
             'offer' => OfferPresenter::detail($offer, false),
+            'issuer' => OfferPresenter::issuer($offer),
             'logo' => $this->logo(),
         ])->render();
     }
@@ -70,6 +74,21 @@ class OfferPdf
     public static function filename(Offer $offer): string
     {
         return 'ponuda-'.trim((string) preg_replace('/[^A-Za-z0-9]+/', '-', $offer->number), '-').'.pdf';
+    }
+
+    /**
+     * "Page X/Y" centered in the bottom margin of every page. It is drawn on the canvas after the
+     * layout (the page count is only known then), not with script in the template.
+     */
+    private function addPageNumbers(Dompdf $dompdf): void
+    {
+        $canvas = $dompdf->getCanvas();
+        $font = $dompdf->getFontMetrics()->getFont(self::FONT);
+        $text = __('Page').' {PAGE_NUM}/{PAGE_COUNT}';
+        $size = 8;
+        $width = $dompdf->getFontMetrics()->getTextWidth(__('Page').' 99/99', $font, $size);
+
+        $canvas->page_text(($canvas->get_width() - $width) / 2, $canvas->get_height() - 30, $text, $font, $size, [0.42, 0.45, 0.5]);
     }
 
     private function logo(): ?string

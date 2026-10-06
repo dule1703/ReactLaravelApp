@@ -90,6 +90,30 @@ class OfferPresenter
         ];
     }
 
+    /**
+     * The issuer (dealer) copied into the offer, for the header of the PDF ONLY: the pages of the
+     * offer do not get it (detail() has no such key). Null when the offer has none (an older offer,
+     * or the details were not entered): the PDF then prints the plain header.
+     *
+     * @return array{name: string, address: ?string, postal_code: ?string, city: ?string, pib: ?string, phone: ?string, email: ?string}|null
+     */
+    public static function issuer(Offer $offer): ?array
+    {
+        if (! filled($offer->issuer_name)) {
+            return null;
+        }
+
+        return [
+            'name' => $offer->issuer_name,
+            'address' => $offer->issuer_address,
+            'postal_code' => $offer->issuer_postal_code,
+            'city' => $offer->issuer_city,
+            'pib' => $offer->issuer_pib,
+            'phone' => $offer->issuer_phone,
+            'email' => $offer->issuer_email,
+        ];
+    }
+
     /** The country name, or the stored code when the config no longer knows it. */
     private static function country(?string $code): ?string
     {

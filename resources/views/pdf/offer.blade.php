@@ -1,7 +1,9 @@
 {{--
     PDF of an offer (dompdf). Everything comes from OfferPresenter::detail(), that is from the SNAPSHOT
     stored in the offer: never the live client profile or the catalog, and never a JMBG. Amounts are the
-    stored columns (integer cents, formatted by Money::format); an unknown amount is "-".
+    stored columns (integer cents, formatted by Money::format); an unknown amount is "-". The issuer
+    (dealer) in the header comes from OfferPresenter::issuer(), the copy stored in the offer; without it
+    the plain header is printed. Printed ONLY with {{ }} (escaped), never with {!! !!}.
     dompdf: no JavaScript, no remote files (the logo is a data URI), font "DejaVu Sans" (has ć č đ š ž).
 --}}
 @php
@@ -16,6 +18,22 @@
     };
     $rate = Money::formatPercentBp($offer['vat_rate_bp']);
     $client = $offer['client'];
+
+    // The issuer block: empty fields are left out (no "-"). Every value is printed with {{ }} (escaped).
+    $issuerLines = [];
+    if ($issuer) {
+        $issuerLines = array_values(array_filter([
+            $issuer['address'],
+            trim(($issuer['postal_code'] ?? '').' '.($issuer['city'] ?? '')),
+            filled($issuer['pib']) ? 'PIB: '.$issuer['pib'] : null,
+            filled($issuer['phone']) ? __('Phone').': '.$issuer['phone'] : null,
+            $issuer['email'],
+        ], fn ($line) => filled($line)));
+    }
+
+    // Fixed widths of the item columns, the same in the header table and in every item table.
+    $widths = ['6mm', null, '12mm', '28mm', '30mm'];
+    $cell = fn (int $i): string => $widths[$i] === null ? '' : ' style="width: '.$widths[$i].';"';
 @endphp
 <!DOCTYPE html>
 <html lang="sr-Latn">
@@ -37,8 +55,9 @@
         .meta td.k { width: 32mm; color: #6b7280; }
         .items th { background: #F4F6F5; text-align: left; font-size: 8pt; padding: 1.6mm 2mm; }
         .items td { padding: 1.6mm 2mm; border-bottom: 0.2mm solid #d1d5db; }
-        .items thead { display: table-header-group; }
-        .items tr { page-break-inside: avoid; }
+        .items { table-layout: fixed; }
+        .item { page-break-inside: avoid; }
+        .issuer { font-size: 8pt; margin-top: 1mm; }
         .option td { padding: 0.6mm 2mm 0.6mm 6mm; border: 0; font-size: 8pt; }
         .tag { font-size: 7pt; color: #6b7280; }
         .totals { width: 70mm; margin-left: auto; margin-top: 4mm; }
@@ -65,7 +84,16 @@
                 @endif
             </td>
             <td>
-                <strong style="font-size: 12pt;">{{ __('Škoda Configurator') }}</strong>
+                @if ($issuer)
+                    <strong style="font-size: 11pt;">{{ $issuer['name'] }}</strong>
+                    <div class="muted issuer">
+                        @foreach ($issuerLines as $line)
+                            {{ $line }}<br>
+                        @endforeach
+                    </div>
+                @else
+                    <strong style="font-size: 12pt;">{{ __('Škoda Configurator') }}</strong>
+                @endif
             </td>
             <td class="right">
                 <h1>{{ __('Offer :number', ['number' => $offer['number']]) }}</h1>
@@ -90,47 +118,57 @@
         <p class="muted">{{ __('This offer has no items.') }}</p>
     @else
         <table class="items">
-            <thead>
-                <tr>
-                    <th style="width: 6mm;">#</th>
-                    <th>{{ __('Version') }}</th>
-                    <th class="right" style="width: 12mm;">{{ __('Quantity') }}</th>
-                    <th class="right" style="width: 28mm;">{{ __('Price of one vehicle') }}</th>
-                    <th class="right" style="width: 30mm;">{{ __('Line without VAT') }}</th>
-                </tr>
-            </thead>
-            @foreach ($offer['items'] as $item)
-                <tbody>
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>
-                            <strong>{{ $item['car_model_name'] }} {{ $item['trim_name'] }}</strong><br>
-                            <span class="muted">{{ $item['engine_name'] }}, {{ $item['power_kw'] }} kW, {{ $label('fuel', $item['fuel_type']) }}, {{ $item['transmission_name'] }}, {{ $label('drive', $item['drive']) }}</span>
-                        </td>
-                        <td class="right">{{ $item['quantity'] }}</td>
-                        <td class="right nowrap">{{ $money($item['version_price_cents']) }}</td>
-                        <td class="right nowrap"><strong>{{ $money($item['line_net_cents']) }}</strong></td>
-                    </tr>
-                    @foreach ($item['options'] as $option)
-                        @php
-                            $tags = array_filter([
-                                $label('equipment.category', $option['category']),
-                                $option['group_name'],
-                                $option['is_surcharge'] ? __('surcharge') : null,
-                            ], fn ($tag) => filled($tag));
-                        @endphp
-                        <tr class="option">
-                            <td></td>
-                            <td colspan="3">
-                                {{ $option['name'] }}
-                                <span class="tag">({{ implode(', ', $tags) }})</span>
-                            </td>
-                            <td class="right nowrap">+ {{ $money($option['price_cents']) }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            @endforeach
+            <tr>
+                <th{!! $cell(0) !!}>#</th>
+                <th{!! $cell(1) !!}>{{ __('Version') }}</th>
+                <th class="right"{!! $cell(2) !!}>{{ __('Quantity') }}</th>
+                <th class="right"{!! $cell(3) !!}>{{ __('Price of one vehicle') }}</th>
+                <th class="right"{!! $cell(4) !!}>{{ __('Line without VAT') }}</th>
+            </tr>
         </table>
+        {{-- One table per item with the same fixed widths: an item (the row and its options) is not split across pages. --}}
+        @foreach ($offer['items'] as $item)
+            @php
+                $spec = implode(', ', array_filter([
+                    $item['engine_name'],
+                    $item['power_kw'] === null ? null : $item['power_kw'].' kW',
+                    $label('fuel', $item['fuel_type']),
+                    $item['transmission_name'],
+                    $label('drive', $item['drive']),
+                ], fn ($part) => filled($part)));
+            @endphp
+            <table class="items item">
+                <tr>
+                    <td{!! $cell(0) !!}>{{ $loop->iteration }}</td>
+                    <td{!! $cell(1) !!}>
+                        <strong>{{ $item['car_model_name'] }} {{ $item['trim_name'] }}</strong><br>
+                        <span class="muted">{{ $spec }}</span>
+                    </td>
+                    <td class="right"{!! $cell(2) !!}>{{ $item['quantity'] }}</td>
+                    <td class="right nowrap"{!! $cell(3) !!}>{{ $money($item['version_price_cents']) }}</td>
+                    <td class="right nowrap"{!! $cell(4) !!}><strong>{{ $money($item['line_net_cents']) }}</strong></td>
+                </tr>
+                @foreach ($item['options'] as $option)
+                    @php
+                        $tags = array_filter([
+                            $label('equipment.category', $option['category']),
+                            $option['group_name'],
+                            $option['is_surcharge'] ? __('surcharge') : null,
+                        ], fn ($tag) => filled($tag));
+                    @endphp
+                    <tr class="option">
+                        <td></td>
+                        <td colspan="3">
+                            {{ $option['name'] }}
+                            @if (count($tags) > 0)
+                                <span class="tag">({{ implode(', ', $tags) }})</span>
+                            @endif
+                        </td>
+                        <td class="right nowrap">{{ $option['price_cents'] === null ? '' : '+ '.$money($option['price_cents']) }}</td>
+                    </tr>
+                @endforeach
+            </table>
+        @endforeach
     @endif
 
     <table class="totals">
