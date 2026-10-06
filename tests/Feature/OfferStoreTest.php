@@ -59,7 +59,7 @@ class OfferStoreTest extends TestCase
     {
         $response = $this->save($this->payload());
 
-        $response->assertCreated()->assertJson(['number' => now()->format('Y') === '2026' ? '001/2026' : '001/'.now()->format('Y'), 'redirect' => route('offers.create')]);
+        $response->assertCreated()->assertJson(['number' => now()->format('Y') === '2026' ? '001/2026' : '001/'.now()->format('Y'), 'redirect' => route('offers.show', Offer::sole())]);
         $response->assertSessionHas('success');
 
         $offer = Offer::sole();
@@ -229,10 +229,10 @@ class OfferStoreTest extends TestCase
         $this->assertSame(0, ActivityLog::whereIn('action', ['offer_item.created', 'offer_item_option.created'])->count());
     }
 
-    public function test_the_navigation_of_a_client_has_new_offer_and_a_disabled_offers_item(): void
+    public function test_the_navigation_of_a_client_has_new_offer_and_an_active_offers_item(): void
     {
         $this->actingAs($this->client)->get(route('client-profile.edit'))->assertInertia(fn (Assert $page) => $page
             ->where('nav', fn ($nav) => collect($nav)->firstWhere('key', 'new-offer')['href'] === route('offers.create', absolute: false)
-                && collect($nav)->firstWhere('key', 'offers')['soon'] === true));
+                && collect($nav)->firstWhere('key', 'offers')['soon'] === false));
     }
 }

@@ -119,6 +119,13 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     });
 });
 
+// Offers of both roles (4.6): the list is narrowed by role, the Policy decides who may open one.
+// Registered after /offers/new; the parameter is numeric so 'new' and 'abc' never match.
+Route::middleware('auth')->group(function () {
+    Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
+    Route::get('/offers/{offer}', [OfferController::class, 'show'])->whereNumber('offer')->name('offers.show');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
