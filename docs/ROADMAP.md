@@ -24,13 +24,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       Izlaz ide u `/dev/null` (`schedule:run` svaki minut piše "No scheduled commands are ready"), a greške u `cron-errors.log`.
       `queue:work` se ne zakazuje dok ne postoji prvi `ShouldQueue` posao (danas red ne nosi ništa; mejl iz 4.5c je sinhron).
       Štiklira se kad se potvrdi da se u dnevniku aktivnosti pojavio "Čišćenje dnevnika" posle ponoći.
-- [x] 0.11 Reset opcache-a posle deploy-a (`OPCACHE_RESET_URL` u `finish-release.sh`): staging je posle
-      deploy-a prikazivao stari kod. Menja `deploy/*.sh`, pa samo uz potvrdu.
-      Odluka u toku. Server koristi CloudLinux PHP Selector (nema MultiPHP INI Editora), pa se `opcache.validate_timestamps`
-      i `realpath_cache_ttl` ne mogu menjati. Prvo se meri koliko dugo posle deploy-a ostaje stari kod. Ruta za reset
-      (token u `shared/.env`, nikad u javnom repou; skripte čitaju URL i token iz `shared/.env`) pravi se samo ako simptom ostane.
-      Zatvoreno bez rute: izmerjeno na stagingu, nova verzija (uključujući PHP izmenu navigacije) vidljiva nekoliko sekundi posle
-      deploy-a; ako se simptom ponovi, ponovo otvoriti (ruta sa tokenom iz shared/.env, v. analizu).
+- [x] 0.11 Reset opcache-a posle deploy-a (`OPCACHE_RESET_URL` ostaje prazan, `deploy/*.sh` se ne menja).
+      Zatvoreno bez rute: izmereno na stagingu, nova verzija vidljiva nekoliko sekundi posle deploy-a;
+      ako se simptom ponovi, ponovo otvoriti.
 
 ## Faza 1 - Autentifikacija i uloge
 
