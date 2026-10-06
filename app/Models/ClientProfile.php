@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ClientType;
 use App\Models\Concerns\LogsActivity;
+use App\Models\Concerns\MutesCreationLog;
 use App\Support\Jmbg;
 use Database\Factories\ClientProfileFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ClientProfile extends Model
 {
     /** @use HasFactory<ClientProfileFactory> */
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, MutesCreationLog;
 
     /**
      * @var array<string, mixed>

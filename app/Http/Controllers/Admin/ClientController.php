@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ClientIndexRequest;
 use App\Http\Requests\Admin\RevealSensitiveRequest;
+use App\Http\Requests\Admin\StoreClientRequest;
 use App\Http\Requests\UpdateClientProfileRequest;
 use App\Models\ClientProfile;
 use App\Services\ActivityLogger;
+use App\Services\ClientCreator;
+use App\Services\ClientInvitation;
 use App\Support\Jmbg;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
@@ -19,6 +22,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 /**
  * Admin management of client profiles. Props never carry the full JMBG or its hash; the full
@@ -71,6 +75,66 @@ class ClientController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        Gate::authorize('create', ClientProfile::class);
+
+        return Inertia::render('Admin/Clients/Create', [
+            'countries' => $this->countries(),
+            'linkMinutes' => (int) config('auth.passwords.'.config('auth.defaults.passwords').'.expire'),
+        ]);
+    }
+
+    /**
+     * The salon flow: the admin makes the account and the profile; the client sets their own
+     * password through an emailed link. A failed email does not undo the account (it exists, and the
+     * client can use "Forgot your password?"): the admin is warned. ONE summary entry goes to the
+     * activity log, written after the mail attempt so it says whether the mail was sent.
+     */
+    public function store(StoreClientRequest $request, ClientCreator $creator, ClientInvitation $invitation, ActivityLogger $logger): RedirectResponse
+    {
+        $data = $request->validated();
+
+        $profile = $creator->create($data, (bool) ($data['confirm_duplicate_pib'] ?? false));
+
+        try {
+            $invitation->send($profile->user);
+            $mailSent = true;
+        } catch (Throwable $e) {
+            report($e);
+            $mailSent = false;
+        }
+
+        $logger->log(
+            'client.created_by_admin',
+            $profile,
+            description: $mailSent ? __('Password setup email sent') : __('Password setup email NOT sent'),
+            // JMBG and PIB (and the hash) come out as the field name only; the password and the
+            // token are never part of this.
+            changes: [
+                ...$logger->changesFor($profile, 'created'),
+                'email' => ['new' => $profile->user->email],
+                'password' => ['redacted' => true],
+            ],
+        );
+
+        $redirect = redirect()->route('clients.index');
+
+        return $mailSent
+            ? $redirect->with('success', __('Client created. An email with a link to set the password has been sent.'))
+            : $redirect->with('error', __('The client was created, but the email could not be sent. The client can use "Forgot your password?" on the sign-in page.'));
+    }
+
+    /**
+     * @return list<array{code: string, name: string}>
+     */
+    private function countries(): array
+    {
+        return collect(config('countries.codes'))
+            ->map(fn (string $code) => ['code' => $code, 'name' => __("country.$code")])
+            ->all();
+    }
+
     public function edit(ClientProfile $clientProfile): Response
     {
         Gate::authorize('update', $clientProfile);
@@ -95,9 +159,7 @@ class ClientController extends Controller
                 'city' => $clientProfile->city,
                 'country' => $clientProfile->country,
             ],
-            'countries' => collect(config('countries.codes'))
-                ->map(fn (string $code) => ['code' => $code, 'name' => __("country.$code")])
-                ->all(),
+            'countries' => $this->countries(),
         ]);
     }
 
