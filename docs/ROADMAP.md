@@ -162,8 +162,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 - [x] 5.1 PDF ponude: `GET /offers/{offer}/pdf` (`offers.pdf`, inline, throttle 30/min) preko `App\Services\OfferPdf` + `resources/views/pdf/offer.blade.php`; podaci samo iz `OfferPresenter` (snimak), font DejaVu Sans (ugrađen u dompdf, ima ć č đ š ž €), logo kao data URI. Zahteva PHP `gd` (logo.png je RGBA; `ext-gd` u composer.json + provera u `OfferPdf`).
       Bez serijske opreme (nije u snimku), bez dugmadi/preuzimanja/logovanja (5.2), logo i izgled 5.3 (SVG logo bolje rezolucije).
-- [ ] 5.2 PDF preuzimanje i prikaz za štampu ponude, testovi autorizacije
-      Beleže se PDF preuzimanje i štampa ponude kroz `ActivityLogger`.
+- [x] 5.2 Dugmad "Štampaj" i "PDF" (lista ponuda i prikaz ponude), preuzimanje (`?download=1`, attachment) i beleženje u dnevnik
+      Beleži se samo ono što server vidi, posle uspešnog renderovanja: `offer.pdf_opened` (inline, "otvoreno za štampu", ne dokaz štampanja) i `offer.pdf_downloaded`;
+      subjekt ponuda, bez ličnih podataka u zapisu. Svaki zahtev je jedan zapis (bez deduplikacije).
 - [ ] 5.3 Doterivanje PDF izgleda (zaglavlje, tabela stavki, zbirovi, napomena)
       Podaci izdavaoca ponude (naziv, logo, adresa, PIB dilera) iz podešavanja koje admin menja; odlučiti da li se snimaju u ponudu
       (dokument ne sme da se menja unazad). Do tada zaglavlje PDF-a je ključ prevoda "Škoda Configurator", ne `APP_NAME`.
