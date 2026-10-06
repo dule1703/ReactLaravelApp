@@ -1,4 +1,5 @@
 import { categoryLabel } from '@/Components/Configurator/EquipmentChoices';
+import OfferNoteEditor from '@/Components/OfferNoteEditor';
 import OfferPdfActions from '@/Components/OfferPdfActions';
 import OfferStatusActions from '@/Components/OfferStatusActions';
 import OfferStatusBadge from '@/Components/OfferStatusBadge';
@@ -73,7 +74,7 @@ function ItemCard({ item, index }) {
     );
 }
 
-export default function Show({ offer, isAdmin }) {
+export default function Show({ offer, isAdmin, canEditNote, noteMax }) {
     const { client } = offer;
 
     return (
@@ -110,10 +111,7 @@ export default function Show({ offer, isAdmin }) {
                                 <Field label={t('Date')}>{offer.offer_date}</Field>
                                 <Field label={t('VAT (%)')}>{formatRateBp(offer.vat_rate_bp)}</Field>
                             </dl>
-                            <div className="mt-3">
-                                <dt className="text-xs uppercase text-gray-500">{t('Note')}</dt>
-                                <dd className="mt-0.5 whitespace-pre-line text-sm text-ink">{offer.note || '-'}</dd>
-                            </div>
+                            <OfferNoteEditor offer={offer} canEdit={canEditNote} noteMax={noteMax} />
                         </div>
 
                         <div>

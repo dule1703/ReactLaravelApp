@@ -712,5 +712,11 @@
     "Delete the offer?": "Obrisati ponudu?",
     "The offer disappears from the lists and can no longer be opened. Its number is not used again. You can restore it from the list of deleted offers.": "Ponuda nestaje iz lista i više se ne može otvoriti. Njen broj se ne koristi ponovo. Možete je vratiti iz liste obrisanih ponuda.",
     "Restore": "Vrati",
-    "No deleted offers.": "Nema obrisanih ponuda."
+    "No deleted offers.": "Nema obrisanih ponuda.",
+    "activity.action.offer.note_updated": "Izmenjena napomena ponude",
+    "A withdrawn offer can no longer be changed.": "Povučena ponuda se više ne može menjati.",
+    "The note of offer :number was saved.": "Napomena ponude :number je sačuvana.",
+    "The note of offer :number is unchanged.": "Napomena ponude :number nije promenjena.",
+    "Edit note": "Izmeni napomenu",
+    ":count of :max characters": ":count od :max znakova"
 }
