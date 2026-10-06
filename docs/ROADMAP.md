@@ -8,19 +8,27 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 ## Faza 0 - Temelji i pipeline
 
 - [x] 0.1 Sveža Laravel 12 + React + Inertia instalacija, repo na GitHubu (`main`, `develop`)
-- [ ] 0.2 Lokalno pokretanje (`composer run setup`, `php artisan serve` + `npm run dev`)
-- [ ] 0.3 GitHub: rulesets za `main` i `develop`, squash merge, automatsko brisanje grana
-- [ ] 0.4 Deploy SSH ključ + svih 9 repository secrets
-- [ ] 0.5 Priprema staging servera: `shared/.env`, MySQL baza, PHP >= 8.2 za domen
+- [x] 0.2 Lokalno pokretanje (`composer run setup`, `php artisan serve` + `npm run dev`)
+- [x] 0.3 GitHub: rulesets za `main` i `develop`, squash merge, automatsko brisanje grana
+- [x] 0.4 Deploy SSH ključ + svih 9 repository secrets
+- [x] 0.5 Priprema staging servera: `shared/.env`, MySQL baza, PHP >= 8.2 za domen
 - [x] 0.6 vitest + prvi test (`npm install -D vitest`, commit i `package-lock.json`)
-- [ ] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
-- [ ] 0.8 Test Rollback workflow-a na stagingu
-- [ ] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
+- [x] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
+- [x] 0.8 Test Rollback workflow-a na stagingu
+- [x] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
 - [ ] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
       Provera: `php artisan schedule:list`. MORA biti gotovo pre produkcije (`activitylog:prune` je
       zakazan dnevno); do tada se `php artisan activitylog:prune` pokreće ručno.
+      cPanel > Cron Jobs, jednom u minuti (`* * * * *`), po jedna linija za svako okruženje (`<env>` = `production` ili `staging`):
+      `cd /home/ddweba/projects/react-laravel-app/deploy/<env>/current && /usr/local/bin/php artisan schedule:run >/dev/null 2>>/home/ddweba/projects/react-laravel-app/deploy/<env>/shared/storage/logs/cron-errors.log`
+      Izlaz ide u `/dev/null` (`schedule:run` svaki minut piše "No scheduled commands are ready"), a greške u `cron-errors.log`.
+      `queue:work` se ne zakazuje dok ne postoji prvi `ShouldQueue` posao (danas red ne nosi ništa; mejl iz 4.5c je sinhron).
+      Štiklira se kad se potvrdi da se u dnevniku aktivnosti pojavio "Čišćenje dnevnika" posle ponoći.
 - [ ] 0.11 Reset opcache-a posle deploy-a (`OPCACHE_RESET_URL` u `finish-release.sh`): staging je posle
       deploy-a prikazivao stari kod. Menja `deploy/*.sh`, pa samo uz potvrdu.
+      Odluka u toku. Server koristi CloudLinux PHP Selector (nema MultiPHP INI Editora), pa se `opcache.validate_timestamps`
+      i `realpath_cache_ttl` ne mogu menjati. Prvo se meri koliko dugo posle deploy-a ostaje stari kod. Ruta za reset
+      (token u `shared/.env`, nikad u javnom repou; skripte čitaju URL i token iz `shared/.env`) pravi se samo ako simptom ostane.
 
 ## Faza 1 - Autentifikacija i uloge
 
