@@ -1,3 +1,4 @@
+import OfferPdfActions from '@/Components/OfferPdfActions';
 import Pagination from '@/Components/Pagination';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
@@ -117,7 +118,10 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                         <td className="px-3 py-2 text-right">{offer.items_count}</td>
                                         <td className="max-w-xs px-3 py-2 text-gray-600">{offer.note ?? ''}</td>
                                         <td className="whitespace-nowrap px-3 py-2">
-                                            <Link href={route('offers.show', offer.id)} className="font-medium text-brand-700 hover:text-brand-800">{t('View')}</Link>
+                                            <div className="flex items-center gap-3">
+                                                <Link href={route('offers.show', offer.id)} className="font-medium text-brand-700 hover:text-brand-800">{t('View')}</Link>
+                                                <OfferPdfActions offer={offer} compact />
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

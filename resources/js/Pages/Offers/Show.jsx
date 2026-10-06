@@ -1,4 +1,5 @@
 import { categoryLabel } from '@/Components/Configurator/EquipmentChoices';
+import OfferPdfActions from '@/Components/OfferPdfActions';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { groupBy } from '@/lib/configurator';
 import { t, tOr } from '@/lib/i18n';
@@ -78,7 +79,10 @@ export default function Show({ offer }) {
             header={
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <h2 className="text-xl font-semibold leading-tight text-ink">{t('Offer :number', { number: offer.number })}</h2>
-                    <Link href={route('offers.index')} className="text-sm font-medium text-brand-700 hover:text-brand-800">{t('Back to offers')}</Link>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <OfferPdfActions offer={offer} />
+                        <Link href={route('offers.index')} className="text-sm font-medium text-brand-700 hover:text-brand-800">{t('Back to offers')}</Link>
+                    </div>
                 </div>
             }
         >
