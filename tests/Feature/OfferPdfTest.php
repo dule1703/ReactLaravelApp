@@ -13,6 +13,7 @@ use App\Support\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use RuntimeException;
 use Tests\Concerns\BuildsOfferCatalog;
 use Tests\TestCase;
 
@@ -258,10 +259,21 @@ class OfferPdfTest extends TestCase
         $this->assertStringContainsString('data:image/png;base64,', $html);
     }
 
-    public function test_serving_the_pdf_writes_nothing_to_the_database(): void
+    /** The entries of the log for one action. */
+    private function entries(string $action)
+    {
+        return ActivityLog::where('action', $action)->get();
+    }
+
+    private function pdfEntries(): int
+    {
+        return ActivityLog::whereIn('action', ['offer.pdf_opened', 'offer.pdf_downloaded'])->count();
+    }
+
+    public function test_opening_the_pdf_writes_exactly_one_log_entry_and_nothing_else(): void
     {
         $offer = $this->realOffer();
-        $logs = ActivityLog::count();
+        $logsBefore = ActivityLog::count();
 
         DB::flushQueryLog();
         DB::enableQueryLog();
@@ -269,8 +281,137 @@ class OfferPdfTest extends TestCase
         $writes = collect(DB::getQueryLog())->filter(fn ($q) => preg_match('/^\s*(insert|update|delete)/i', $q['query']));
         DB::disableQueryLog();
 
-        $this->assertCount(0, $writes);
-        $this->assertSame($logs, ActivityLog::count());
+        $this->assertCount(1, $writes);
+        $this->assertMatchesRegularExpression('/^\s*insert into "activity_logs"/i', $writes->first()['query']);
+        $this->assertSame($logsBefore + 1, ActivityLog::count());
+    }
+
+    public function test_opening_inline_is_recorded_as_opened_with_the_actor_and_the_offer(): void
+    {
+        $offer = $this->realOffer();
+
+        $this->actingAs($this->client)->get(route('offers.pdf', $offer))->assertOk();
+
+        $entry = $this->entries('offer.pdf_opened')->sole();
+        $this->assertSame($this->client->id, $entry->user_id);
+        $this->assertSame('client', $entry->user_role);
+        $this->assertSame($offer->getMorphClass(), $entry->subject_type);
+        $this->assertSame($offer->id, $entry->subject_id);
+        $this->assertSame('Ponuda '.$offer->number, $entry->subject_label);
+        $this->assertNull($entry->changes);
+        $this->assertNull($entry->description);
+        $this->assertCount(0, $this->entries('offer.pdf_downloaded'));
+    }
+
+    public function test_download_is_an_attachment_with_the_same_name_and_is_recorded_as_downloaded(): void
+    {
+        $this->realOffer();
+        $second = $this->realOffer();
+        $year = now()->format('Y');
+
+        $response = $this->actingAs($this->client)->get(route('offers.pdf', ['offer' => $second, 'download' => 1]));
+
+        $response->assertOk()->assertHeader('Content-Type', 'application/pdf');
+        $this->assertSame('attachment; filename="ponuda-002-'.$year.'.pdf"', $response->headers->get('Content-Disposition'));
+        $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('private', $response->headers->get('Cache-Control'));
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+
+        $entry = $this->entries('offer.pdf_downloaded')->sole();
+        $this->assertSame($second->id, $entry->subject_id);
+        $this->assertSame('Ponuda 002/'.$year, $entry->subject_label);
+        $this->assertCount(0, $this->entries('offer.pdf_opened'));
+    }
+
+    public function test_only_a_true_download_flag_makes_it_an_attachment(): void
+    {
+        $offer = $this->realOffer();
+        $disposition = fn (string $value) => $this->actingAs($this->client)
+            ->get(route('offers.pdf', $offer).'?download='.$value)->headers->get('Content-Disposition');
+
+        foreach (['0', 'false', 'abc', ''] as $value) {
+            $this->assertStringStartsWith('inline', $disposition($value), "download=$value");
+        }
+
+        foreach (['1', 'true', 'on'] as $value) {
+            $this->assertStringStartsWith('attachment', $disposition($value), "download=$value");
+        }
+    }
+
+    public function test_every_request_is_one_entry_without_deduplication(): void
+    {
+        $offer = $this->realOffer();
+
+        $this->actingAs($this->client)->get(route('offers.pdf', $offer))->assertOk();
+        $this->actingAs($this->client)->get(route('offers.pdf', $offer))->assertOk();
+
+        $this->assertCount(2, $this->entries('offer.pdf_opened'));
+    }
+
+    public function test_an_admin_opening_someone_elses_offer_is_recorded_with_the_admin_as_actor(): void
+    {
+        $offer = $this->realOffer();
+
+        $this->actingAs($this->admin)->get(route('offers.pdf', $offer))->assertOk();
+
+        $entry = $this->entries('offer.pdf_opened')->sole();
+        $this->assertSame($this->admin->id, $entry->user_id);
+        $this->assertSame('admin', $entry->user_role);
+        $this->assertSame($offer->id, $entry->subject_id);
+    }
+
+    public function test_someone_elses_offer_a_guest_and_bad_ids_leave_no_entry(): void
+    {
+        $offer = $this->realOffer();
+
+        $this->actingAs($this->other)->get(route('offers.pdf', $offer))->assertNotFound();
+        $this->actingAs($this->other)->get(route('offers.pdf', ['offer' => $offer, 'download' => 1]))->assertNotFound();
+        $this->actingAs($this->client)->get('/offers/999999/pdf')->assertNotFound();
+
+        auth()->logout();
+        $this->get(route('offers.pdf', $offer))->assertRedirect(route('login'));
+
+        $this->assertSame(0, $this->pdfEntries());
+    }
+
+    public function test_a_failed_rendering_leaves_no_entry(): void
+    {
+        $offer = $this->realOffer();
+
+        $this->mock(OfferPdf::class, fn ($mock) => $mock->shouldReceive('render')->andThrow(new RuntimeException('render failed')));
+
+        $this->actingAs($this->client)->get(route('offers.pdf', $offer))->assertStatus(500);
+        $this->actingAs($this->client)->get(route('offers.pdf', ['offer' => $offer, 'download' => 1]))->assertStatus(500);
+
+        $this->assertSame(0, $this->pdfEntries());
+    }
+
+    public function test_the_entry_has_no_jmbg_and_no_client_data(): void
+    {
+        $offer = $this->realOffer();
+
+        $this->actingAs($this->client)->get(route('offers.pdf', $offer))->assertOk();
+        $this->actingAs($this->client)->get(route('offers.pdf', ['offer' => $offer, 'download' => 1]))->assertOk();
+
+        $json = json_encode(ActivityLog::whereIn('action', ['offer.pdf_opened', 'offer.pdf_downloaded'])->get()->toArray());
+
+        $this->assertStringNotContainsString(self::JMBG, $json);
+        $this->assertStringNotContainsString($this->client->profile()->jmbg_hash, $json);
+        $this->assertStringNotContainsString('Petar Petrović', $json);
+        $this->assertStringNotContainsString('Knez Mihailova', $json);
+        $this->assertStringNotContainsString('Beograd', $json);
+    }
+
+    public function test_the_new_events_have_a_translated_name_for_the_admin_log(): void
+    {
+        $translations = json_decode(file_get_contents(base_path('lang/sr_Latn.json')), true);
+
+        foreach (['offer.pdf_opened', 'offer.pdf_downloaded'] as $action) {
+            $this->assertNotEmpty($translations["activity.action.$action"] ?? null, $action);
+        }
+
+        // Opening is not proof of printing.
+        $this->assertStringNotContainsStringIgnoringCase('odštampan', $translations['activity.action.offer.pdf_opened']);
     }
 
     public function test_the_work_folder_is_created_in_storage_by_the_code(): void
