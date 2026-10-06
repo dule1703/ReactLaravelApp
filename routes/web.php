@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Catalog\TransmissionController;
 use App\Http\Controllers\Admin\Catalog\TrimController;
 use App\Http\Controllers\Admin\Catalog\VersionController;
 use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\IssuerProfileController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\ClientProfileController;
@@ -33,9 +34,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/admin', function () {
-    return Inertia::render('Admin/Dashboard');
-})->middleware(['auth', 'role:admin'])->name('admin.dashboard');
+Route::get('/admin', [DashboardController::class, 'index'])->middleware(['auth', 'role:admin'])->name('admin.dashboard');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('admin.activity-log');

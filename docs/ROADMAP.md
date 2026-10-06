@@ -169,11 +169,11 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       subjekt ponuda, bez ličnih podataka u zapisu. Svaki zahtev je jedan zapis (bez deduplikacije).
 - [x] 5.3 Izdavalac ponude u PDF-u i doterivanje izgleda: admin ekran `/admin/issuer` (`IssuerProfile`, jedan red; naziv obavezan), podaci se SNIMAJU u ponudu (`offers.issuer_*`, `IssuerSnapshot` u `OfferCreator`), PDF ih čita iz `OfferPresenter::issuer()` (stara ponuda bez snimka ima zaglavlje "Škoda konfigurator").
       Izgled: stavka je zasebna tabela (`page-break-inside: avoid`), "Strana X/Y" u podnožju (canvas), naslov dokumenta, bez "+ -" i " kW" za nepoznate vrednosti. Demo izdavalac samo za local i staging (`IssuerProfileSeeder`). Izgled se proverava ručno (nema rasterizatora u razvoju).
-- [ ] 5.4 Otpremanje loga dilera (do tada se štampa naš `public/images/logo.png`; isto pravilo kao slike modela: samo kroz admin, disk `public`, nikad u git).
+- [ ] 5.4 ODLOŽENO: koristi se postojeći `logo.png` (nije urađeno). Otpremanje loga dilera (do tada se štampa naš `public/images/logo.png`; isto pravilo kao slike modela: samo kroz admin, disk `public`, nikad u git).
 
 ## Faza 6 - Admin dashboard i poliranje
 
-- [ ] 6.1 Dashboard: broj klijenata/ponuda, poslednje aktivnosti, prečice do izmene cena
+- [x] 6.1 Dashboard `/admin`: brojevi (klijenti, aktivne, povučene, ponude u 30 dana), poslednjih 5 ponuda i 8 aktivnosti (bez `auth.*` i PDF zapisa), prečice; `AppSupportAdminDashboard` (whitelist, 4 upita).
 - [ ] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost
 - [ ] 6.3 Bezbednosni pregled: rate limiting, pokrivenost Policy-ja, bez osetljivih podataka u logovima
 

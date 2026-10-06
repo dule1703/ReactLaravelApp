@@ -37,8 +37,8 @@ class RoleAccessTest extends TestCase
         $issuer = route('issuer.edit', absolute: false);
         $source = file_get_contents(resource_path('js/Pages/Admin/Dashboard.jsx'));
 
-        // The page renders in the browser: its source must point to the route and the card must use the route name for the href (see AdminLinkCard.test.jsx).
-        $this->assertStringContainsString('routeName="issuer.edit"', $source);
+        // The shortcuts are a list in the page source: the issuer card must be in it, by route name (AdminLinkCard uses it for the href).
+        $this->assertStringContainsString("routeName: 'issuer.edit'", $source);
         $this->assertSame('/admin/issuer', $issuer);
 
         $this->actingAs(User::factory()->admin()->create())->get('/admin')->assertOk()->assertInertia(fn ($page) => $page->component('Admin/Dashboard'));

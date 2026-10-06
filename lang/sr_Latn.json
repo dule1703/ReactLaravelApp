@@ -737,5 +737,21 @@
     "activity.field.issuer_pib": "PIB izdavaoca",
     "activity.field.issuer_phone": "Telefon izdavaoca",
     "activity.field.issuer_email": "Email izdavaoca",
-    "Dealer details printed in the header of the offer PDF": "Podaci dilera koji se štampaju u zaglavlju PDF-a ponude"
+    "Dealer details printed in the header of the offer PDF": "Podaci dilera koji se štampaju u zaglavlju PDF-a ponude",
+    "Overview": "Pregled",
+    "Clients registered": "Registrovani klijenti",
+    "Active offers": "Aktivne ponude",
+    "Withdrawn offers": "Povučene ponude",
+    "Offers in the last 30 days": "Ponude u poslednjih 30 dana",
+    "Latest offers": "Poslednje ponude",
+    "No offers yet.": "Još nema ponuda.",
+    "Latest activity": "Poslednje aktivnosti",
+    "No activity yet.": "Još nema aktivnosti.",
+    "Shortcuts": "Prečice",
+    "View all": "Prikaži sve",
+    "Update prices in bulk": "Grupna izmena cena",
+    "Car models, trims, engines, equipment": "Modeli, paketi opreme, motori i oprema",
+    "Client accounts and profiles": "Nalozi i profili klijenata",
+    "Create an offer, for a client too": "Pravljenje ponude, i za klijenta",
+    "Who did what and when": "Ko je šta uradio i kada"
 }
