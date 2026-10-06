@@ -669,5 +669,16 @@
     "Set password": "Postavi lozinku",
     "The link is valid for :minutes minutes. After that, use \"Forgot your password?\" on the sign-in page: :url": "Link važi :minutes minuta. Posle toga koristite „Zaboravili ste lozinku?“ na stranici za prijavu: :url",
     "If you did not expect this email, you can ignore it.": "Ako niste očekivali ovaj mejl, možete ga zanemariti.",
-    "activity.action.client.created_by_admin": "Admin napravio klijenta"
+    "activity.action.client.created_by_admin": "Admin napravio klijenta",
+    "Client for the offer": "Klijent za ponudu",
+    "Choose a client to make the offer for.": "Izaberite klijenta za kog se pravi ponuda.",
+    "The profile of this client is incomplete. Complete it to make an offer.": "Profil ovog klijenta nije potpun. Dopunite ga da biste napravili ponudu.",
+    "Complete the client profile": "Dopuni profil klijenta",
+    "Search clients by name or email": "Pretraga klijenata po imenu ili emailu",
+    "Type at least :count characters.": "Unesite najmanje :count znaka.",
+    "Searching…": "Pretraga…",
+    "The clients could not be loaded. Try again.": "Klijenti nisu učitani. Pokušajte ponovo.",
+    "Profile incomplete": "Profil nije potpun",
+    "Choose an existing client.": "Izaberite postojećeg klijenta.",
+    "The profile of this client is incomplete: :fields. Complete it before making the offer.": "Profil ovog klijenta nije potpun: :fields. Dopunite ga pre pravljenja ponude."
 }

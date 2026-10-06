@@ -144,10 +144,12 @@ class OfferCatalogEndpointsTest extends TestCase
         $this->actingAs($this->client)->getJson('/offers/catalog/versions/abc')->assertNotFound();
     }
 
-    public function test_only_a_client_can_read_the_endpoints(): void
+    public function test_a_guest_is_refused_and_an_admin_can_read_the_endpoints(): void
     {
-        $this->actingAs(User::factory()->admin()->create())
-            ->getJson(route('offers.catalog.version', $this->version))->assertForbidden();
+        // Changed on purpose in 4.5d: the admin makes offers too (on behalf of a client).
+        $admin = User::factory()->admin()->create();
+        $this->actingAs($admin)->getJson(route('offers.catalog.version', $this->version))->assertOk();
+        $this->actingAs($admin)->getJson(route('offers.catalog.versions', $this->version->trim->carModel))->assertOk();
 
         auth()->logout();
         $this->getJson(route('offers.catalog.version', $this->version))->assertUnauthorized();

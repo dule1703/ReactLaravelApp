@@ -178,11 +178,63 @@ export function expectedFrom(totals) {
     };
 }
 
-/** The body of the save request. */
-export function saveBody(items, note, totals) {
+/**
+ * The body of the save request. An admin also sends `clientId` (the id of a client PROFILE: who the
+ * offer is for); a client sends none (the server ignores it anyway: the owner is the signed-in user).
+ */
+export function saveBody(items, note, totals, clientId = null) {
     const trimmed = note.trim();
 
-    return { items: toPayload(items), note: trimmed === '' ? null : trimmed, ...expectedFrom(totals) };
+    return {
+        items: toPayload(items),
+        note: trimmed === '' ? null : trimmed,
+        ...expectedFrom(totals),
+        ...(clientId === null ? {} : { client_id: clientId }),
+    };
+}
+
+/**
+ * Why "Save offer" is blocked, or null when it may be pressed. The server checks all of this again
+ * (a 422); this only tells the user early. For an admin a client must be chosen and that client's
+ * profile must be complete; for a client their own profile must be complete.
+ *
+ * @returns {null|'saving'|'editing'|'items'|'limits'|'client'|'client_incomplete'|'profile'}
+ */
+export function saveBlocker({ isAdmin, profileIncomplete, client, itemCount, calculationError, editing, saving }) {
+    if (saving) return 'saving';
+    if (editing) return 'editing';
+    if (itemCount === 0) return 'items';
+    if (calculationError) return 'limits';
+
+    if (isAdmin) {
+        if (!client) return 'client';
+        if (client.complete !== true) return 'client_incomplete';
+    } else if (profileIncomplete) {
+        return 'profile';
+    }
+
+    return null;
+}
+
+/**
+ * The highlighted row of a list of options after a key (ArrowDown / ArrowUp wrap around, Home /
+ * End jump); -1 means "none". Used by the client picker.
+ */
+export function moveActive(index, count, key) {
+    if (count === 0) return -1;
+
+    switch (key) {
+        case 'ArrowDown':
+            return index < 0 || index >= count - 1 ? 0 : index + 1;
+        case 'ArrowUp':
+            return index <= 0 ? count - 1 : index - 1;
+        case 'Home':
+            return 0;
+        case 'End':
+            return count - 1;
+        default:
+            return index;
+    }
 }
 
 /** The new server totals of a 409 become what the user confirms. */
@@ -194,12 +246,14 @@ export function totalsFromConflict(data) {
     };
 }
 
-/** Per-field messages of a 422 in one flat list. */
-export function errorMessages(error, fallback) {
+/** Per-field messages of a 422 in one flat list (`except`: fields that are shown elsewhere). */
+export function errorMessages(error, fallback, except = []) {
     const data = error.response?.data;
 
     if (error.response?.status === 422 && data?.errors) {
-        return Object.values(data.errors).flat();
+        return Object.entries(data.errors)
+            .filter(([field]) => !except.includes(field))
+            .flatMap(([, messages]) => messages);
     }
 
     return [data?.message ?? fallback];

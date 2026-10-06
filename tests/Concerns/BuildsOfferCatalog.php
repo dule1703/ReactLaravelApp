@@ -66,14 +66,14 @@ trait BuildsOfferCatalog
     }
 
     /** A client with a complete profile (what an offer needs). */
-    protected function clientWithProfile(array $profile = []): User
+    protected function clientWithProfile(array $profile = [], array $user = []): User
     {
-        $user = User::factory()->client()->create();
-        $user->profile()->forceFill(array_merge([
+        $account = User::factory()->client()->create($user);
+        $account->profile()->forceFill(array_merge([
             'full_name' => 'Petar Petrović', 'address' => 'Knez Mihailova 1',
             'postal_code' => '11000', 'city' => 'Beograd', 'country' => 'RS',
         ], $profile))->save();
 
-        return $user->fresh();
+        return $account->fresh();
     }
 }
