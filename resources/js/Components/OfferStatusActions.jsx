@@ -15,15 +15,22 @@ export default function OfferStatusActions({ offer, isAdmin }) {
     const [confirming, setConfirming] = useState(null); // 'withdraw' | 'delete' | null
     const [processing, setProcessing] = useState(false);
 
-    const request = (method, name) =>
-        router[method](route(name, offer.id), {}, {
+    const request = (method, name) => {
+        const options = {
             preserveScroll: true,
             onStart: () => setProcessing(true),
             onFinish: () => {
                 setProcessing(false);
                 setConfirming(null);
             },
-        });
+        };
+
+        // router.delete(url, options) has no data argument (router.post(url, data, options) does):
+        // options passed as the second argument of delete would be ignored.
+        return method === 'delete'
+            ? router.delete(route(name, offer.id), options)
+            : router.post(route(name, offer.id), {}, options);
+    };
 
     const modal = {
         withdraw: {
