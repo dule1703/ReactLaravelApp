@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       DB_CONNECTION: sqlite
       DB_DATABASE: ":memory:"
@@ -56,7 +56,7 @@ jobs:
 
   build-and-deploy:
     needs: tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -125,7 +125,7 @@ jobs:
   notify:
     needs: [tests, build-and-deploy]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Resolve environment and status
         id: status

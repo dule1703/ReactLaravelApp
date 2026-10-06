@@ -95,6 +95,7 @@ Nema Node-a ni supervisora na serveru, nema headless Chrome-a (PDF preko dompdf)
 `.github/workflows/*.yml` i `deploy/*.sh` upravljaju produkcijom: predloži izmenu i sačekaj
 potvrdu. Release model: `releases/<timestamp>`, deljeni `storage` + `.env`, atomski symlink
 `current`. Putanje: `~/projects/react-laravel-app/deploy/{production,staging}/`.
+Runneri su zakucani na `ubuntu-24.04` jer `ubuntu-latest` prelazi na Ubuntu 26 od 19.10.2026; verzija se podiže svesno, u sva tri workflow-a odjednom, posle provere CI-ja.
 
 ## Održavanje ovog fajla i ROADMAP-a
 
