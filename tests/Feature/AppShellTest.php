@@ -40,10 +40,10 @@ class AppShellTest extends TestCase
     {
         $nav = $this->navFor(User::factory()->admin()->create());
 
-        $this->assertSame(['admin', 'activity-log', 'clients', 'catalog', 'prices', 'issuer', 'new-offer', 'offers'], array_column($nav, 'key'));
-        $this->assertSame(['Administracija', 'Dnevnik aktivnosti', 'Klijenti', 'Katalog', 'Cene', 'Izdavalac ponude', 'Nova ponuda', 'Ponude'], array_column($nav, 'label'));
-        $this->assertSame(['/admin', '/admin/activity-log', '/admin/clients', '/admin/catalog/models', '/admin/prices', '/admin/issuer', '/offers/new', '/offers'], array_column($nav, 'href'));
-        $this->assertSame([false, false, false, false, false, false, false, false], array_column($nav, 'soon'));
+        $this->assertSame(['admin', 'activity-log', 'clients', 'catalog', 'prices', 'new-offer', 'offers'], array_column($nav, 'key'));
+        $this->assertSame(['Administracija', 'Dnevnik aktivnosti', 'Klijenti', 'Katalog', 'Cene', 'Nova ponuda', 'Ponude'], array_column($nav, 'label'));
+        $this->assertSame(['/admin', '/admin/activity-log', '/admin/clients', '/admin/catalog/models', '/admin/prices', '/offers/new', '/offers'], array_column($nav, 'href'));
+        $this->assertSame([false, false, false, false, false, false, false], array_column($nav, 'soon'));
     }
 
     public function test_clients_do_not_get_admin_links(): void
