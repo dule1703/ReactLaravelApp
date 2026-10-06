@@ -7,7 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { t, tOr } from '@/lib/i18n';
 import { formatMoney, parseEuros } from '@/lib/money';
 import { grossFromNet, netFromGross } from '@/lib/vat';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
 const MAX_PRICE_CENTS = 1_000_000_000;
@@ -445,7 +445,10 @@ export default function Prices({ vat, models, selectedModelId, trims }) {
 
                     {models.length === 0 ? (
                         <Card>
-                            <p className="text-sm text-gray-600">{t('The catalog is empty.')}</p>
+                            <p className="text-sm text-gray-600">
+                                {t('The catalog is empty.')}{' '}
+                                <Link href={route('catalog.models.index')} className="font-semibold text-brand-700 underline">{t('Add a car model in the catalog')}</Link>
+                            </p>
                         </Card>
                     ) : (
                         <>

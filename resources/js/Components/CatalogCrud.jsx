@@ -211,7 +211,7 @@ export default function CatalogCrud({
                         {items.data.length === 0 && (
                             <tr>
                                 <td colSpan={columns.length + 2} className="px-3 py-8 text-center text-gray-500">
-                                    {t('Nothing found.')}
+                                    {Object.values(filters).some((value) => value) ? t('Nothing matches the search.') : t('Nothing has been added yet. Use the button above to add the first item.')}
                                 </td>
                             </tr>
                         )}

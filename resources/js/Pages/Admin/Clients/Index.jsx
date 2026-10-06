@@ -124,7 +124,16 @@ export default function Index({ clients, filters, perPageOptions }) {
                                 {clients.data.length === 0 && (
                                     <tr>
                                         <td colSpan={12} className="px-3 py-8 text-center text-gray-500">
-                                            {t('No clients found.')}
+                                            {filters.q ? (
+                                                <p>{t('No clients match the search.')}</p>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    <p>{t('No clients have registered yet.')}</p>
+                                                    <Link href={route('clients.create')} className="font-semibold text-brand-700 underline">
+                                                        {t('Add the first client')}
+                                                    </Link>
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 )}

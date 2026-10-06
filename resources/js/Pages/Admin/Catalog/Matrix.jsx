@@ -10,7 +10,7 @@ import { t, tOr } from '@/lib/i18n';
 import { cellKey, centsToInput, expectedOf, groupEntriesOnTrim, indexEntries, otherStandard, stateOf } from '@/lib/matrix';
 import { formatMoney, parseEuros } from '@/lib/money';
 import { grossFromNet, netFromGross } from '@/lib/vat';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
 const MAX_PRICE_CENTS = 1_000_000_000;
@@ -312,7 +312,10 @@ export default function Matrix({ models, selectedModelId, filters, categories, g
         <CatalogLayout active="matrix">
             <div className="space-y-4 px-4 sm:px-0">
                 {models.length === 0 ? (
-                    <p className="text-sm text-gray-600">{t('No car models yet.')}</p>
+                    <p className="text-sm text-gray-600">
+                        {t('No car models yet.')}{' '}
+                        <Link href={route('catalog.models.index')} className="font-semibold text-brand-700 underline">{t('Add a car model in the catalog')}</Link>
+                    </p>
                 ) : (
                     <>
                         <form
