@@ -27,7 +27,16 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
     };
 
     const searching = Boolean(filters.q) || filters.status !== 'all';
-    const columns = isAdmin ? 10 : 9;
+    const deletedView = isAdmin && filters.status === 'deleted';
+    const columns = (isAdmin ? 10 : 9) + (deletedView ? 1 : 0);
+    const [restoring, setRestoring] = useState(null);
+
+    const restore = (offer) =>
+        router.post(route('offers.restore', offer.id), {}, {
+            preserveScroll: true,
+            onStart: () => setRestoring(offer.id),
+            onFinish: () => setRestoring(null),
+        });
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight text-ink">{t('Offers')}</h2>}>
@@ -60,6 +69,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                 <option value="all">{t('All offers')}</option>
                                 <option value="active">{t('Active offers')}</option>
                                 <option value="withdrawn">{t('Withdrawn offers')}</option>
+                                {isAdmin && <option value="deleted">{t('Deleted offers')}</option>}
                             </SelectInput>
                         </div>
 
@@ -88,6 +98,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                     <th className="px-3 py-2">{t('Offer number')}</th>
                                     {isAdmin && <th className="px-3 py-2">{t('Client')}</th>}
                                     <th className="px-3 py-2">{t('Date')}</th>
+                                    {deletedView && <th className="px-3 py-2">{t('Deleted on')}</th>}
                                     <th className="px-3 py-2 text-right">{t('VAT (%)')}</th>
                                     <th className="px-3 py-2 text-right">{t('Amount without VAT')}</th>
                                     <th className="px-3 py-2 text-right">{t('VAT amount')}</th>
@@ -103,6 +114,8 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                         <td colSpan={columns} className="px-3 py-10 text-center text-gray-500">
                                             {searching ? (
                                                 <p>{t('No offers match the search.')}</p>
+                                            ) : deletedView ? (
+                                                <p>{t('No deleted offers.')}</p>
                                             ) : (
                                                 <div className="space-y-3">
                                                     <p>{isAdmin ? t('No offers have been made yet.') : t('You have no offers yet.')}</p>
@@ -122,11 +135,12 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                 {offers.data.map((offer) => (
                                     <tr key={offer.id} className="align-top">
                                         <td className="whitespace-nowrap px-3 py-2 font-medium text-ink">
-                                            <Link href={route('offers.show', offer.id)} className="text-brand-700 hover:text-brand-800">{offer.number}</Link>
+                                            {deletedView ? offer.number : <Link href={route('offers.show', offer.id)} className="text-brand-700 hover:text-brand-800">{offer.number}</Link>}
                                             <span className="ms-2"><OfferStatusBadge offer={offer} /></span>
                                         </td>
                                         {isAdmin && <td className="px-3 py-2">{offer.client_name}</td>}
                                         <td className="whitespace-nowrap px-3 py-2">{offer.offer_date}</td>
+                                        {deletedView && <td className="whitespace-nowrap px-3 py-2">{offer.deleted_at}</td>}
                                         <td className="px-3 py-2 text-right">{formatRateBp(offer.vat_rate_bp)}</td>
                                         <td className="whitespace-nowrap px-3 py-2 text-right">{formatMoneyOrDash(offer.total_net_cents)}</td>
                                         <td className="whitespace-nowrap px-3 py-2 text-right">{formatMoneyOrDash(offer.vat_cents)}</td>
@@ -134,10 +148,14 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                         <td className="px-3 py-2 text-right">{offer.items_count}</td>
                                         <td className="max-w-xs px-3 py-2 text-gray-600">{offer.note ?? ''}</td>
                                         <td className="whitespace-nowrap px-3 py-2">
-                                            <div className="flex items-center gap-3">
-                                                <Link href={route('offers.show', offer.id)} className="font-medium text-brand-700 hover:text-brand-800">{t('View')}</Link>
-                                                <OfferPdfActions offer={offer} compact />
-                                            </div>
+                                            {deletedView ? (
+                                                <SecondaryButton disabled={restoring === offer.id} onClick={() => restore(offer)}>{t('Restore')}</SecondaryButton>
+                                            ) : (
+                                                <div className="flex items-center gap-3">
+                                                    <Link href={route('offers.show', offer.id)} className="font-medium text-brand-700 hover:text-brand-800">{t('View')}</Link>
+                                                    <OfferPdfActions offer={offer} compact />
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

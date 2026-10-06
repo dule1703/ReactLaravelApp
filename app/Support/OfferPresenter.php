@@ -16,7 +16,8 @@ use Illuminate\Support\Str;
 class OfferPresenter
 {
     /**
-     * A row of the list. The client name is only for the admin (a client sees their own offers).
+     * A row of the list. The client name and the date of deletion are only for the admin (a client
+     * sees their own offers, never a deleted one).
      *
      * @return array<string, mixed>
      */
@@ -26,7 +27,7 @@ class OfferPresenter
             'id' => $offer->id,
             'number' => $offer->number,
             'offer_date' => $offer->offer_date->format('d.m.Y'),
-            ...($admin ? ['client_name' => $offer->client_name] : []),
+            ...($admin ? ['client_name' => $offer->client_name, 'deleted_at' => $offer->deleted_at?->format('d.m.Y')] : []),
             'vat_rate_bp' => $offer->vat_rate_bp,
             'total_net_cents' => $offer->total_net_cents,
             'vat_cents' => $offer->vat_cents,

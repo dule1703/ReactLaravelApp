@@ -136,6 +136,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/offers/{offer}/pdf', OfferPdfController::class)->whereNumber('offer')->middleware('throttle:30,1')->name('offers.pdf');
     Route::post('/offers/{offer}/withdraw', [OfferStatusController::class, 'withdraw'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.withdraw');
     Route::post('/offers/{offer}/withdrawal/revert', [OfferStatusController::class, 'revertWithdrawal'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.withdrawal.revert');
+    Route::delete('/offers/{offer}', [OfferStatusController::class, 'destroy'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.destroy');
+    // withTrashed: the only route that opens a deleted offer (to restore it); the Policy keeps it admin-only.
+    Route::post('/offers/{offer}/restore', [OfferStatusController::class, 'restore'])->whereNumber('offer')->withTrashed()->middleware('throttle:30,1')->name('offers.restore');
 });
 
 Route::middleware('auth')->group(function () {

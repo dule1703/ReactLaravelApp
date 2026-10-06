@@ -35,4 +35,26 @@ class OfferStatusController extends Controller
 
         return redirect()->route('offers.show', $offer)->with('success', $message);
     }
+
+    public function destroy(Offer $offer, OfferStatus $status): RedirectResponse
+    {
+        Gate::authorize('delete', $offer);
+
+        $message = $status->delete($offer)
+            ? __('Offer :number deleted. You can restore it from the list of deleted offers.', ['number' => $offer->number])
+            : __('Offer :number is already deleted.', ['number' => $offer->number]);
+
+        return redirect()->route('offers.index')->with('success', $message);
+    }
+
+    public function restore(Offer $offer, OfferStatus $status): RedirectResponse
+    {
+        Gate::authorize('restore', $offer);
+
+        $message = $status->restore($offer)
+            ? __('Offer :number restored.', ['number' => $offer->number])
+            : __('Offer :number is not deleted.', ['number' => $offer->number]);
+
+        return redirect()->route('offers.index', ['status' => 'deleted'])->with('success', $message);
+    }
 }

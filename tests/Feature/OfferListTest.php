@@ -79,7 +79,7 @@ class OfferListTest extends TestCase
         $common = ['id', 'number', 'offer_date', 'vat_rate_bp', 'total_net_cents', 'vat_cents', 'total_gross_cents', 'withdrawn_at', 'note', 'items_count'];
 
         $this->assertEqualsCanonicalizing($common, array_keys($row($this->client)));
-        $this->assertEqualsCanonicalizing([...$common, 'client_name'], array_keys($row($this->admin)));
+        $this->assertEqualsCanonicalizing([...$common, 'client_name', 'deleted_at'], array_keys($row($this->admin)));
     }
 
     public function test_the_search_finds_the_number_including_the_slash_the_name_and_the_note(): void

@@ -98,6 +98,19 @@ class CatalogPurgeCommandTest extends TestCase
         $this->assertSame(0, ActivityLog::where('action', 'catalog.purged')->count());
     }
 
+    public function test_a_deleted_offer_still_blocks_the_purge(): void
+    {
+        $offer = Offer::factory()->create();
+        $offer->delete();
+        $this->assertSame(0, Offer::count());
+
+        $this->level('all');
+        $this->artisan('catalog:purge-demo', ['--confirm' => true])
+            ->expectsOutputToContain("Odbijeno: postoje ponude (tabela 'offers'")
+            ->assertExitCode(1);
+        $this->assertSame(4, CarModel::count());
+    }
+
     public function test_the_offer_check_comes_before_the_level_check(): void
     {
         // The real offers table comes from the migration (4.1).

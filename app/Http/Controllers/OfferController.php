@@ -57,11 +57,18 @@ class OfferController extends Controller
         $filters = $request->validated();
         $term = trim($filters['q'] ?? '');
         $status = $filters['status'] ?? 'all';
+
+        // Deleted offers are an admin view; for a client the value is ignored (they never see one).
+        if ($status === 'deleted' && ! $admin) {
+            $status = 'all';
+        }
+
         $perPage = (int) ($filters['per_page'] ?? OfferIndexRequest::PER_PAGE_OPTIONS[0]);
 
         $offers = Offer::query()
             ->withCount('items')
             ->when(! $admin, fn (Builder $query) => $query->where('offers.user_id', $user->id))
+            ->when($status === 'deleted', fn (Builder $query) => $query->onlyTrashed())
             ->when($status === 'active', fn (Builder $query) => $query->whereNull('offers.withdrawn_at'))
             ->when($status === 'withdrawn', fn (Builder $query) => $query->whereNotNull('offers.withdrawn_at'))
             ->when($term !== '', fn (Builder $query) => $this->search($query, $term, $admin))

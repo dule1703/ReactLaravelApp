@@ -15,7 +15,9 @@ use Illuminate\Auth\Access\Response;
  * number exists. Choosing a client (searching the clients) is for the admin only.
  * Status (4.6b): the owner withdraws their own offer (an admin never does: 403; someone else's
  * offer is "not found"); only an admin reverts a withdrawal (someone who is not an admin gets "not
- * found" on someone else's offer, so nothing reveals that it exists).
+ * found" on someone else's offer, so nothing reveals that it exists). Deleting (soft) and restoring are
+ * for the admin only; a client gets 403 on their own offer and "not found" on any other, and always
+ * "not found" on a restore (a deleted offer does not exist for them).
  */
 class OfferPolicy
 {
@@ -56,6 +58,16 @@ class OfferPolicy
     public function revertWithdrawal(User $user, Offer $offer): Response
     {
         return $this->adminOnly($user, $offer);
+    }
+
+    public function delete(User $user, Offer $offer): Response
+    {
+        return $this->adminOnly($user, $offer);
+    }
+
+    public function restore(User $user, Offer $offer): Response
+    {
+        return $user->isAdmin() ? Response::allow() : Response::denyAsNotFound();
     }
 
     private function adminOnly(User $user, Offer $offer): Response

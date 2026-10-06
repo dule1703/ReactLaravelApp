@@ -700,5 +700,17 @@
     "This offer is withdrawn and can no longer be changed.": "Ova ponuda je povučena i više se ne može menjati.",
     "Withdrawn offers": "Povučene",
     "All offers": "Sve ponude",
-    "Active offers": "Aktivne"
+    "Active offers": "Aktivne",
+    "activity.action.offer.restored": "Vraćena ponuda",
+    "Offer :number deleted. You can restore it from the list of deleted offers.": "Ponuda :number je obrisana. Možete je vratiti iz liste obrisanih ponuda.",
+    "Offer :number is already deleted.": "Ponuda :number je već obrisana.",
+    "Offer :number restored.": "Ponuda :number je vraćena.",
+    "Offer :number is not deleted.": "Ponuda :number nije obrisana.",
+    "Deleted offers": "Obrisane",
+    "Deleted on": "Obrisana dana",
+    "Delete offer": "Obriši ponudu",
+    "Delete the offer?": "Obrisati ponudu?",
+    "The offer disappears from the lists and can no longer be opened. Its number is not used again. You can restore it from the list of deleted offers.": "Ponuda nestaje iz lista i više se ne može otvoriti. Njen broj se ne koristi ponovo. Možete je vratiti iz liste obrisanih ponuda.",
+    "Restore": "Vrati",
+    "No deleted offers.": "Nema obrisanih ponuda."
 }
