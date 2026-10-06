@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -41,7 +42,7 @@ export default function UpdateProfileInformation({
                     <InputLabel htmlFor="name" value={t('Name')} />
 
                     <TextInput
-                        id="name"
+                        id="name" {...fieldA11y('name', errors.name)}
                         className="mt-1 block w-full"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
@@ -50,14 +51,14 @@ export default function UpdateProfileInformation({
                         autoComplete="name"
                     />
 
-                    <InputError className="mt-2" message={errors.name} />
+                    <InputError id={errorId('name')} className="mt-2" message={errors.name} />
                 </div>
 
                 <div>
                     <InputLabel htmlFor="email" value={t('Email')} />
 
                     <TextInput
-                        id="email"
+                        id="email" {...fieldA11y('email', errors.email)}
                         type="email"
                         className="mt-1 block w-full"
                         value={data.email}
@@ -66,7 +67,7 @@ export default function UpdateProfileInformation({
                         autoComplete="username"
                     />
 
-                    <InputError className="mt-2" message={errors.email} />
+                    <InputError id={errorId('email')} className="mt-2" message={errors.email} />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

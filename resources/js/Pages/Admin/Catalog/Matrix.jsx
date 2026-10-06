@@ -10,6 +10,7 @@ import { t, tOr } from '@/lib/i18n';
 import { cellKey, centsToInput, expectedOf, groupEntriesOnTrim, indexEntries, otherStandard, stateOf } from '@/lib/matrix';
 import { formatMoney, parseEuros } from '@/lib/money';
 import { grossFromNet, netFromGross } from '@/lib/vat';
+import { errorId } from '@/lib/a11y';
 import { Link, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
@@ -51,7 +52,8 @@ function PriceField({ id, label, mode, amount, onMode, onAmount, rateBp, error, 
                         inputMode="decimal"
                         value={amount}
                         onChange={(e) => onAmount(e.target.value)}
-                        aria-describedby={`${id}-hint`}
+                        aria-invalid={error ? true : undefined}
+                        aria-describedby={error ? `${id}-hint ${errorId(id)}` : `${id}-hint`}
                     />
                     <p id={`${id}-hint`} className="mt-1 text-xs text-gray-500">{preview ?? hint}</p>
                 </div>
@@ -60,7 +62,7 @@ function PriceField({ id, label, mode, amount, onMode, onAmount, rateBp, error, 
                     <option value="gross">{t('Gross')}</option>
                 </SelectInput>
             </div>
-            <InputError className="mt-1" message={error} />
+            <InputError id={errorId(id)} className="mt-1" message={error} />
         </div>
     );
 }

@@ -28,7 +28,7 @@ class UiShellTest extends TestCase
 
     public function test_validation_messages_are_in_serbian(): void
     {
-        $this->post('/login', [])->assertSessionHasErrors(['email' => 'Polje email je obavezno.']);
+        $this->post('/login', [])->assertSessionHasErrors(['email' => 'Polje email adresa je obavezno.']);
     }
 
     public function test_translation_file_is_valid_json_with_non_empty_values(): void

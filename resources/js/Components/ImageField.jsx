@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import FormField from '@/Components/FormField';
 import { t } from '@/lib/i18n';
 import { useState } from 'react';
@@ -65,7 +66,7 @@ export default function ImageField({ id = 'image', currentUrl, alt, data, setDat
                 </p>
             )}
             <input
-                id={id}
+                id={id} {...fieldA11y(id, clientError ?? error)}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 className="mt-2 block w-full text-sm"

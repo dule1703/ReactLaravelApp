@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import CatalogCrud from '@/Components/CatalogCrud';
 import FormField from '@/Components/FormField';
 import ImageField from '@/Components/ImageField';
@@ -76,7 +77,7 @@ function Fields({ data, setData, errors, editing, row, context }) {
         <>
             <FormField id="name" label={t('Title')} error={errors.name}>
                 <TextInput
-                    id="name"
+                    id="name" {...fieldA11y('name', errors.name)}
                     className="mt-1 block w-full"
                     value={data.name}
                     maxLength={150}
@@ -97,7 +98,7 @@ function Fields({ data, setData, errors, editing, row, context }) {
                 }
             >
                 <SelectInput
-                    id="group_id"
+                    id="group_id" {...fieldA11y('group_id', errors.group_id)}
                     className="mt-1 block w-full"
                     value={data.group_id}
                     disabled={groupLocked}
@@ -119,7 +120,7 @@ function Fields({ data, setData, errors, editing, row, context }) {
                 hint={group ? t('Fixed by the group.') : null}
             >
                 <SelectInput
-                    id="category"
+                    id="category" {...fieldA11y('category', errors.category)}
                     className="mt-1 block w-full"
                     value={data.category}
                     disabled={group !== null}
@@ -144,7 +145,7 @@ function Fields({ data, setData, errors, editing, row, context }) {
                             onChange={(e) => setData('swatch_hex', e.target.value.toUpperCase())}
                         />
                         <TextInput
-                            id="swatch_hex"
+                            id="swatch_hex" {...fieldA11y('swatch_hex', errors.swatch_hex)}
                             className="block w-32 font-mono"
                             maxLength={7}
                             value={data.swatch_hex}
@@ -161,7 +162,7 @@ function Fields({ data, setData, errors, editing, row, context }) {
                 hint={t('Lower numbers come first. Leave empty for the next free number.')}
             >
                 <TextInput
-                    id="sort_order"
+                    id="sort_order" {...fieldA11y('sort_order', errors.sort_order)}
                     className="mt-1 block w-32"
                     inputMode="numeric"
                     value={data.sort_order}

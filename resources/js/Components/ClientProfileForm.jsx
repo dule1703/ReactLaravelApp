@@ -4,6 +4,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SelectInput from '@/Components/SelectInput';
 import TextInput from '@/Components/TextInput';
+import { errorId, fieldA11y } from '@/lib/a11y';
 import { t } from '@/lib/i18n';
 import { Link, useForm } from '@inertiajs/react';
 
@@ -20,7 +21,7 @@ function Field({ id, label, optional = false, error, hint, children }) {
                     {hint}
                 </p>
             )}
-            <InputError className="mt-2" message={error} />
+            <InputError id={errorId(id)} className="mt-2" message={error} />
         </div>
     );
 }
@@ -69,13 +70,21 @@ export default function ClientProfileForm({ profile, countries, action, jmbgExtr
             </p>
         ) : null;
 
-    const input = (id, extra = {}) => ({
-        id,
-        className: 'mt-1 block w-full',
-        value: data[id],
-        onChange: (e) => setData(id, e.target.value),
-        ...extra,
-    });
+    // aria-describedby lists the hint (if any) and, while the field is invalid, its error message.
+    const input = (id, extra = {}) => {
+        const a11y = fieldA11y(id, errors[id]);
+        const describedBy = [extra['aria-describedby'], a11y['aria-describedby']].filter(Boolean).join(' ');
+
+        return {
+            id,
+            className: 'mt-1 block w-full',
+            value: data[id],
+            onChange: (e) => setData(id, e.target.value),
+            ...extra,
+            ...a11y,
+            ...(describedBy ? { 'aria-describedby': describedBy } : {}),
+        };
+    };
 
     return (
         <form onSubmit={submit} className="max-w-xl space-y-6">

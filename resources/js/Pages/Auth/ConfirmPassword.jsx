@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -32,7 +33,7 @@ export default function ConfirmPassword() {
                     <InputLabel htmlFor="password" value={t('Password')} />
 
                     <TextInput
-                        id="password"
+                        id="password" {...fieldA11y('password', errors.password)}
                         type="password"
                         name="password"
                         value={data.password}
@@ -41,7 +42,7 @@ export default function ConfirmPassword() {
                         onChange={(e) => setData('password', e.target.value)}
                     />
 
-                    <InputError message={errors.password} className="mt-2" />
+                    <InputError id={errorId('password')} message={errors.password} className="mt-2" />
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">

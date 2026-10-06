@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import CatalogCrud from '@/Components/CatalogCrud';
 import FormField from '@/Components/FormField';
 import SelectInput from '@/Components/SelectInput';
@@ -20,7 +21,7 @@ function Fields({ data, setData, errors, context }) {
         <>
             <FormField id="name" label={t('Title')} error={errors.name}>
                 <TextInput
-                    id="name"
+                    id="name" {...fieldA11y('name', errors.name)}
                     className="mt-1 block w-full"
                     value={data.name}
                     maxLength={100}
@@ -31,7 +32,7 @@ function Fields({ data, setData, errors, context }) {
             </FormField>
             <FormField id="type" label={t('Type')} error={errors.type}>
                 <SelectInput
-                    id="type"
+                    id="type" {...fieldA11y('type', errors.type)}
                     className="mt-1 block w-full"
                     value={data.type}
                     required
@@ -47,7 +48,7 @@ function Fields({ data, setData, errors, context }) {
             </FormField>
             <FormField id="drive" label={t('Drive')} error={errors.drive}>
                 <SelectInput
-                    id="drive"
+                    id="drive" {...fieldA11y('drive', errors.drive)}
                     className="mt-1 block w-full"
                     value={data.drive}
                     required
