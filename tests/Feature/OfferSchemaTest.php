@@ -291,7 +291,7 @@ class OfferSchemaTest extends TestCase
         $this->assertStringContainsString('Climatronic', ActivityLog::where('action', 'offer_item_option.created')->sole()->subject_label);
 
         $offer->update(['note' => 'Hvala']);
-        $this->assertSame(['old' => null, 'new' => 'Hvala'], ActivityLog::where('action', 'offer.updated')->sole()->changes['note']);
+        $this->assertSame(['redacted' => true], ActivityLog::where('action', 'offer.updated')->sole()->changes['note']);
     }
 
     public function test_the_pib_of_the_client_is_logged_by_field_name_only(): void
