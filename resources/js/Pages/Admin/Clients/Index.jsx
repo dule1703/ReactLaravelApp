@@ -93,6 +93,12 @@ export default function Index({ clients, filters, perPageOptions }) {
                         <div className="flex gap-2">
                             <PrimaryButton type="submit">{t('Search')}</PrimaryButton>
                             <SecondaryButton onClick={reset}>{t('Reset')}</SecondaryButton>
+                            <Link
+                                href={route('clients.create')}
+                                className="inline-flex items-center rounded-md border border-brand-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-brand-700 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+                            >
+                                {t('New client')}
+                            </Link>
                         </div>
                     </form>
 

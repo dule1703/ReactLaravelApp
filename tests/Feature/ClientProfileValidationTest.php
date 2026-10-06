@@ -297,9 +297,11 @@ class ClientProfileValidationTest extends TestCase
             $this->assertFalse(Gate::forUser(null)->allows($ability, $profile), "guest $ability");
         }
 
-        foreach (['create'] as $ability) {
-            $this->assertFalse(Gate::forUser($admin)->allows($ability, $profile), "admin $ability");
-        }
+        // Creating a client is the admin's salon flow (4.5c): only an admin; a client and a guest cannot.
+        // (Before 4.5c nobody could create: this assertion was changed on purpose.)
+        $this->assertTrue(Gate::forUser($admin)->allows('create', ClientProfile::class), 'admin create');
+        $this->assertFalse(Gate::forUser($profile->user)->allows('create', ClientProfile::class), 'client create');
+        $this->assertFalse(Gate::forUser(null)->allows('create', ClientProfile::class), 'guest create');
     }
 
     public function test_profile_helper_creates_a_missing_profile_once(): void
