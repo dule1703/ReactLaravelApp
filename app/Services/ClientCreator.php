@@ -16,7 +16,10 @@ use Illuminate\Validation\ValidationException;
 /**
  * Creates a client for the admin (salon flow): a user with the role client and a profile, in ONE
  * transaction together with the duplicate check, so there is never a user without a profile and
- * the unique keys stay the last line of defence (a race ends in the same 422).
+ * the unique keys stay the last line of defence (a race ends in the same 422). The duplicate check
+ * takes NO row lock: lower(email) cannot use the index, so FOR UPDATE could lock the whole users
+ * table on MySQL until the end of the transaction. Protection against a race is the unique index on
+ * users.email / client_profiles.jmbg_hash and the caught UniqueConstraintViolationException.
  *
  * The role is set here, never read from a request. The password is random (Hash::make of 40
  * random characters) and is never shown, logged or sent: the client sets their own through the
@@ -67,7 +70,7 @@ class ClientCreator
     {
         $errors = [];
 
-        $user = User::query()->whereRaw('lower(email) = ?', [mb_strtolower($data['email'])])->lockForUpdate()->first();
+        $user = User::query()->whereRaw('lower(email) = ?', [mb_strtolower($data['email'])])->first();
 
         if ($user !== null) {
             $errors['email'] = [__('A user with this email already exists.')];
