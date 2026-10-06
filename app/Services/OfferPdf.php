@@ -62,7 +62,6 @@ class OfferPdf
 
         return view('pdf.offer', [
             'offer' => OfferPresenter::detail($offer, false),
-            'appName' => config('app.name'),
             'logo' => $this->logo(),
         ])->render();
     }

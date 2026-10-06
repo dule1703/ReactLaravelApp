@@ -154,6 +154,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 5.2 PDF preuzimanje i prikaz za štampu ponude, testovi autorizacije
       Beleže se PDF preuzimanje i štampa ponude kroz `ActivityLogger`.
 - [ ] 5.3 Doterivanje PDF izgleda (zaglavlje, tabela stavki, zbirovi, napomena)
+      Podaci izdavaoca ponude (naziv, logo, adresa, PIB dilera) iz podešavanja koje admin menja; odlučiti da li se snimaju u ponudu
+      (dokument ne sme da se menja unazad). Do tada zaglavlje PDF-a je ključ prevoda "Škoda Configurator", ne `APP_NAME`.
 
 ## Faza 6 - Admin dashboard i poliranje
 
