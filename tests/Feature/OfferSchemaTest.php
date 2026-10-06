@@ -152,7 +152,7 @@ class OfferSchemaTest extends TestCase
         $item = OfferItem::factory()->create(['offer_id' => $offer->id]);
         OfferItemOption::factory()->create(['offer_item_id' => $item->id]);
 
-        $offer->delete();
+        $offer->forceDelete();
 
         $this->assertSame(0, OfferItem::count());
         $this->assertSame(0, OfferItemOption::count());

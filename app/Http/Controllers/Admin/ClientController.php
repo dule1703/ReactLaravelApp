@@ -207,7 +207,7 @@ class ClientController extends Controller
 
         // Offers are snapshot documents of the client: a client with offers is not deleted (the
         // foreign key offers.user_id RESTRICT is the safety net for a race).
-        $offers = $clientProfile->user->offers()->count();
+        $offers = $clientProfile->user->offers()->withTrashed()->count();
 
         if ($offers > 0) {
             return back()->with('error', __('The client has offers (:count) and cannot be deleted.', ['count' => $offers]));
