@@ -37,12 +37,29 @@ class ValidationMessagesTest extends TestCase
         }
     }
 
+    /** The account name field is labelled "Ime i prezime" on the forms, never the catalog's "naziv". */
+    private function assertNameMessage(string $message): void
+    {
+        $this->assertStringContainsString('ime i prezime', $message);
+        $this->assertStringNotContainsString('naziv', $message);
+    }
+
     public function test_registration(): void
     {
         $this->post('/register', ['name' => '', 'email' => 'x', 'password' => 'a', 'password_confirmation' => 'b'])
             ->assertSessionHasErrors(['name', 'email', 'password']);
 
         $this->assertReadable($this->messages());
+        $this->assertNameMessage(session('errors')->first('name'));
+    }
+
+    public function test_account_update(): void
+    {
+        $this->actingAs(User::factory()->client()->create())->patch('/profile', ['name' => '', 'email' => 'x'])
+            ->assertSessionHasErrors(['name', 'email']);
+
+        $this->assertReadable($this->messages());
+        $this->assertNameMessage(session('errors')->first('name'));
     }
 
     public function test_client_profile(): void
