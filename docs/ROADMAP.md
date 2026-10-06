@@ -172,7 +172,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 ## Faza 6 - Admin dashboard i poliranje
 
 - [x] 6.1 Dashboard `/admin`: brojevi (klijenti, aktivne, povučene, ponude u 30 dana), poslednjih 5 ponuda i 8 aktivnosti (bez `auth.*` i PDF zapisa), prečice; `App\Support\AdminDashboard` (whitelist, 4 upita).
-- [ ] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost
+- [x] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost: klijentska početna (`App\Support\ClientDashboard`, admin na `/dashboard` ide na `/admin`), prazna stanja sa sledećim korakom, prigušivanje lista dok traje pretraga (`BusyRegion`), srpske poruke i nazivi polja uz test za svaki Form Request, `aria-invalid`/`aria-describedby` uz greške, navigacija se skuplja do `lg`.
 - [ ] 6.3 Bezbednosni pregled: rate limiting, pokrivenost Policy-ja, bez osetljivih podataka u logovima
 
 ## Faza 7 - Završnica
