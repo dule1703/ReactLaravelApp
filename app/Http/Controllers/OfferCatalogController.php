@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OptionSelection;
+use App\Enums\UserRole;
 use App\Models\CarModel;
+use App\Models\ClientProfile;
 use App\Models\EquipmentItem;
 use App\Models\Offer;
 use App\Models\Version;
+use App\Support\Like;
+use App\Support\OfferClientRules;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -127,6 +132,42 @@ class OfferCatalogController extends Controller
                 'price_cents' => (int) $item->extra_price_cents,
             ])->values(),
         ]);
+    }
+
+    /**
+     * The admin searches the clients to make an offer for one of them: the name (from the profile) and
+     * the email of an account with the role client, at least 2 characters, at most 10 results. Only
+     * what tells two clients apart is returned (id of the PROFILE, name, city, email) and whether the
+     * profile is complete enough for an offer; never a JMBG, a PIB or an address.
+     */
+    public function clients(Request $request): JsonResponse
+    {
+        Gate::authorize('chooseClient', Offer::class);
+
+        $term = trim($request->validate(['q' => ['required', 'string', 'min:2', 'max:100']])['q']);
+        $like = Like::contains($term);
+
+        $clients = ClientProfile::query()
+            ->join('users', 'users.id', '=', 'client_profiles.user_id')
+            ->where('users.role', UserRole::Client->value)
+            ->where(fn ($query) => $query
+                ->whereRaw("client_profiles.full_name like ? escape '!'", [$like])
+                ->orWhereRaw("users.email like ? escape '!'", [$like]))
+            ->orderBy('client_profiles.full_name')
+            ->orderBy('client_profiles.id')
+            ->limit(10)
+            ->select('client_profiles.*', 'users.email as account_email', 'users.name as account_name')
+            ->get()
+            ->map(fn (ClientProfile $profile) => [
+                'id' => $profile->id,
+                'name' => $profile->full_name ?? $profile->account_name,
+                'city' => $profile->city,
+                'email' => $profile->account_email,
+                'complete' => OfferClientRules::missing($profile) === [],
+            ])
+            ->values();
+
+        return $this->json(['clients' => $clients]);
     }
 
     /**

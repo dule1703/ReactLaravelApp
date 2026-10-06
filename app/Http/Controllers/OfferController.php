@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OfferIndexRequest;
 use App\Http\Requests\StoreOfferRequest;
 use App\Models\CarModel;
+use App\Models\ClientProfile;
 use App\Models\Offer;
+use App\Models\User;
 use App\Services\OfferCreator;
 use App\Services\OfferTotalMismatchException;
 use App\Support\Like;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -30,6 +33,16 @@ use Inertia\Response;
  */
 class OfferController extends Controller
 {
+    /** Names of the profile fields for the message to the admin (keys of lang/sr_Latn.json). */
+    private const FIELD_LABELS = [
+        'full_name' => 'Full name or company name',
+        'address' => 'Address',
+        'postal_code' => 'Postal code',
+        'city' => 'City',
+        'country' => 'Country',
+        'pib' => 'PIB',
+    ];
+
     /** Columns of the snapshot the list search looks at; the PIB only for the admin. */
     private const SEARCH_COLUMNS = ['offers.number', 'offers.client_name', 'offers.note'];
 
@@ -92,8 +105,10 @@ class OfferController extends Controller
         return Inertia::render('Offers/Create', [
             'models' => $models,
             'vatRateBp' => VatRate::current(),
-            // Only the NAMES of the profile fields that are missing, never profile data.
-            'profileMissing' => OfferClientRules::missing($request->user()->profile()),
+            // Only the NAMES of the profile fields that are missing, never profile data. An admin has no
+            // profile: they choose a client, whose profile is checked when the offer is saved.
+            'profileMissing' => $request->user()->isClient() ? OfferClientRules::missing($request->user()->profile()) : [],
+            'isAdmin' => $request->user()->isAdmin(),
             'limits' => [
                 'maxItems' => OfferCalculator::MAX_ITEMS,
                 'maxQuantity' => OfferCalculator::MAX_QUANTITY,
@@ -106,7 +121,7 @@ class OfferController extends Controller
     {
         try {
             $offer = $creator->create(
-                $request->user(),
+                $this->owner($request),
                 $request->validated('note'),
                 $request->input('items'),
                 [
@@ -133,6 +148,37 @@ class OfferController extends Controller
             'number' => $offer->number,
             'redirect' => route('offers.show', $offer),
         ], 201);
+    }
+
+    /**
+     * Who the offer is for. A client: always themselves (a `client_id` in the request is never read).
+     * An admin: the chosen client (the id of a client PROFILE), never the admin: the account must be a
+     * client and the profile must be complete (the printed offer needs it), else a 422 that names
+     * the missing fields; nothing is written.
+     */
+    private function owner(StoreOfferRequest $request): User
+    {
+        $user = $request->user();
+
+        if (! $user->isAdmin()) {
+            return $user;
+        }
+
+        $profile = ClientProfile::query()->with('user')->find($request->validated('client_id'));
+
+        if ($profile === null || $profile->user === null || ! $profile->user->isClient()) {
+            throw ValidationException::withMessages(['client_id' => __('Choose an existing client.')]);
+        }
+
+        $missing = OfferClientRules::missing($profile);
+
+        if ($missing !== []) {
+            throw ValidationException::withMessages(['client_id' => __('The profile of this client is incomplete: :fields. Complete it before making the offer.', [
+                'fields' => implode(', ', array_map(fn (string $field) => __(self::FIELD_LABELS[$field]), $missing)),
+            ])]);
+        }
+
+        return $profile->user;
     }
 
     private function search(Builder $query, string $term, bool $admin): Builder

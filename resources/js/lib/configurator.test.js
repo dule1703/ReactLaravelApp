@@ -7,8 +7,10 @@ import {
     expectedFrom,
     groupBy,
     hasUnsavedItems,
+    moveActive,
     optionIndex,
     parseQuantity,
+    saveBlocker,
     saveBody,
     selectSingle,
     singleChoice,
@@ -184,5 +186,83 @@ describe('errorMessages', () => {
         expect(errorMessages({ response: { status: 422, data: { errors: { a: ['one'], b: ['two', 'three'] } } } }, 'x')).toEqual(['one', 'two', 'three']);
         expect(errorMessages({ response: { status: 500, data: {} } }, 'fallback')).toEqual(['fallback']);
         expect(errorMessages({}, 'fallback')).toEqual(['fallback']);
+    });
+});
+
+describe('saveBody for an admin', () => {
+    const items = [buildItem(detail, [31], 1)];
+    const { totals } = totalsOf(items, 2000);
+
+    it('adds the id of the chosen client profile and nothing else about the client', () => {
+        const body = saveBody(items, '', totals, 12);
+
+        expect(body.client_id).toBe(12);
+        expect(Object.keys(body).sort()).toEqual(['client_id', 'expected_total_gross_cents', 'expected_total_net_cents', 'items', 'note']);
+    });
+
+    it('sends no client_id for a client', () => {
+        expect(saveBody(items, '', totals)).not.toHaveProperty('client_id');
+        expect(saveBody(items, '', totals, null)).not.toHaveProperty('client_id');
+    });
+});
+
+describe('saveBlocker', () => {
+    const ok = { isAdmin: false, profileIncomplete: false, client: null, itemCount: 1, calculationError: null, editing: false, saving: false };
+    const admin = { ...ok, isAdmin: true, client: { id: 3, complete: true } };
+
+    it('lets a client with a complete profile and an item save', () => {
+        expect(saveBlocker(ok)).toBeNull();
+    });
+
+    it('blocks a client with an incomplete profile', () => {
+        expect(saveBlocker({ ...ok, profileIncomplete: true })).toBe('profile');
+    });
+
+    it('blocks an admin until a client is chosen', () => {
+        expect(saveBlocker({ ...admin, client: null })).toBe('client');
+        expect(saveBlocker(admin)).toBeNull();
+    });
+
+    it('blocks an admin whose chosen client has an incomplete profile (and does not trust a missing flag)', () => {
+        expect(saveBlocker({ ...admin, client: { id: 3, complete: false } })).toBe('client_incomplete');
+        expect(saveBlocker({ ...admin, client: { id: 3 } })).toBe('client_incomplete');
+    });
+
+    it('does not use the admin own profile flag', () => {
+        expect(saveBlocker({ ...admin, profileIncomplete: true })).toBeNull();
+    });
+
+    it('blocks without items, over the limits, while editing a model and while saving', () => {
+        expect(saveBlocker({ ...admin, itemCount: 0 })).toBe('items');
+        expect(saveBlocker({ ...admin, calculationError: 'range' })).toBe('limits');
+        expect(saveBlocker({ ...admin, editing: true })).toBe('editing');
+        expect(saveBlocker({ ...admin, saving: true })).toBe('saving');
+    });
+});
+
+describe('moveActive', () => {
+    it('moves and wraps', () => {
+        expect(moveActive(-1, 3, 'ArrowDown')).toBe(0);
+        expect(moveActive(0, 3, 'ArrowDown')).toBe(1);
+        expect(moveActive(2, 3, 'ArrowDown')).toBe(0);
+        expect(moveActive(-1, 3, 'ArrowUp')).toBe(2);
+        expect(moveActive(0, 3, 'ArrowUp')).toBe(2);
+        expect(moveActive(2, 3, 'ArrowUp')).toBe(1);
+        expect(moveActive(1, 3, 'Home')).toBe(0);
+        expect(moveActive(0, 3, 'End')).toBe(2);
+    });
+
+    it('is -1 for an empty list and keeps the index for other keys', () => {
+        expect(moveActive(0, 0, 'ArrowDown')).toBe(-1);
+        expect(moveActive(1, 3, 'a')).toBe(1);
+    });
+});
+
+describe('errorMessages except', () => {
+    it('leaves out the fields shown elsewhere', () => {
+        const error = { response: { status: 422, data: { errors: { client_id: ['no client'], items: ['no items'] } } } };
+
+        expect(errorMessages(error, 'x', ['client_id'])).toEqual(['no items']);
+        expect(errorMessages(error, 'x')).toEqual(['no client', 'no items']);
     });
 });

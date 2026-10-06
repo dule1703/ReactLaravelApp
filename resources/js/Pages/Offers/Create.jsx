@@ -1,3 +1,4 @@
+import ClientPicker from '@/Components/Configurator/ClientPicker';
 import ConflictPanel from '@/Components/Configurator/ConflictPanel';
 import EquipmentChoices from '@/Components/Configurator/EquipmentChoices';
 import ItemList, { describeVersion } from '@/Components/Configurator/ItemList';
@@ -15,6 +16,7 @@ import {
     hasUnsavedItems,
     optionIndex,
     parseQuantity,
+    saveBlocker,
     saveBody,
     totalsFromConflict,
     totalsOf,
@@ -38,7 +40,7 @@ function Step({ number, title, children }) {
     );
 }
 
-export default function Create({ models, vatRateBp, profileMissing, limits }) {
+export default function Create({ models, vatRateBp, profileMissing, limits, isAdmin = false }) {
     const catalog = useVersionCatalog();
     const [state, dispatch] = useReducer(configuratorReducer, undefined, createState);
 
@@ -53,10 +55,14 @@ export default function Create({ models, vatRateBp, profileMissing, limits }) {
     const [saving, setSaving] = useState(false);
     const [problems, setProblems] = useState([]);
     const [conflict, setConflict] = useState(null);
+    // An admin makes the offer for a chosen client (a row of the client search: id of the PROFILE, name, city, email, complete).
+    const [client, setClient] = useState(null);
+    const [clientError, setClientError] = useState(null);
     const saved = useRef(false);
 
     const { items } = state;
     const profileIncomplete = profileMissing.length > 0;
+    const stepOffset = isAdmin ? 1 : 0;
     const calculation = useMemo(() => totalsOf(items, vatRateBp), [items, vatRateBp]);
     const totals = calculation.totals ?? EMPTY_TOTALS;
     const parsedQuantity = parseQuantity(quantity, limits.maxQuantity);
@@ -175,7 +181,7 @@ export default function Create({ models, vatRateBp, profileMissing, limits }) {
         setProblems([]);
 
         try {
-            const { data } = await window.axios.post(route('offers.store'), saveBody(items, note, expectedTotals));
+            const { data } = await window.axios.post(route('offers.store'), saveBody(items, note, expectedTotals, isAdmin ? client?.id ?? null : null));
 
             saved.current = true;
             router.visit(data.redirect);
@@ -189,14 +195,25 @@ export default function Create({ models, vatRateBp, profileMissing, limits }) {
                 });
             } else {
                 setConflict(null);
-                setProblems(errorMessages(error, t('Saving failed. Try again.')));
+                // The message about the client is shown under the client picker, the rest below the offer.
+                setClientError(error.response?.data?.errors?.client_id?.[0] ?? null);
+                setProblems(errorMessages(error, t('Saving failed. Try again.'), ['client_id']));
             }
         } finally {
             setSaving(false);
         }
     };
 
-    const canSave = !profileIncomplete && items.length > 0 && !calculation.error && !saving && editingUid === null;
+    const blocker = saveBlocker({
+        isAdmin,
+        profileIncomplete,
+        client,
+        itemCount: items.length,
+        calculationError: calculation.error ?? null,
+        editing: editingUid !== null,
+        saving,
+    });
+    const canSave = blocker === null;
     const unitSummary = detail && (
         <p className="text-sm text-gray-700">
             {t('Price of one vehicle')}: <strong>{formatMoney(detail.version.price_cents + chosen.reduce((sum, id) => sum + (optionIndex(detail).get(id)?.price_cents ?? 0), 0))}</strong>{' '}
@@ -219,7 +236,21 @@ export default function Create({ models, vatRateBp, profileMissing, limits }) {
 
                     <div className="grid gap-6 lg:grid-cols-3">
                         <div className="space-y-6 lg:col-span-2">
-                            <Step number={1} title={t('Model')}>
+                            {isAdmin && (
+                                <Step number={1} title={t('Client for the offer')}>
+                                    <ClientPicker
+                                        selected={client}
+                                        onSelect={(chosen) => {
+                                            setClient(chosen);
+                                            setClientError(null);
+                                            setConflict(null);
+                                        }}
+                                        serverError={clientError}
+                                    />
+                                </Step>
+                            )}
+
+                            <Step number={1 + stepOffset} title={t('Model')}>
                                 {models.length === 0 ? (
                                     <p className="text-sm text-gray-500">{t('No models are available for an offer right now.')}</p>
                                 ) : (
@@ -246,7 +277,7 @@ export default function Create({ models, vatRateBp, profileMissing, limits }) {
                             </Step>
 
                             {modelId !== null && (
-                                <Step number={2} title={t('Trim, engine and transmission')}>
+                                <Step number={2 + stepOffset} title={t('Trim, engine and transmission')}>
                                     {loading && trims.length === 0 && <p className="text-sm text-gray-500">{t('Loading…')}</p>}
                                     <div className="space-y-5">
                                         {trims.map((trim) => (
@@ -277,11 +308,11 @@ export default function Create({ models, vatRateBp, profileMissing, limits }) {
 
                             {detail && (
                                 <>
-                                    <Step number={3} title={t('Equipment')}>
+                                    <Step number={3 + stepOffset} title={t('Equipment')}>
                                         <EquipmentChoices detail={detail} chosen={chosen} onChange={setChosen} rateBp={vatRateBp} />
                                     </Step>
 
-                                    <Step number={4} title={t('Number of vehicles')}>
+                                    <Step number={4 + stepOffset} title={t('Number of vehicles')}>
                                         <div className="flex flex-wrap items-end gap-4">
                                             <div>
                                                 <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">{t('Number of vehicles')}</label>
@@ -357,6 +388,8 @@ export default function Create({ models, vatRateBp, profileMissing, limits }) {
                                             {saving ? t('Saving…') : t('Save offer')}
                                         </PrimaryButton>
                                         {editingUid !== null && <p className="mt-2 text-xs text-gray-500">{t('Finish or cancel editing the model before you save the offer.')}</p>}
+                                        {blocker === 'client' && <p className="mt-2 text-xs text-gray-500">{t('Choose a client to make the offer for.')}</p>}
+                                        {blocker === 'client_incomplete' && <p className="mt-2 text-xs text-danger">{t('The profile of this client is incomplete. Complete it to make an offer.')}</p>}
                                     </div>
                                 )}
                             </section>
