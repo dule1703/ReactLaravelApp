@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Catalog\TransmissionController;
 use App\Http\Controllers\Admin\Catalog\TrimController;
 use App\Http\Controllers\Admin\Catalog\VersionController;
 use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\IssuerProfileController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\ClientProfileController;
 use App\Http\Controllers\OfferCatalogController;
@@ -38,6 +39,9 @@ Route::get('/admin', function () {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('admin.activity-log');
+
+    Route::get('/issuer', [IssuerProfileController::class, 'edit'])->name('issuer.edit');
+    Route::patch('/issuer', [IssuerProfileController::class, 'update'])->name('issuer.update');
 
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
     // The salon flow (4.5c). /clients/create goes BEFORE /clients/{clientProfile}.

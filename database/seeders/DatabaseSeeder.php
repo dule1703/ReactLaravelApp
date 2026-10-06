@@ -25,6 +25,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(ClientProfileSeeder::class);
+
+        // A made-up issuer only where nobody makes real offers: on production it would be printed on them.
+        if (app()->environment(['local', 'staging'])) {
+            $this->call(IssuerProfileSeeder::class);
+        }
+
         // Real catalog from database/seeders/data/real_catalog.php (an empty frame does nothing).
         // The demo catalog stays available for development: CatalogSeeder, then CategorySeeder.
         $this->call(RealCatalogSeeder::class);

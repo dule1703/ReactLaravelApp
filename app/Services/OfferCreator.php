@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Offer;
 use App\Models\User;
 use App\Support\ClientSnapshot;
+use App\Support\IssuerSnapshot;
 use App\Support\OfferCalculationException;
 use App\Support\OfferCalculator;
 use App\Support\OfferClientRules;
@@ -90,6 +91,8 @@ class OfferCreator
                 'total_gross_cents' => $totals['total_gross_cents'],
                 ...ClientSnapshot::from($profile),
             ]);
+            // The issuer (dealer) as it is NOW; a later change of it never touches this offer (5.3).
+            $offer->forceFill(IssuerSnapshot::current());
             $offer->user_id = $client->id;
 
             $this->numbers->assign($offer, $date->year);
