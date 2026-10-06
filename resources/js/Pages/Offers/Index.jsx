@@ -86,7 +86,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                             </SelectInput>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <PrimaryButton type="submit">{t('Search')}</PrimaryButton>
                             <SecondaryButton onClick={reset}>{t('Reset')}</SecondaryButton>
                         </div>

@@ -91,7 +91,7 @@ export default function Index({ clients, filters, perPageOptions }) {
                             </SelectInput>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <PrimaryButton type="submit">{t('Search')}</PrimaryButton>
                             <SecondaryButton onClick={reset}>{t('Reset')}</SecondaryButton>
                             <Link
@@ -191,7 +191,7 @@ export default function Index({ clients, filters, perPageOptions }) {
                                 name: toDelete.name,
                             })}
                         </p>
-                        <div className="mt-6 flex justify-end gap-3">
+                        <div className="mt-6 flex flex-wrap justify-end gap-3">
                             <SecondaryButton onClick={() => setToDelete(null)}>{t('Cancel')}</SecondaryButton>
                             <DangerButton onClick={confirmDelete} disabled={deleting}>
                                 {t('Delete')}

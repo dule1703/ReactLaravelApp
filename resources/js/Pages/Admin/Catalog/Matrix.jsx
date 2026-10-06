@@ -186,7 +186,7 @@ function CellDialog({ ctx, modelId, rateBp, onClose, onSaved }) {
                         <ul className="list-disc ps-5 text-sm text-gray-700">
                             {groupEntries.map((row) => <li key={row.item_id}>{row.item_name}</li>)}
                         </ul>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <PrimaryButton type="button" disabled={processing} onClick={removeGroup}>{t('Remove')}</PrimaryButton>
                             <SecondaryButton onClick={() => setConfirmGroup(false)}>{t('Cancel')}</SecondaryButton>
                         </div>

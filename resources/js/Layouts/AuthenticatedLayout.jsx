@@ -79,7 +79,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <ApplicationLogo className="block" />
                             </Link>
 
-                            <div className="hidden space-x-6 md:ms-10 md:flex">
+                            <div className="hidden space-x-4 xl:space-x-6 lg:ms-10 lg:flex">
                                 {nav.map((item) => (
                                     <NavItem key={item.key} item={item} />
                                 ))}
@@ -89,7 +89,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="flex items-center gap-2">
                             <Link
                                 href={route('profile.edit')}
-                                className="hidden max-w-[12rem] truncate rounded-md px-2 py-1 text-sm font-medium text-gray-600 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 md:block"
+                                className="hidden max-w-[8rem] truncate xl:max-w-[12rem] rounded-md px-2 py-1 text-sm font-medium text-gray-600 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 lg:block"
                                 title={user.email}
                             >
                                 {user.name}
@@ -100,7 +100,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 href={route('logout')}
                                 method="post"
                                 as="button"
-                                className="hidden items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-ink hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 md:inline-flex"
+                                className="hidden items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-ink hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 lg:inline-flex"
                             >
                                 {t('Log Out')}
                             </Link>
@@ -110,7 +110,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 as="button"
                                 aria-label={t('Log Out')}
                                 title={t('Log Out')}
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 md:hidden"
+                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 lg:hidden"
                             >
                                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
@@ -122,7 +122,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 onClick={() => setMenuOpen((open) => !open)}
                                 aria-label={t('Menu')}
                                 aria-expanded={menuOpen}
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 md:hidden"
+                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 lg:hidden"
                             >
                                 <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                     <path
@@ -145,7 +145,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </div>
 
-                <div className={`${menuOpen ? 'block' : 'hidden'} md:hidden`}>
+                <div className={`${menuOpen ? 'block' : 'hidden'} lg:hidden`}>
                     <div className="space-y-1 pb-3 pt-2">
                         {nav.map((item) => (
                             <NavItem key={item.key} item={item} mobile />

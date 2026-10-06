@@ -51,7 +51,7 @@ function EntityForm({ resource, row, entity, initialData, Form, formContext, usa
                 <Form data={data} setData={setData} errors={errors} editing={editing} row={row} context={formContext} />
             </div>
 
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
                 <SecondaryButton onClick={onClose}>{t('Cancel')}</SecondaryButton>
                 <PrimaryButton disabled={processing}>{t('Save')}</PrimaryButton>
             </div>
@@ -67,7 +67,7 @@ function ConfirmModal({ show, title, text, confirmLabel, danger = false, busy = 
             <div className="p-6">
                 <h3 className="text-lg font-medium text-ink">{title}</h3>
                 <p className="mt-2 text-sm text-gray-600">{text}</p>
-                <div className="mt-6 flex justify-end gap-3">
+                <div className="mt-6 flex flex-wrap justify-end gap-3">
                     <SecondaryButton onClick={onClose}>{t('Cancel')}</SecondaryButton>
                     <Button onClick={onConfirm} disabled={busy}>
                         {confirmLabel}

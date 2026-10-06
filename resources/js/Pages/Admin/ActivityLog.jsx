@@ -206,7 +206,7 @@ export default function ActivityLog({ logs, filters, users, actions }) {
                             <TextInput id="ip" className="mt-1 block w-full" value={form.ip} onChange={setField('ip')} />
                         </div>
 
-                        <div className="flex items-end gap-2 md:col-span-4">
+                        <div className="flex flex-wrap items-end gap-2 md:col-span-4">
                             <PrimaryButton type="submit">{t('Apply')}</PrimaryButton>
                             <SecondaryButton type="button" onClick={reset}>
                                 {t('Reset')}
