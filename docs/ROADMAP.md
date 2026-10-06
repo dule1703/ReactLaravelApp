@@ -144,8 +144,19 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 4.5d Admin bira klijenta i pravi mu ponudu (OfferPolicy::create za admina + konfigurator sa izborom klijenta)
 - [x] 4.6 Lista ponuda i prikaz jedne ponude (samo čitanje): `/offers` (`offers.index`) i `/offers/{offer}` (`offers.show`, `whereNumber`), pretraga (broj, naziv klijenta iz snimka, napomena; PIB samo admin), broj po strani 10/25/50.
       `OfferPolicy::viewAny/view` (admin sve, klijent svoje; tuđa ponuda = 404 jer su brojevi uzastopni), lista sužena upitom po ulozi; sastavljanje props-a samo kroz `App\Support\OfferPresenter` (whitelist). Posle snimanja redirect na `offers.show`. "Ponude" u navigaciji je aktivna.
-- [ ] 4.6b Izmena i brisanje ponude (admin; klijent po pravilu koje treba odlučiti), štampa/PDF (dompdf), pojedinačno logovanje izmena stavki
-- [ ] 4.7 Policy za izmenu/brisanje + Feature testovi (čitanje i tuđa ponuda su pokriveni u 4.6)
+- [ ] 4.6b Povlačenje i brisanje ponude, izmena ponude, pojedinačno logovanje izmena stavki
+      ODLUČENO: klijent POVLAČI svoju ponudu kao promenu statusa (nullable `withdrawn_at`,
+      expand migracija, bez brisanja): povučena ostaje čitljiva i u listi sa oznakom
+      "Povučena", ne može se menjati, PDF ima žig "POVUČENA"; povratak samo admin.
+      Admin: soft delete (`deleted_at`) i restore; obrisana ponuda je 404 na listi, prikazu
+      i PDF-u za sve; beleži se u dnevnik; broj se ne koristi ponovo.
+      Zavisnosti broje i obrisane (`withTrashed`): blokada brisanja klijenta
+      (`restrictOnDelete`) i `catalog:purge-demo` (`offer_tables`).
+      Policy: `withdraw` samo vlasnik (tuđa = 404), `delete` i `restore` samo admin.
+      OTVORENO (odlučiti pre koda): izmena ponude (ponovo razrešava cene iz kataloga uz isti
+      broj, ili samo napomena); mutiranje loga samo pri kreiranju, izmene stavki pojedinačno.
+- [ ] 4.7 Policy za izmenu/povlačenje/brisanje/restore + Feature testovi (čitanje i tuđa
+      ponuda su pokriveni u 4.6).
 
 ## Faza 5 - PDF i štampa
 
@@ -156,6 +167,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [ ] 5.3 Doterivanje PDF izgleda (zaglavlje, tabela stavki, zbirovi, napomena)
       Podaci izdavaoca ponude (naziv, logo, adresa, PIB dilera) iz podešavanja koje admin menja; odlučiti da li se snimaju u ponudu
       (dokument ne sme da se menja unazad). Do tada zaglavlje PDF-a je ključ prevoda "Škoda Configurator", ne `APP_NAME`.
+      Žig "POVUČENA" u PDF-u dolazi u 4.6b (doterivanje izgleda žiga ovde).
 
 ## Faza 6 - Admin dashboard i poliranje
 
