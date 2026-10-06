@@ -44,6 +44,18 @@ class OfferPolicy
         return $user->isAdmin();
     }
 
+    /** Only the note changes; never on a withdrawn offer (403, even for the owner and the admin). */
+    public function update(User $user, Offer $offer): Response
+    {
+        if (! $user->isAdmin() && $offer->user_id !== $user->id) {
+            return Response::denyAsNotFound();
+        }
+
+        return $offer->isWithdrawn()
+            ? Response::denyWithStatus(403, __('A withdrawn offer can no longer be changed.'))
+            : Response::allow();
+    }
+
     /** Only the owner withdraws; the admin does not. */
     public function withdraw(User $user, Offer $offer): Response
     {

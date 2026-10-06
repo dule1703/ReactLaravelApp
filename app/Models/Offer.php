@@ -93,6 +93,12 @@ class Offer extends Model
             return $this->withdrawn_at === null ? 'offer.withdrawal_reverted' : 'offer.withdrawn';
         }
 
+        // A change of the note only is "offer.note_updated"; `note` is a sensitive field, so the entry
+        // holds only its name, never the text.
+        if ($event === 'updated' && array_keys($changes) === ['note']) {
+            return 'offer.note_updated';
+        }
+
         return 'offer.'.$event;
     }
 
