@@ -100,7 +100,7 @@ export default function ClientPicker({ selected, onSelect, serverError = null })
                             {[selected.city, selected.email].filter(Boolean).join(' · ')}
                         </p>
                     </div>
-                    <SecondaryButton onClick={() => onSelect(null)}>{t('Change')}</SecondaryButton>
+                    <SecondaryButton onClick={() => onSelect(null)}>{t('Change client')}</SecondaryButton>
                 </div>
 
                 {selected.complete !== true && (
