@@ -159,10 +159,9 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 5.2 Dugmad "Štampaj" i "PDF" (lista ponuda i prikaz ponude), preuzimanje (`?download=1`, attachment) i beleženje u dnevnik
       Beleži se samo ono što server vidi, posle uspešnog renderovanja: `offer.pdf_opened` (inline, "otvoreno za štampu", ne dokaz štampanja) i `offer.pdf_downloaded`;
       subjekt ponuda, bez ličnih podataka u zapisu. Svaki zahtev je jedan zapis (bez deduplikacije).
-- [ ] 5.3 Doterivanje PDF izgleda (zaglavlje, tabela stavki, zbirovi, napomena)
-      Podaci izdavaoca ponude (naziv, logo, adresa, PIB dilera) iz podešavanja koje admin menja; odlučiti da li se snimaju u ponudu
-      (dokument ne sme da se menja unazad). Do tada zaglavlje PDF-a je ključ prevoda "Škoda Configurator", ne `APP_NAME`.
-      Žig "POVUČENA" je u PDF-u od 4.6b kao jednostavan baner (doterivanje izgleda žiga ovde).
+- [x] 5.3 Izdavalac ponude u PDF-u i doterivanje izgleda: admin ekran `/admin/issuer` (`IssuerProfile`, jedan red; naziv obavezan), podaci se SNIMAJU u ponudu (`offers.issuer_*`, `IssuerSnapshot` u `OfferCreator`), PDF ih čita iz `OfferPresenter::issuer()` (stara ponuda bez snimka ima zaglavlje "Škoda konfigurator").
+      Izgled: stavka je zasebna tabela (`page-break-inside: avoid`), "Strana X/Y" u podnožju (canvas), naslov dokumenta, bez "+ -" i " kW" za nepoznate vrednosti. Demo izdavalac samo za local i staging (`IssuerProfileSeeder`). Izgled se proverava ručno (nema rasterizatora u razvoju).
+- [ ] 5.4 Otpremanje loga dilera (do tada se štampa naš `public/images/logo.png`; isto pravilo kao slike modela: samo kroz admin, disk `public`, nikad u git).
 
 ## Faza 6 - Admin dashboard i poliranje
 
