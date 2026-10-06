@@ -22,7 +22,7 @@ export default function Pagination({ paginator }) {
                 })}
             </p>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
                 {paginator.prev_page_url ? (
                     <Link href={paginator.prev_page_url} className={linkClass} preserveScroll>
                         {t('Previous')}

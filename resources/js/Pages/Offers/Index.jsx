@@ -1,3 +1,4 @@
+import BusyRegion from '@/Components/BusyRegion';
 import OfferPdfActions from '@/Components/OfferPdfActions';
 import Pagination from '@/Components/Pagination';
 import OfferStatusBadge from '@/Components/OfferStatusBadge';
@@ -85,12 +86,13 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                             </SelectInput>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <PrimaryButton type="submit">{t('Search')}</PrimaryButton>
                             <SecondaryButton onClick={reset}>{t('Reset')}</SecondaryButton>
                         </div>
                     </form>
 
+                    <BusyRegion className="space-y-4">
                     <div className="overflow-x-auto bg-white shadow sm:rounded-lg">
                         <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
                             <thead className="bg-surface text-xs uppercase text-gray-500">
@@ -119,14 +121,12 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                             ) : (
                                                 <div className="space-y-3">
                                                     <p>{isAdmin ? t('No offers have been made yet.') : t('You have no offers yet.')}</p>
-                                                    {!isAdmin && (
-                                                        <Link
-                                                            href={route('offers.create')}
-                                                            className="inline-flex items-center rounded-md bg-brand-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
-                                                        >
-                                                            {t('New offer')}
-                                                        </Link>
-                                                    )}
+                                                    <Link
+                                                        href={route('offers.create')}
+                                                        className="inline-flex items-center rounded-md bg-brand-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+                                                    >
+                                                        {t('New offer')}
+                                                    </Link>
                                                 </div>
                                             )}
                                         </td>
@@ -164,6 +164,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                     </div>
 
                     <Pagination paginator={offers} />
+                    </BusyRegion>
                 </div>
             </div>
         </AuthenticatedLayout>

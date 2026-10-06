@@ -10,7 +10,8 @@ import { t, tOr } from '@/lib/i18n';
 import { cellKey, centsToInput, expectedOf, groupEntriesOnTrim, indexEntries, otherStandard, stateOf } from '@/lib/matrix';
 import { formatMoney, parseEuros } from '@/lib/money';
 import { grossFromNet, netFromGross } from '@/lib/vat';
-import { router } from '@inertiajs/react';
+import { errorId } from '@/lib/a11y';
+import { Link, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
 const MAX_PRICE_CENTS = 1_000_000_000;
@@ -51,7 +52,8 @@ function PriceField({ id, label, mode, amount, onMode, onAmount, rateBp, error, 
                         inputMode="decimal"
                         value={amount}
                         onChange={(e) => onAmount(e.target.value)}
-                        aria-describedby={`${id}-hint`}
+                        aria-invalid={error ? true : undefined}
+                        aria-describedby={error ? `${id}-hint ${errorId(id)}` : `${id}-hint`}
                     />
                     <p id={`${id}-hint`} className="mt-1 text-xs text-gray-500">{preview ?? hint}</p>
                 </div>
@@ -60,7 +62,7 @@ function PriceField({ id, label, mode, amount, onMode, onAmount, rateBp, error, 
                     <option value="gross">{t('Gross')}</option>
                 </SelectInput>
             </div>
-            <InputError className="mt-1" message={error} />
+            <InputError id={errorId(id)} className="mt-1" message={error} />
         </div>
     );
 }
@@ -184,7 +186,7 @@ function CellDialog({ ctx, modelId, rateBp, onClose, onSaved }) {
                         <ul className="list-disc ps-5 text-sm text-gray-700">
                             {groupEntries.map((row) => <li key={row.item_id}>{row.item_name}</li>)}
                         </ul>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <PrimaryButton type="button" disabled={processing} onClick={removeGroup}>{t('Remove')}</PrimaryButton>
                             <SecondaryButton onClick={() => setConfirmGroup(false)}>{t('Cancel')}</SecondaryButton>
                         </div>
@@ -312,7 +314,10 @@ export default function Matrix({ models, selectedModelId, filters, categories, g
         <CatalogLayout active="matrix">
             <div className="space-y-4 px-4 sm:px-0">
                 {models.length === 0 ? (
-                    <p className="text-sm text-gray-600">{t('No car models yet.')}</p>
+                    <p className="text-sm text-gray-600">
+                        {t('No car models yet.')}{' '}
+                        <Link href={route('catalog.models.index')} className="font-semibold text-brand-700 underline">{t('Add a car model in the catalog')}</Link>
+                    </p>
                 ) : (
                     <>
                         <form

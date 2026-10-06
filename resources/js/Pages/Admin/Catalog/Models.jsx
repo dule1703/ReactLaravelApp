@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import CatalogCrud from '@/Components/CatalogCrud';
 import FormField from '@/Components/FormField';
 import ImageField from '@/Components/ImageField';
@@ -59,7 +60,7 @@ function Fields({ data, setData, errors, row, context }) {
         <>
             <FormField id="name" label={t('Title')} error={errors.name}>
                 <TextInput
-                    id="name"
+                    id="name" {...fieldA11y('name', errors.name)}
                     className="mt-1 block w-full"
                     value={data.name}
                     maxLength={100}
@@ -76,7 +77,7 @@ function Fields({ data, setData, errors, row, context }) {
                 hint={t('Lower numbers come first. Leave empty for the next free number.')}
             >
                 <TextInput
-                    id="sort_order"
+                    id="sort_order" {...fieldA11y('sort_order', errors.sort_order)}
                     className="mt-1 block w-32"
                     inputMode="numeric"
                     value={data.sort_order}

@@ -21,6 +21,7 @@ createInertiaApp({
         root.render(<App {...props} />);
     },
     progress: {
-        color: '#4B5563',
+        // = brand.600 in tailwind.config.js (Inertia needs a hex string, not a class)
+        color: '#3B8624',
     },
 });

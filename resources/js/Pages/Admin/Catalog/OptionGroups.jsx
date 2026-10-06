@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import CatalogCrud from '@/Components/CatalogCrud';
 import FormField from '@/Components/FormField';
 import SelectInput from '@/Components/SelectInput';
@@ -27,7 +28,7 @@ function Fields({ data, setData, errors, editing, row }) {
         <>
             <FormField id="name" label={t('Title')} error={errors.name}>
                 <TextInput
-                    id="name"
+                    id="name" {...fieldA11y('name', errors.name)}
                     className="mt-1 block w-full"
                     value={data.name}
                     maxLength={100}
@@ -39,7 +40,7 @@ function Fields({ data, setData, errors, editing, row }) {
 
             <FormField id="category" label={t('Category')} error={errors.category}>
                 <SelectInput
-                    id="category"
+                    id="category" {...fieldA11y('category', errors.category)}
                     className="mt-1 block w-full"
                     value={data.category}
                     onChange={(e) => setData((current) => ({ ...current, category: e.target.value, confirm_category_change: false }))}
@@ -70,7 +71,7 @@ function Fields({ data, setData, errors, editing, row }) {
                 hint={t('One of several: every trim has exactly one standard item and the others are surcharges.')}
             >
                 <SelectInput
-                    id="selection"
+                    id="selection" {...fieldA11y('selection', errors.selection)}
                     className="mt-1 block w-full"
                     value={data.selection}
                     onChange={(e) => setData('selection', e.target.value)}
@@ -102,7 +103,7 @@ function Fields({ data, setData, errors, editing, row }) {
                 hint={t('Lower numbers come first. Leave empty for the next free number.')}
             >
                 <TextInput
-                    id="sort_order"
+                    id="sort_order" {...fieldA11y('sort_order', errors.sort_order)}
                     className="mt-1 block w-32"
                     inputMode="numeric"
                     value={data.sort_order}

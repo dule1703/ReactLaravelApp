@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
@@ -37,7 +38,7 @@ export default function Login({ status, canResetPassword }) {
                     <InputLabel htmlFor="email" value={t('Email')} />
 
                     <TextInput
-                        id="email"
+                        id="email" {...fieldA11y('email', errors.email)}
                         type="email"
                         name="email"
                         value={data.email}
@@ -47,14 +48,14 @@ export default function Login({ status, canResetPassword }) {
                         onChange={(e) => setData('email', e.target.value)}
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <InputError id={errorId('email')} message={errors.email} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value={t('Password')} />
 
                     <TextInput
-                        id="password"
+                        id="password" {...fieldA11y('password', errors.password)}
                         type="password"
                         name="password"
                         value={data.password}
@@ -63,7 +64,7 @@ export default function Login({ status, canResetPassword }) {
                         onChange={(e) => setData('password', e.target.value)}
                     />
 
-                    <InputError message={errors.password} className="mt-2" />
+                    <InputError id={errorId('password')} message={errors.password} className="mt-2" />
                 </div>
 
                 <div className="mt-4 block">

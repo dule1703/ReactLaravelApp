@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import CatalogCrud from '@/Components/CatalogCrud';
 import FormField from '@/Components/FormField';
 import SelectInput from '@/Components/SelectInput';
@@ -19,7 +20,7 @@ function Fields({ data, setData, errors, context }) {
         <>
             <FormField id="name" label={t('Title')} error={errors.name}>
                 <TextInput
-                    id="name"
+                    id="name" {...fieldA11y('name', errors.name)}
                     className="mt-1 block w-full"
                     value={data.name}
                     maxLength={100}
@@ -30,7 +31,7 @@ function Fields({ data, setData, errors, context }) {
             </FormField>
             <FormField id="fuel_type" label={t('Fuel')} error={errors.fuel_type}>
                 <SelectInput
-                    id="fuel_type"
+                    id="fuel_type" {...fieldA11y('fuel_type', errors.fuel_type)}
                     className="mt-1 block w-full"
                     value={data.fuel_type}
                     required
@@ -46,7 +47,7 @@ function Fields({ data, setData, errors, context }) {
             </FormField>
             <FormField id="power_kw" label={t('Power (kW)')} error={errors.power_kw} hint={t('From 20 to 1000 kW.')}>
                 <TextInput
-                    id="power_kw"
+                    id="power_kw" {...fieldA11y('power_kw', errors.power_kw)}
                     className="mt-1 block w-32"
                     inputMode="numeric"
                     value={data.power_kw}

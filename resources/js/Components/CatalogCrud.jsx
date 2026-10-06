@@ -1,3 +1,4 @@
+import BusyRegion from '@/Components/BusyRegion';
 import DangerButton from '@/Components/DangerButton';
 import Modal from '@/Components/Modal';
 import Pagination from '@/Components/Pagination';
@@ -50,7 +51,7 @@ function EntityForm({ resource, row, entity, initialData, Form, formContext, usa
                 <Form data={data} setData={setData} errors={errors} editing={editing} row={row} context={formContext} />
             </div>
 
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
                 <SecondaryButton onClick={onClose}>{t('Cancel')}</SecondaryButton>
                 <PrimaryButton disabled={processing}>{t('Save')}</PrimaryButton>
             </div>
@@ -66,7 +67,7 @@ function ConfirmModal({ show, title, text, confirmLabel, danger = false, busy = 
             <div className="p-6">
                 <h3 className="text-lg font-medium text-ink">{title}</h3>
                 <p className="mt-2 text-sm text-gray-600">{text}</p>
-                <div className="mt-6 flex justify-end gap-3">
+                <div className="mt-6 flex flex-wrap justify-end gap-3">
                     <SecondaryButton onClick={onClose}>{t('Cancel')}</SecondaryButton>
                     <Button onClick={onConfirm} disabled={busy}>
                         {confirmLabel}
@@ -194,6 +195,7 @@ export default function CatalogCrud({
                 </PrimaryButton>
             </div>
 
+            <BusyRegion className="space-y-4">
             <div className="overflow-x-auto bg-white shadow sm:rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
                     <thead className="bg-surface text-xs uppercase text-gray-500">
@@ -211,7 +213,7 @@ export default function CatalogCrud({
                         {items.data.length === 0 && (
                             <tr>
                                 <td colSpan={columns.length + 2} className="px-3 py-8 text-center text-gray-500">
-                                    {t('Nothing found.')}
+                                    {Object.values(filters).some((value) => value) ? t('Nothing matches the search.') : t('Nothing has been added yet. Use the button above to add the first item.')}
                                 </td>
                             </tr>
                         )}
@@ -262,6 +264,7 @@ export default function CatalogCrud({
             </div>
 
             {items.last_page > 1 && <Pagination paginator={items} />}
+            </BusyRegion>
 
             <Modal show={form !== null} onClose={() => setForm(null)} maxWidth="lg">
                 {form && (

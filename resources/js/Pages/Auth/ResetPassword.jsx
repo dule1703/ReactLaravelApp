@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -31,7 +32,7 @@ export default function ResetPassword({ token, email }) {
                     <InputLabel htmlFor="email" value={t('Email')} />
 
                     <TextInput
-                        id="email"
+                        id="email" {...fieldA11y('email', errors.email)}
                         type="email"
                         name="email"
                         value={data.email}
@@ -40,14 +41,14 @@ export default function ResetPassword({ token, email }) {
                         onChange={(e) => setData('email', e.target.value)}
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <InputError id={errorId('email')} message={errors.email} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value={t('Password')} />
 
                     <TextInput
-                        id="password"
+                        id="password" {...fieldA11y('password', errors.password)}
                         type="password"
                         name="password"
                         value={data.password}
@@ -57,7 +58,7 @@ export default function ResetPassword({ token, email }) {
                         onChange={(e) => setData('password', e.target.value)}
                     />
 
-                    <InputError message={errors.password} className="mt-2" />
+                    <InputError id={errorId('password')} message={errors.password} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
@@ -68,7 +69,7 @@ export default function ResetPassword({ token, email }) {
 
                     <TextInput
                         type="password"
-                        id="password_confirmation"
+                        id="password_confirmation" {...fieldA11y('password_confirmation', errors.password_confirmation)}
                         name="password_confirmation"
                         value={data.password_confirmation}
                         className="mt-1 block w-full"
@@ -78,7 +79,7 @@ export default function ResetPassword({ token, email }) {
                         }
                     />
 
-                    <InputError
+                    <InputError id={errorId('password_confirmation')}
                         message={errors.password_confirmation}
                         className="mt-2"
                     />

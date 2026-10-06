@@ -28,4 +28,14 @@ class ProfileUpdateRequest extends FormRequest
             ],
         ];
     }
+
+    /**
+     * The form calls this field "Ime i prezime"; the global attribute 'name' ("naziv") is for the catalog.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return ['name' => mb_strtolower(__('Name'))];
+    }
 }

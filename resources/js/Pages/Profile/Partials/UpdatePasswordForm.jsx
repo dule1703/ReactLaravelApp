@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -63,7 +64,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     />
 
                     <TextInput
-                        id="current_password"
+                        id="current_password" {...fieldA11y('current_password', errors.current_password)}
                         ref={currentPasswordInput}
                         value={data.current_password}
                         onChange={(e) =>
@@ -74,7 +75,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         autoComplete="current-password"
                     />
 
-                    <InputError
+                    <InputError id={errorId('current_password')}
                         message={errors.current_password}
                         className="mt-2"
                     />
@@ -84,7 +85,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     <InputLabel htmlFor="password" value={t('New Password')} />
 
                     <TextInput
-                        id="password"
+                        id="password" {...fieldA11y('password', errors.password)}
                         ref={passwordInput}
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
@@ -93,7 +94,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         autoComplete="new-password"
                     />
 
-                    <InputError message={errors.password} className="mt-2" />
+                    <InputError id={errorId('password')} message={errors.password} className="mt-2" />
                 </div>
 
                 <div>
@@ -103,7 +104,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     />
 
                     <TextInput
-                        id="password_confirmation"
+                        id="password_confirmation" {...fieldA11y('password_confirmation', errors.password_confirmation)}
                         value={data.password_confirmation}
                         onChange={(e) =>
                             setData('password_confirmation', e.target.value)
@@ -113,7 +114,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         autoComplete="new-password"
                     />
 
-                    <InputError
+                    <InputError id={errorId('password_confirmation')}
                         message={errors.password_confirmation}
                         className="mt-2"
                     />
