@@ -1,3 +1,4 @@
+import AdminLinkCard from '@/Components/AdminLinkCard';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { t } from '@/lib/i18n';
 import { Head } from '@inertiajs/react';
@@ -19,6 +20,14 @@ export default function Dashboard() {
                         <div className="p-6 text-ink">
                             {t('Admin area. Clients, offers and prices will be managed here.')}
                         </div>
+                    </div>
+
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                        <AdminLinkCard
+                            routeName="issuer.edit"
+                            title={t('Offer issuer')}
+                            description={t('Dealer details printed in the header of the offer PDF')}
+                        />
                     </div>
                 </div>
             </div>

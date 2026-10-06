@@ -736,5 +736,6 @@
     "activity.field.issuer_city": "Grad izdavaoca",
     "activity.field.issuer_pib": "PIB izdavaoca",
     "activity.field.issuer_phone": "Telefon izdavaoca",
-    "activity.field.issuer_email": "Email izdavaoca"
+    "activity.field.issuer_email": "Email izdavaoca",
+    "Dealer details printed in the header of the offer PDF": "Podaci dilera koji se štampaju u zaglavlju PDF-a ponude"
 }
