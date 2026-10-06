@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activityFieldLabel } from './activity';
+import { activityActionLabel, activityFieldLabel } from './activity';
 
 describe('activityFieldLabel()', () => {
     it('prefers the entity-specific label', () => {
@@ -17,5 +17,16 @@ describe('activityFieldLabel()', () => {
     it('falls back to the raw field name when nothing matches', () => {
         expect(activityFieldLabel('version.updated', 'unknown_field')).toBe('unknown_field');
         expect(activityFieldLabel(undefined, 'unknown_field')).toBe('unknown_field');
+    });
+});
+
+describe('activityActionLabel()', () => {
+    it('translates a known action', () => {
+        expect(activityActionLabel('offer.created')).toBe('Kreirana ponuda');
+        expect(activityActionLabel('offer.withdrawn')).toBe('Povučena ponuda');
+    });
+
+    it('falls back to the raw code of an unknown action', () => {
+        expect(activityActionLabel('nothing.known')).toBe('nothing.known');
     });
 });
