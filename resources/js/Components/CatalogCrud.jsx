@@ -1,3 +1,4 @@
+import BusyRegion from '@/Components/BusyRegion';
 import DangerButton from '@/Components/DangerButton';
 import Modal from '@/Components/Modal';
 import Pagination from '@/Components/Pagination';
@@ -194,6 +195,7 @@ export default function CatalogCrud({
                 </PrimaryButton>
             </div>
 
+            <BusyRegion className="space-y-4">
             <div className="overflow-x-auto bg-white shadow sm:rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
                     <thead className="bg-surface text-xs uppercase text-gray-500">
@@ -262,6 +264,7 @@ export default function CatalogCrud({
             </div>
 
             {items.last_page > 1 && <Pagination paginator={items} />}
+            </BusyRegion>
 
             <Modal show={form !== null} onClose={() => setForm(null)} maxWidth="lg">
                 {form && (

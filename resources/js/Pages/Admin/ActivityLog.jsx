@@ -1,3 +1,4 @@
+import BusyRegion from '@/Components/BusyRegion';
 import Modal from '@/Components/Modal';
 import Pagination from '@/Components/Pagination';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -213,6 +214,7 @@ export default function ActivityLog({ logs, filters, users, actions }) {
                         </div>
                     </form>
 
+                    <BusyRegion className="space-y-4">
                     <div className="overflow-x-auto bg-white shadow-sm sm:rounded-lg">
                         <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
                             <thead className="bg-surface text-xs uppercase text-gray-500">
@@ -262,6 +264,7 @@ export default function ActivityLog({ logs, filters, users, actions }) {
                     </div>
 
                     <Pagination paginator={logs} />
+                    </BusyRegion>
                 </div>
             </div>
 

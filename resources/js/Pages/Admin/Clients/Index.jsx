@@ -1,3 +1,4 @@
+import BusyRegion from '@/Components/BusyRegion';
 import DangerButton from '@/Components/DangerButton';
 import Modal from '@/Components/Modal';
 import Pagination from '@/Components/Pagination';
@@ -102,6 +103,7 @@ export default function Index({ clients, filters, perPageOptions }) {
                         </div>
                     </form>
 
+                    <BusyRegion className="space-y-4">
                     <div className="overflow-x-auto bg-white shadow sm:rounded-lg">
                         <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
                             <thead className="bg-surface text-xs uppercase text-gray-500">
@@ -176,6 +178,7 @@ export default function Index({ clients, filters, perPageOptions }) {
                     </div>
 
                     <Pagination paginator={clients} />
+                    </BusyRegion>
                 </div>
             </div>
 

@@ -1,3 +1,4 @@
+import BusyRegion from '@/Components/BusyRegion';
 import OfferPdfActions from '@/Components/OfferPdfActions';
 import Pagination from '@/Components/Pagination';
 import OfferStatusBadge from '@/Components/OfferStatusBadge';
@@ -91,6 +92,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                         </div>
                     </form>
 
+                    <BusyRegion className="space-y-4">
                     <div className="overflow-x-auto bg-white shadow sm:rounded-lg">
                         <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
                             <thead className="bg-surface text-xs uppercase text-gray-500">
@@ -162,6 +164,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                     </div>
 
                     <Pagination paginator={offers} />
+                    </BusyRegion>
                 </div>
             </div>
         </AuthenticatedLayout>
