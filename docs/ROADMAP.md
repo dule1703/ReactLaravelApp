@@ -149,7 +149,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 ## Faza 5 - PDF i štampa
 
-- [ ] 5.1 dompdf + Blade šablon sa fontom koji podržava srpska slova
+- [x] 5.1 PDF ponude: `GET /offers/{offer}/pdf` (`offers.pdf`, inline, throttle 30/min) preko `App\Services\OfferPdf` + `resources/views/pdf/offer.blade.php`; podaci samo iz `OfferPresenter` (snimak), font DejaVu Sans (ugrađen u dompdf, ima ć č đ š ž €), logo kao data URI. Zahteva PHP `gd` (logo.png je RGBA; `ext-gd` u composer.json + provera u `OfferPdf`).
+      Bez serijske opreme (nije u snimku), bez dugmadi/preuzimanja/logovanja (5.2), logo i izgled 5.3 (SVG logo bolje rezolucije).
 - [ ] 5.2 PDF preuzimanje i prikaz za štampu ponude, testovi autorizacije
       Beleže se PDF preuzimanje i štampa ponude kroz `ActivityLogger`.
 - [ ] 5.3 Doterivanje PDF izgleda (zaglavlje, tabela stavki, zbirovi, napomena)
