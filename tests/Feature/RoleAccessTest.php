@@ -32,6 +32,25 @@ class RoleAccessTest extends TestCase
             ->assertInertia(fn ($page) => $page->component('Admin/Dashboard'));
     }
 
+    public function test_the_admin_page_links_to_the_issuer_screen_only_for_the_admin(): void
+    {
+        $issuer = route('issuer.edit', absolute: false);
+        $source = file_get_contents(resource_path('js/Pages/Admin/Dashboard.jsx'));
+
+        // The page renders in the browser: its source must point to the route and the card must use the route name for the href (see AdminLinkCard.test.jsx).
+        $this->assertStringContainsString('routeName="issuer.edit"', $source);
+        $this->assertSame('/admin/issuer', $issuer);
+
+        $this->actingAs(User::factory()->admin()->create())->get('/admin')->assertOk()->assertInertia(fn ($page) => $page->component('Admin/Dashboard'));
+        $this->get($issuer)->assertOk();
+
+        $this->actingAs(User::factory()->client()->create())->get('/admin')->assertForbidden();
+        $this->get($issuer)->assertForbidden();
+
+        auth()->logout();
+        $this->get('/admin')->assertRedirect(route('login'));
+    }
+
     public function test_403_page_message_is_in_serbian(): void
     {
         $this->actingAs(User::factory()->client()->create())
