@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
@@ -47,7 +48,9 @@ export default function OfferNoteEditor({ offer, canEdit, noteMax }) {
             {editing ? (
                 <form onSubmit={submit} className="mt-1 space-y-2">
                     <textarea
+                        id="offer_note"
                         aria-label={t('Note')}
+                        {...fieldA11y('offer_note', form.errors.note)}
                         value={form.data.note}
                         onChange={(event) => form.setData('note', event.target.value)}
                         maxLength={noteMax}
@@ -57,7 +60,7 @@ export default function OfferNoteEditor({ offer, canEdit, noteMax }) {
                     <div className="flex items-center justify-between text-xs text-gray-500">
                         <span>{t(':count of :max characters', { count: form.data.note.length, max: noteMax })}</span>
                     </div>
-                    <InputError message={form.errors.note} />
+                    <InputError id={errorId('offer_note')} message={form.errors.note} />
                     <div className="flex gap-3">
                         <PrimaryButton type="submit" disabled={form.processing}>{t('Save')}</PrimaryButton>
                         <SecondaryButton type="button" disabled={form.processing} onClick={cancel}>{t('Cancel')}</SecondaryButton>

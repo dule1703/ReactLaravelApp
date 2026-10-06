@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import FormField from '@/Components/FormField';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
@@ -17,6 +18,7 @@ export default function Issuer({ issuer }) {
         <FormField id={`issuer_${name}`} label={label} error={errors[name]}>
             <TextInput
                 id={`issuer_${name}`}
+                {...fieldA11y(`issuer_${name}`, errors[name])}
                 className="mt-1 block w-full"
                 value={data[name]}
                 onChange={(e) => setData(name, e.target.value)}

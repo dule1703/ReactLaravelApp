@@ -1,3 +1,4 @@
+import { fieldA11y } from '@/lib/a11y';
 import CatalogCrud from '@/Components/CatalogCrud';
 import FormField from '@/Components/FormField';
 import SelectInput from '@/Components/SelectInput';
@@ -50,7 +51,7 @@ function Fields({ data, setData, errors, context }) {
         <>
             <FormField id="trim_id" label={t('Trim')} error={errors.trim_id}>
                 <SelectInput
-                    id="trim_id"
+                    id="trim_id" {...fieldA11y('trim_id', errors.trim_id)}
                     className="mt-1 block w-full"
                     value={data.trim_id}
                     required
@@ -73,7 +74,7 @@ function Fields({ data, setData, errors, context }) {
 
             <FormField id="engine_id" label={t('Engine')} error={errors.engine_id}>
                 <SelectInput
-                    id="engine_id"
+                    id="engine_id" {...fieldA11y('engine_id', errors.engine_id)}
                     className="mt-1 block w-full"
                     value={data.engine_id}
                     required
@@ -90,7 +91,7 @@ function Fields({ data, setData, errors, context }) {
 
             <FormField id="transmission_id" label={t('Transmission')} error={errors.transmission_id}>
                 <SelectInput
-                    id="transmission_id"
+                    id="transmission_id" {...fieldA11y('transmission_id', errors.transmission_id)}
                     className="mt-1 block w-full"
                     value={data.transmission_id}
                     required
@@ -109,7 +110,7 @@ function Fields({ data, setData, errors, context }) {
                 <div>
                     <FormField id="amount" label={t('Price')} error={errors.amount} hint={preview}>
                         <TextInput
-                            id="amount"
+                            id="amount" {...fieldA11y('amount', errors.amount)}
                             className="mt-1 block w-40"
                             inputMode="decimal"
                             value={data.amount}
@@ -120,7 +121,7 @@ function Fields({ data, setData, errors, context }) {
                 </div>
                 <FormField id="mode" label={t('Entered as')} error={errors.mode}>
                     <SelectInput
-                        id="mode"
+                        id="mode" {...fieldA11y('mode', errors.mode)}
                         className="mt-1 block"
                         value={data.mode}
                         onChange={(e) => setData('mode', e.target.value)}

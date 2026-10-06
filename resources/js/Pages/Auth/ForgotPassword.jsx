@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
@@ -32,7 +33,7 @@ export default function ForgotPassword({ status }) {
 
             <form onSubmit={submit}>
                 <TextInput
-                    id="email"
+                    id="email" {...fieldA11y('email', errors.email)}
                     type="email"
                     name="email"
                     value={data.email}
@@ -41,7 +42,7 @@ export default function ForgotPassword({ status }) {
                     onChange={(e) => setData('email', e.target.value)}
                 />
 
-                <InputError message={errors.email} className="mt-2" />
+                <InputError id={errorId('email')} message={errors.email} className="mt-2" />
 
                 <div className="mt-4 flex items-center justify-end">
                     <PrimaryButton className="ms-4" disabled={processing}>

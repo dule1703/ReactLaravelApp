@@ -1,3 +1,4 @@
+import { errorId, fieldA11y } from '@/lib/a11y';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
@@ -7,8 +8,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { t, tOr } from '@/lib/i18n';
 import { formatMoney, parseEuros } from '@/lib/money';
 import { grossFromNet, netFromGross } from '@/lib/vat';
-import { Head, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { useId, useState } from 'react';
 
 const MAX_PRICE_CENTS = 1_000_000_000;
 
@@ -38,12 +39,13 @@ function VatForm({ vat }) {
                     </label>
                     <TextInput
                         id="vat_rate"
+                        {...fieldA11y('vat_rate', errors.rate)}
                         className="mt-1 block w-32"
                         inputMode="decimal"
                         value={data.rate}
                         onChange={(e) => setData('rate', e.target.value)}
                     />
-                    <InputError className="mt-2" message={errors.rate} />
+                    <InputError id={errorId('vat_rate')} className="mt-2" message={errors.rate} />
                 </div>
                 <PrimaryButton disabled={processing}>{t('Save')}</PrimaryButton>
             </form>
@@ -58,6 +60,7 @@ function VatForm({ vat }) {
 // The preview below the field uses the same VAT arithmetic as the server (lib/vat.js).
 function PriceEditor({ action, net, gross, rateBp }) {
     const { data, setData, patch, errors, processing, reset } = useForm({ mode: 'net', amount: '' });
+    const fieldId = useId(); // one editor per price row: the id must be unique on the page
 
     const typed = data.amount.trim() === '' ? null : parseEuros(data.amount);
     let preview = null;
@@ -77,7 +80,9 @@ function PriceEditor({ action, net, gross, rateBp }) {
         <form onSubmit={submit} className="flex flex-wrap items-start gap-2">
             <div>
                 <TextInput
+                    id={fieldId}
                     aria-label={t('New price')}
+                    {...fieldA11y(fieldId, errors.amount)}
                     className="block w-32 text-sm"
                     inputMode="decimal"
                     placeholder={formatMoney(net).replace(/[^\d.,]/g, '')}
@@ -85,7 +90,7 @@ function PriceEditor({ action, net, gross, rateBp }) {
                     onChange={(e) => setData('amount', e.target.value)}
                 />
                 {preview && <p className="mt-1 text-xs text-gray-500">{preview}</p>}
-                <InputError className="mt-1" message={errors.amount} />
+                <InputError id={errorId(fieldId)} className="mt-1" message={errors.amount} />
             </div>
             <SelectInput
                 aria-label={t('Entered as')}
@@ -445,7 +450,10 @@ export default function Prices({ vat, models, selectedModelId, trims }) {
 
                     {models.length === 0 ? (
                         <Card>
-                            <p className="text-sm text-gray-600">{t('The catalog is empty.')}</p>
+                            <p className="text-sm text-gray-600">
+                                {t('The catalog is empty.')}{' '}
+                                <Link href={route('catalog.models.index')} className="font-semibold text-brand-700 underline">{t('Add a car model in the catalog')}</Link>
+                            </p>
                         </Card>
                     ) : (
                         <>

@@ -60,7 +60,7 @@ export default function OfferStatusActions({ offer, isAdmin }) {
                     <div className="space-y-4 p-6">
                         <h3 className="text-lg font-semibold text-ink">{modal.title}</h3>
                         <p className="text-sm text-gray-600">{modal.text}</p>
-                        <div className="flex justify-end gap-3">
+                        <div className="flex flex-wrap justify-end gap-3">
                             <SecondaryButton disabled={processing} onClick={() => setConfirming(null)}>{t('Cancel')}</SecondaryButton>
                             <DangerButton disabled={processing} onClick={modal.run}>{modal.label}</DangerButton>
                         </div>

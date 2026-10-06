@@ -72,7 +72,7 @@ export default function Edit({ client, profile, countries }) {
                     <p className="mt-2 text-sm text-gray-600">
                         {t('Delete the saved JMBG? This cannot be undone.')}
                     </p>
-                    <div className="mt-6 flex justify-end gap-3">
+                    <div className="mt-6 flex flex-wrap justify-end gap-3">
                         <SecondaryButton onClick={() => setConfirming(false)}>{t('Cancel')}</SecondaryButton>
                         <DangerButton onClick={deleteJmbg} disabled={deleting}>
                             {t('Delete')}

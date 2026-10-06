@@ -252,7 +252,14 @@ export default function Create({ models, vatRateBp, profileMissing, limits, isAd
 
                             <Step number={1 + stepOffset} title={t('Model')}>
                                 {models.length === 0 ? (
-                                    <p className="text-sm text-gray-500">{t('No models are available for an offer right now.')}</p>
+                                    <p className="text-sm text-gray-500">
+                                        {t('No models are available for an offer right now.')}{' '}
+                                        {isAdmin ? (
+                                            <Link href={route('catalog.models.index')} className="font-semibold text-brand-700 underline">{t('Open the catalog')}</Link>
+                                        ) : (
+                                            t('Please contact the dealer.')
+                                        )}
+                                    </p>
                                 ) : (
                                     <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                                         {models.map((model) => (
