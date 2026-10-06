@@ -3,8 +3,8 @@
 namespace App\Support;
 
 /**
- * Parsing of typed amounts without floats. Identical to resources/js/lib/money.js; both are
- * tested against tests/fixtures/money-parse-cases.json. The server is the authority; the
+ * Parsing and formatting of amounts without floats. Identical to resources/js/lib/money.js; both are
+ * tested against tests/fixtures/money-parse-cases.json and money-format-cases.json (format()). The server is the authority; the
  * browser parser only drives live previews.
  *
  * Euros: a decimal comma is preferred and dots then group thousands ("25.000,50"). Without a
@@ -116,5 +116,22 @@ class Money
     public static function roundToEuro(int $cents): int
     {
         return intdiv($cents + 50, 100) * 100;
+    }
+
+    /**
+     * Cents for display, the way resources/js/lib/money.js formatMoney does: "1.234,56 €" (dots group
+     * thousands, a comma before the cents, a NON-BREAKING space before the euro sign). Integer
+     * arithmetic only; the division happens here, at the display edge.
+     */
+    public static function format(int $cents): string
+    {
+        if ($cents === PHP_INT_MIN) {
+            throw new \InvalidArgumentException('The amount is out of range.');
+        }
+
+        $abs = abs($cents);
+        $euros = strrev(implode('.', str_split(strrev((string) intdiv($abs, 100)), 3)));
+
+        return ($cents < 0 ? '-' : '').$euros.','.str_pad((string) ($abs % 100), 2, '0', STR_PAD_LEFT)."\u{00A0}€";
     }
 }

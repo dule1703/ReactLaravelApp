@@ -1,0 +1,20 @@
+{
+    "_note": "Worked out by hand: dots group thousands, a comma before the cents. The separator before the euro sign is a non-breaking space in the output; both tests turn any whitespace into a plain space before comparing.",
+    "cases": [
+        { "cents": 0, "text": "0,00 €" },
+        { "cents": 1, "text": "0,01 €" },
+        { "cents": 5, "text": "0,05 €" },
+        { "cents": 99, "text": "0,99 €" },
+        { "cents": 100, "text": "1,00 €" },
+        { "cents": 999, "text": "9,99 €" },
+        { "cents": 1000, "text": "10,00 €" },
+        { "cents": 100000, "text": "1.000,00 €" },
+        { "cents": 123456, "text": "1.234,56 €" },
+        { "cents": 2399900, "text": "23.999,00 €" },
+        { "cents": 12345678, "text": "123.456,78 €" },
+        { "cents": 100000000, "text": "1.000.000,00 €" },
+        { "cents": 100000000000, "text": "1.000.000.000,00 €" },
+        { "cents": -150, "text": "-1,50 €" },
+        { "cents": -123456, "text": "-1.234,56 €" }
+    ]
+}
