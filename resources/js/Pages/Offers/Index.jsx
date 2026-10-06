@@ -1,5 +1,6 @@
 import OfferPdfActions from '@/Components/OfferPdfActions';
 import Pagination from '@/Components/Pagination';
+import OfferStatusBadge from '@/Components/OfferStatusBadge';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import SelectInput from '@/Components/SelectInput';
@@ -17,7 +18,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
 
     const search = (e) => {
         e.preventDefault();
-        load({ q: q || undefined, per_page: filters.per_page });
+        load({ q: q || undefined, status: filters.status === 'all' ? undefined : filters.status, per_page: filters.per_page });
     };
 
     const reset = () => {
@@ -25,8 +26,17 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
         load({ per_page: filters.per_page });
     };
 
-    const searching = Boolean(filters.q);
-    const columns = isAdmin ? 10 : 9;
+    const searching = Boolean(filters.q) || filters.status !== 'all';
+    const deletedView = isAdmin && filters.status === 'deleted';
+    const columns = (isAdmin ? 10 : 9) + (deletedView ? 1 : 0);
+    const [restoring, setRestoring] = useState(null);
+
+    const restore = (offer) =>
+        router.post(route('offers.restore', offer.id), {}, {
+            preserveScroll: true,
+            onStart: () => setRestoring(offer.id),
+            onFinish: () => setRestoring(null),
+        });
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight text-ink">{t('Offers')}</h2>}>
@@ -49,12 +59,27 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                         </div>
 
                         <div>
+                            <label htmlFor="status" className="block text-sm font-medium text-gray-700">{t('Status')}</label>
+                            <SelectInput
+                                id="status"
+                                className="mt-1 block"
+                                value={filters.status}
+                                onChange={(e) => load({ q: filters.q || undefined, status: e.target.value === 'all' ? undefined : e.target.value, per_page: filters.per_page })}
+                            >
+                                <option value="all">{t('All offers')}</option>
+                                <option value="active">{t('Active offers')}</option>
+                                <option value="withdrawn">{t('Withdrawn offers')}</option>
+                                {isAdmin && <option value="deleted">{t('Deleted offers')}</option>}
+                            </SelectInput>
+                        </div>
+
+                        <div>
                             <label htmlFor="per_page" className="block text-sm font-medium text-gray-700">{t('Rows per page')}</label>
                             <SelectInput
                                 id="per_page"
                                 className="mt-1 block"
                                 value={filters.per_page}
-                                onChange={(e) => load({ q: filters.q || undefined, per_page: e.target.value })}
+                                onChange={(e) => load({ q: filters.q || undefined, status: filters.status === 'all' ? undefined : filters.status, per_page: e.target.value })}
                             >
                                 {perPageOptions.map((option) => <option key={option} value={option}>{option}</option>)}
                             </SelectInput>
@@ -73,6 +98,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                     <th className="px-3 py-2">{t('Offer number')}</th>
                                     {isAdmin && <th className="px-3 py-2">{t('Client')}</th>}
                                     <th className="px-3 py-2">{t('Date')}</th>
+                                    {deletedView && <th className="px-3 py-2">{t('Deleted on')}</th>}
                                     <th className="px-3 py-2 text-right">{t('VAT (%)')}</th>
                                     <th className="px-3 py-2 text-right">{t('Amount without VAT')}</th>
                                     <th className="px-3 py-2 text-right">{t('VAT amount')}</th>
@@ -88,6 +114,8 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                         <td colSpan={columns} className="px-3 py-10 text-center text-gray-500">
                                             {searching ? (
                                                 <p>{t('No offers match the search.')}</p>
+                                            ) : deletedView ? (
+                                                <p>{t('No deleted offers.')}</p>
                                             ) : (
                                                 <div className="space-y-3">
                                                     <p>{isAdmin ? t('No offers have been made yet.') : t('You have no offers yet.')}</p>
@@ -107,10 +135,12 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                 {offers.data.map((offer) => (
                                     <tr key={offer.id} className="align-top">
                                         <td className="whitespace-nowrap px-3 py-2 font-medium text-ink">
-                                            <Link href={route('offers.show', offer.id)} className="text-brand-700 hover:text-brand-800">{offer.number}</Link>
+                                            {deletedView ? offer.number : <Link href={route('offers.show', offer.id)} className="text-brand-700 hover:text-brand-800">{offer.number}</Link>}
+                                            <span className="ms-2"><OfferStatusBadge offer={offer} /></span>
                                         </td>
                                         {isAdmin && <td className="px-3 py-2">{offer.client_name}</td>}
                                         <td className="whitespace-nowrap px-3 py-2">{offer.offer_date}</td>
+                                        {deletedView && <td className="whitespace-nowrap px-3 py-2">{offer.deleted_at}</td>}
                                         <td className="px-3 py-2 text-right">{formatRateBp(offer.vat_rate_bp)}</td>
                                         <td className="whitespace-nowrap px-3 py-2 text-right">{formatMoneyOrDash(offer.total_net_cents)}</td>
                                         <td className="whitespace-nowrap px-3 py-2 text-right">{formatMoneyOrDash(offer.vat_cents)}</td>
@@ -118,10 +148,14 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                         <td className="px-3 py-2 text-right">{offer.items_count}</td>
                                         <td className="max-w-xs px-3 py-2 text-gray-600">{offer.note ?? ''}</td>
                                         <td className="whitespace-nowrap px-3 py-2">
-                                            <div className="flex items-center gap-3">
-                                                <Link href={route('offers.show', offer.id)} className="font-medium text-brand-700 hover:text-brand-800">{t('View')}</Link>
-                                                <OfferPdfActions offer={offer} compact />
-                                            </div>
+                                            {deletedView ? (
+                                                <SecondaryButton disabled={restoring === offer.id} onClick={() => restore(offer)}>{t('Restore')}</SecondaryButton>
+                                            ) : (
+                                                <div className="flex items-center gap-3">
+                                                    <Link href={route('offers.show', offer.id)} className="font-medium text-brand-700 hover:text-brand-800">{t('View')}</Link>
+                                                    <OfferPdfActions offer={offer} compact />
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

@@ -86,6 +86,15 @@ class OfferNumberTest extends TestCase
         $this->assertSame(['001/2026', '002/2026', '003/2026'], $numbers);
     }
 
+    public function test_a_deleted_offer_keeps_its_number_and_the_next_one_gets_the_next_number(): void
+    {
+        $first = $this->create();
+        $first->delete();
+
+        $this->assertSame('002/2026', $this->create()->number);
+        $this->assertSame('001/2026', Offer::withTrashed()->find($first->id)->number);
+    }
+
     public function test_the_sequence_restarts_every_year_and_the_old_year_continues(): void
     {
         $this->create();

@@ -13,7 +13,11 @@ use Illuminate\Auth\Access\Response;
  * own offers by the query); an admin sees any offer, a client only their own. Someone else's offer
  * is "not found", not "forbidden": offer numbers are consecutive, so a 403 would reveal that a
  * number exists. Choosing a client (searching the clients) is for the admin only.
- * Editing and deleting come later.
+ * Status (4.6b): the owner withdraws their own offer (an admin never does: 403; someone else's
+ * offer is "not found"); only an admin reverts a withdrawal (someone who is not an admin gets "not
+ * found" on someone else's offer, so nothing reveals that it exists). Deleting (soft) and restoring are
+ * for the admin only; a client gets 403 on their own offer and "not found" on any other, and always
+ * "not found" on a restore (a deleted offer does not exist for them).
  */
 class OfferPolicy
 {
@@ -38,5 +42,40 @@ class OfferPolicy
     public function chooseClient(User $user): bool
     {
         return $user->isAdmin();
+    }
+
+    /** Only the owner withdraws; the admin does not. */
+    public function withdraw(User $user, Offer $offer): Response
+    {
+        if ($user->isAdmin()) {
+            return Response::denyWithStatus(403);
+        }
+
+        return $offer->user_id === $user->id ? Response::allow() : Response::denyAsNotFound();
+    }
+
+    /** Undoing a withdrawal is for the admin only. */
+    public function revertWithdrawal(User $user, Offer $offer): Response
+    {
+        return $this->adminOnly($user, $offer);
+    }
+
+    public function delete(User $user, Offer $offer): Response
+    {
+        return $this->adminOnly($user, $offer);
+    }
+
+    public function restore(User $user, Offer $offer): Response
+    {
+        return $user->isAdmin() ? Response::allow() : Response::denyAsNotFound();
+    }
+
+    private function adminOnly(User $user, Offer $offer): Response
+    {
+        if ($user->isAdmin()) {
+            return Response::allow();
+        }
+
+        return $offer->user_id === $user->id ? Response::denyWithStatus(403) : Response::denyAsNotFound();
     }
 }

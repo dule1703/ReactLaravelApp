@@ -56,11 +56,21 @@ class OfferController extends Controller
         $admin = $user->isAdmin();
         $filters = $request->validated();
         $term = trim($filters['q'] ?? '');
+        $status = $filters['status'] ?? 'all';
+
+        // Deleted offers are an admin view; for a client the value is ignored (they never see one).
+        if ($status === 'deleted' && ! $admin) {
+            $status = 'all';
+        }
+
         $perPage = (int) ($filters['per_page'] ?? OfferIndexRequest::PER_PAGE_OPTIONS[0]);
 
         $offers = Offer::query()
             ->withCount('items')
             ->when(! $admin, fn (Builder $query) => $query->where('offers.user_id', $user->id))
+            ->when($status === 'deleted', fn (Builder $query) => $query->onlyTrashed())
+            ->when($status === 'active', fn (Builder $query) => $query->whereNull('offers.withdrawn_at'))
+            ->when($status === 'withdrawn', fn (Builder $query) => $query->whereNotNull('offers.withdrawn_at'))
             ->when($term !== '', fn (Builder $query) => $this->search($query, $term, $admin))
             ->orderByDesc('offers.offer_date')
             ->orderByDesc('offers.id')
@@ -70,7 +80,7 @@ class OfferController extends Controller
 
         return Inertia::render('Offers/Index', [
             'offers' => $offers,
-            'filters' => ['q' => $term, 'per_page' => $perPage],
+            'filters' => ['q' => $term, 'status' => $status, 'per_page' => $perPage],
             'perPageOptions' => OfferIndexRequest::PER_PAGE_OPTIONS,
             'isAdmin' => $admin,
         ]);
@@ -83,7 +93,7 @@ class OfferController extends Controller
         $admin = $request->user()->isAdmin();
         $offer->load($admin ? ['items.options', 'user.clientProfile:id,user_id'] : ['items.options']);
 
-        return Inertia::render('Offers/Show', ['offer' => OfferPresenter::detail($offer, $admin)]);
+        return Inertia::render('Offers/Show', ['offer' => OfferPresenter::detail($offer, $admin), 'isAdmin' => $admin]);
     }
 
     public function create(Request $request): Response
