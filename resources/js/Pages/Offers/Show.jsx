@@ -1,5 +1,7 @@
 import { categoryLabel } from '@/Components/Configurator/EquipmentChoices';
 import OfferPdfActions from '@/Components/OfferPdfActions';
+import OfferStatusActions from '@/Components/OfferStatusActions';
+import OfferStatusBadge from '@/Components/OfferStatusBadge';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { groupBy } from '@/lib/configurator';
 import { t, tOr } from '@/lib/i18n';
@@ -71,15 +73,19 @@ function ItemCard({ item, index }) {
     );
 }
 
-export default function Show({ offer }) {
+export default function Show({ offer, isAdmin }) {
     const { client } = offer;
 
     return (
         <AuthenticatedLayout
             header={
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h2 className="text-xl font-semibold leading-tight text-ink">{t('Offer :number', { number: offer.number })}</h2>
+                    <h2 className="flex items-center gap-3 text-xl font-semibold leading-tight text-ink">
+                        {t('Offer :number', { number: offer.number })}
+                        <OfferStatusBadge offer={offer} />
+                    </h2>
                     <div className="flex flex-wrap items-center gap-3">
+                        <OfferStatusActions offer={offer} isAdmin={isAdmin} />
                         <OfferPdfActions offer={offer} />
                         <Link href={route('offers.index')} className="text-sm font-medium text-brand-700 hover:text-brand-800">{t('Back to offers')}</Link>
                     </div>
@@ -90,6 +96,12 @@ export default function Show({ offer }) {
 
             <div className="py-8">
                 <div className="mx-auto max-w-5xl space-y-6 px-4 sm:px-6 lg:px-8">
+                    {offer.withdrawn_at && (
+                        <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+                            {t('Withdrawn on :date', { date: offer.withdrawn_at })}. {t('This offer is withdrawn and can no longer be changed.')}
+                        </p>
+                    )}
+
                     <section className="grid gap-6 rounded-lg bg-white p-4 shadow sm:grid-cols-2 sm:p-6">
                         <div>
                             <h3 className="mb-3 text-base font-semibold text-ink">{t('Offer')}</h3>

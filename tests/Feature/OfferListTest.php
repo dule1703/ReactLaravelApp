@@ -76,7 +76,7 @@ class OfferListTest extends TestCase
 
         $row = fn (User $as) => $this->actingAs($as)->get('/offers')->viewData('page')['props']['offers']['data'][0];
 
-        $common = ['id', 'number', 'offer_date', 'vat_rate_bp', 'total_net_cents', 'vat_cents', 'total_gross_cents', 'note', 'items_count'];
+        $common = ['id', 'number', 'offer_date', 'vat_rate_bp', 'total_net_cents', 'vat_cents', 'total_gross_cents', 'withdrawn_at', 'note', 'items_count'];
 
         $this->assertEqualsCanonicalizing($common, array_keys($row($this->client)));
         $this->assertEqualsCanonicalizing([...$common, 'client_name'], array_keys($row($this->admin)));
@@ -154,7 +154,7 @@ class OfferListTest extends TestCase
             ->where('offers.total', 12)
             ->has('offers.data', 10)
             ->where('offers.next_page_url', fn ($url) => str_contains($url, 'q=match') && str_contains($url, 'per_page=10'))
-            ->where('filters', ['q' => 'match', 'per_page' => 10])
+            ->where('filters', ['q' => 'match', 'status' => 'all', 'per_page' => 10])
             ->where('perPageOptions', [10, 25, 50])
             ->where('isAdmin', false));
     }

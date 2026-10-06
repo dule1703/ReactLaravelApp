@@ -82,7 +82,7 @@ class OfferShowTest extends TestCase
     {
         $offer = $this->realOffer();
 
-        $common = ['id', 'number', 'offer_date', 'vat_rate_bp', 'note', 'total_net_cents', 'vat_cents', 'total_gross_cents', 'client', 'items'];
+        $common = ['id', 'number', 'offer_date', 'vat_rate_bp', 'note', 'total_net_cents', 'vat_cents', 'total_gross_cents', 'withdrawn_at', 'client', 'items'];
 
         $clientView = $this->props($this->client, $offer)['offer'];
         $adminView = $this->props($this->admin, $offer)['offer'];

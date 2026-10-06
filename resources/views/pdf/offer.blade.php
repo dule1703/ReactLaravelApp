@@ -45,9 +45,18 @@
         .totals td { padding: 1mm 0; }
         .totals .grand td { border-top: 0.4mm solid #1B1F1D; font-weight: bold; font-size: 11pt; padding-top: 2mm; }
         .note { white-space: pre-line; }
+        .withdrawn { margin: 0 0 4mm 0; padding: 2mm 3mm; border: 0.6mm solid #b91c1c; color: #b91c1c; text-align: center; font-weight: bold; font-size: 14pt; }
+        .withdrawn small { display: block; font-size: 8pt; font-weight: normal; }
     </style>
 </head>
 <body>
+    @if (filled($offer['withdrawn_at']))
+        <div class="withdrawn">
+            {{ __('WITHDRAWN') }}
+            <small>{{ __('Withdrawn on :date', ['date' => $offer['withdrawn_at']]) }}</small>
+        </div>
+    @endif
+
     <table class="head">
         <tr>
             <td style="width: 24mm;">

@@ -31,6 +31,7 @@ class OfferPresenter
             'total_net_cents' => $offer->total_net_cents,
             'vat_cents' => $offer->vat_cents,
             'total_gross_cents' => $offer->total_gross_cents,
+            'withdrawn_at' => $offer->withdrawn_at?->format('d.m.Y'),
             'note' => $offer->note === null ? null : Str::limit($offer->note, 120),
             'items_count' => (int) $offer->items_count,
         ];
@@ -50,6 +51,7 @@ class OfferPresenter
             'offer_date' => $offer->offer_date->format('d.m.Y'),
             'vat_rate_bp' => $offer->vat_rate_bp,
             'note' => $offer->note,
+            'withdrawn_at' => $offer->withdrawn_at?->format('d.m.Y'),
             'total_net_cents' => $offer->total_net_cents,
             'vat_cents' => $offer->vat_cents,
             'total_gross_cents' => $offer->total_gross_cents,

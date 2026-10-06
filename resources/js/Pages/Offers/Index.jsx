@@ -1,5 +1,6 @@
 import OfferPdfActions from '@/Components/OfferPdfActions';
 import Pagination from '@/Components/Pagination';
+import OfferStatusBadge from '@/Components/OfferStatusBadge';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import SelectInput from '@/Components/SelectInput';
@@ -17,7 +18,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
 
     const search = (e) => {
         e.preventDefault();
-        load({ q: q || undefined, per_page: filters.per_page });
+        load({ q: q || undefined, status: filters.status === 'all' ? undefined : filters.status, per_page: filters.per_page });
     };
 
     const reset = () => {
@@ -25,7 +26,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
         load({ per_page: filters.per_page });
     };
 
-    const searching = Boolean(filters.q);
+    const searching = Boolean(filters.q) || filters.status !== 'all';
     const columns = isAdmin ? 10 : 9;
 
     return (
@@ -49,12 +50,26 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                         </div>
 
                         <div>
+                            <label htmlFor="status" className="block text-sm font-medium text-gray-700">{t('Status')}</label>
+                            <SelectInput
+                                id="status"
+                                className="mt-1 block"
+                                value={filters.status}
+                                onChange={(e) => load({ q: filters.q || undefined, status: e.target.value === 'all' ? undefined : e.target.value, per_page: filters.per_page })}
+                            >
+                                <option value="all">{t('All offers')}</option>
+                                <option value="active">{t('Active offers')}</option>
+                                <option value="withdrawn">{t('Withdrawn offers')}</option>
+                            </SelectInput>
+                        </div>
+
+                        <div>
                             <label htmlFor="per_page" className="block text-sm font-medium text-gray-700">{t('Rows per page')}</label>
                             <SelectInput
                                 id="per_page"
                                 className="mt-1 block"
                                 value={filters.per_page}
-                                onChange={(e) => load({ q: filters.q || undefined, per_page: e.target.value })}
+                                onChange={(e) => load({ q: filters.q || undefined, status: filters.status === 'all' ? undefined : filters.status, per_page: e.target.value })}
                             >
                                 {perPageOptions.map((option) => <option key={option} value={option}>{option}</option>)}
                             </SelectInput>
@@ -108,6 +123,7 @@ export default function Index({ offers, filters, perPageOptions, isAdmin }) {
                                     <tr key={offer.id} className="align-top">
                                         <td className="whitespace-nowrap px-3 py-2 font-medium text-ink">
                                             <Link href={route('offers.show', offer.id)} className="text-brand-700 hover:text-brand-800">{offer.number}</Link>
+                                            <span className="ms-2"><OfferStatusBadge offer={offer} /></span>
                                         </td>
                                         {isAdmin && <td className="px-3 py-2">{offer.client_name}</td>}
                                         <td className="whitespace-nowrap px-3 py-2">{offer.offer_date}</td>

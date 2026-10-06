@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * registered client (D1); a client with offers cannot be deleted. The JMBG is never copied.
  *
  * The number (year, seq, number) and the owner are assigned by the offer service (4.2/4.3), so
- * they are not mass-assignable.
+ * they are not mass-assignable. Neither is the status (`withdrawn_at`): only OfferStatus sets it.
  */
 class Offer extends Model
 {
@@ -52,6 +52,7 @@ class Offer extends Model
             'total_net_cents' => 'integer',
             'vat_cents' => 'integer',
             'total_gross_cents' => 'integer',
+            'withdrawn_at' => 'datetime',
         ];
     }
 
@@ -69,6 +70,26 @@ class Offer extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OfferItem::class)->orderBy('position')->orderBy('id');
+    }
+
+    public function isWithdrawn(): bool
+    {
+        return $this->withdrawn_at !== null;
+    }
+
+    /**
+     * A change of the status only is "offer.withdrawn" / "offer.withdrawal_reverted", not a generic
+     * "offer.updated" (the log would get two entries for one action).
+     *
+     * @param  array<string, mixed>  $changes
+     */
+    public function activityAction(string $event, array $changes): string
+    {
+        if ($event === 'updated' && array_keys($changes) === ['withdrawn_at']) {
+            return $this->withdrawn_at === null ? 'offer.withdrawal_reverted' : 'offer.withdrawn';
+        }
+
+        return 'offer.'.$event;
     }
 
     public function activityLabel(): string
