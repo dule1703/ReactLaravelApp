@@ -139,11 +139,13 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       Granice: 20 stavki, 500 opcija ukupno. Dnevnik: jedan zapis `offer.items_created`, stavke/opcije mutirane samo pri `created` (`MutesCreationLog`).
 - [x] 4.5b UI konfiguratora za KLIJENTA: `/offers/new` (`offers.create`), JSON `offers/catalog/*` (verzije modela, detalji verzije), `POST /offers` (`offers.store`, throttle 10/min, 201 ili 409/422 JSON).
       Stranica `Offers/Create` + `lib/configurator.js` (reducer, izbor `single` grupe, payload samo ID-evi, expected_*). 409 = eksplicitna potvrda novih iznosa (bez ponavljanja).
-      Posle snimanja redirect na `offers.create` (kad stigne 4.6: na listu). Nav: "Nova ponuda" za klijenta, "Ponude" onemogućeno do 4.6. Slike stavki kasnije (uzorci boja već tu).
+      Redirect posle snimanja: od 4.6 na `offers.show`. Nav: "Nova ponuda" za klijenta. Slike stavki kasnije (uzorci boja već tu).
 - [ ] 4.5c Admin kreira nalog i profil klijenta (mejl za postavljanje lozinke)
 - [ ] 4.5d Admin bira klijenta i pravi mu ponudu (OfferPolicy::create za admina + konfigurator sa izborom klijenta)
-- [ ] 4.6 Lista ponuda: pretraga, broj po strani, paginacija, izmena, brisanje
-- [ ] 4.7 Policy: klijent vidi samo svoje ponude, admin sve; Feature testovi
+- [x] 4.6 Lista ponuda i prikaz jedne ponude (samo čitanje): `/offers` (`offers.index`) i `/offers/{offer}` (`offers.show`, `whereNumber`), pretraga (broj, naziv klijenta iz snimka, napomena; PIB samo admin), broj po strani 10/25/50.
+      `OfferPolicy::viewAny/view` (admin sve, klijent svoje; tuđa ponuda = 404 jer su brojevi uzastopni), lista sužena upitom po ulozi; sastavljanje props-a samo kroz `App\Support\OfferPresenter` (whitelist). Posle snimanja redirect na `offers.show`. "Ponude" u navigaciji je aktivna.
+- [ ] 4.6b Izmena i brisanje ponude (admin; klijent po pravilu koje treba odlučiti), štampa/PDF (dompdf), pojedinačno logovanje izmena stavki
+- [ ] 4.7 Policy za izmenu/brisanje + Feature testovi (čitanje i tuđa ponuda su pokriveni u 4.6)
 
 ## Faza 5 - PDF i štampa
 

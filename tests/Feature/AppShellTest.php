@@ -32,8 +32,8 @@ class AppShellTest extends TestCase
 
         $this->assertSame(['dashboard', 'profile', 'new-offer', 'offers'], array_column($nav, 'key'));
         $this->assertSame(['Početna', 'Moj profil', 'Nova ponuda', 'Ponude'], array_column($nav, 'label'));
-        $this->assertSame(['/dashboard', '/client-profile', '/offers/new', null], array_column($nav, 'href'));
-        $this->assertSame([false, false, false, true], array_column($nav, 'soon'));
+        $this->assertSame(['/dashboard', '/client-profile', '/offers/new', '/offers'], array_column($nav, 'href'));
+        $this->assertSame([false, false, false, false], array_column($nav, 'soon'));
     }
 
     public function test_admin_navigation(): void
@@ -42,8 +42,8 @@ class AppShellTest extends TestCase
 
         $this->assertSame(['admin', 'activity-log', 'clients', 'catalog', 'prices', 'offers'], array_column($nav, 'key'));
         $this->assertSame(['Administracija', 'Dnevnik aktivnosti', 'Klijenti', 'Katalog', 'Cene', 'Ponude'], array_column($nav, 'label'));
-        $this->assertSame(['/admin', '/admin/activity-log', '/admin/clients', '/admin/catalog/models', '/admin/prices', null], array_column($nav, 'href'));
-        $this->assertSame([false, false, false, false, false, true], array_column($nav, 'soon'));
+        $this->assertSame(['/admin', '/admin/activity-log', '/admin/clients', '/admin/catalog/models', '/admin/prices', '/offers'], array_column($nav, 'href'));
+        $this->assertSame([false, false, false, false, false, false], array_column($nav, 'soon'));
     }
 
     public function test_clients_do_not_get_admin_links(): void
@@ -55,16 +55,19 @@ class AppShellTest extends TestCase
         $this->assertNotContains('clients', array_column($nav, 'key'));
     }
 
-    public function test_a_soon_item_activates_once_its_route_exists(): void
+    /**
+     * A navigation item whose route does not exist is sent as "soon" (disabled) and activates by
+     * itself once the route is registered. Offers had that status until 4.6; no item is "soon" now,
+     * so this checks the item that was.
+     */
+    public function test_the_offers_item_is_active_for_both_roles_now_that_its_route_exists(): void
     {
-        Route::get('/_offers', fn () => 'ok')->name('offers.index');
-        app('router')->getRoutes()->refreshNameLookups();
+        foreach ([User::factory()->client()->create(), User::factory()->admin()->create()] as $user) {
+            $offers = collect($this->navFor($user))->firstWhere('key', 'offers');
 
-        $nav = $this->navFor(User::factory()->client()->create());
-
-        $offers = collect($nav)->firstWhere('key', 'offers');
-        $this->assertFalse($offers['soon']);
-        $this->assertSame('/_offers', $offers['href']);
+            $this->assertFalse($offers['soon']);
+            $this->assertSame('/offers', $offers['href']);
+        }
     }
 
     public function test_guest_pages_share_no_navigation(): void

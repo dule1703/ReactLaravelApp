@@ -106,3 +106,19 @@ export function formatMoney(cents) {
 
     return formatter.format(cents / 100);
 }
+
+/** Like formatMoney, but "-" for an amount that is not known (an offer without stored totals). */
+export function formatMoneyOrDash(cents) {
+    return cents === null || cents === undefined ? '-' : formatMoney(cents);
+}
+
+const rateFormatter = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 2 });
+
+/** A VAT rate in basis points as a percentage number: 2000 -> "20", 750 -> "7,5". */
+export function formatRateBp(rateBp) {
+    if (!Number.isInteger(rateBp)) {
+        throw new TypeError('A rate must be an integer number of basis points.');
+    }
+
+    return rateFormatter.format(rateBp / 100);
+}
