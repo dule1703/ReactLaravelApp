@@ -1,5 +1,5 @@
 import { t } from '@/lib/i18n';
-import { formatMoney } from '@/lib/money';
+import { formatMoney, formatRateBp } from '@/lib/money';
 
 /** Net, VAT and gross of the whole offer; the rate is the one the server applies when saving. */
 export default function Totals({ totals, rateBp, error }) {
@@ -7,7 +7,6 @@ export default function Totals({ totals, rateBp, error }) {
         return <p role="alert" className="text-sm text-danger">{t('The offer exceeds the allowed limits. Remove an item or some equipment.')}</p>;
     }
 
-    const percent = new Intl.NumberFormat('sr-RS', { maximumFractionDigits: 2 }).format(rateBp / 100);
 
     return (
         <dl className="space-y-1 text-sm">
@@ -16,7 +15,7 @@ export default function Totals({ totals, rateBp, error }) {
                 <dd className="font-medium text-ink">{formatMoney(totals.total_net_cents)}</dd>
             </div>
             <div className="flex justify-between">
-                <dt className="text-gray-600">{t('VAT :rate%', { rate: percent })}</dt>
+                <dt className="text-gray-600">{t('VAT :rate%', { rate: formatRateBp(rateBp) })}</dt>
                 <dd className="font-medium text-ink">{formatMoney(totals.vat_cents)}</dd>
             </div>
             <div className="flex justify-between border-t border-gray-200 pt-2 text-base">

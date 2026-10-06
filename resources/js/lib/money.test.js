@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import parseCases from '../../../tests/fixtures/money-parse-cases.json';
-import { formatMoney, parseEuros, parsePercentBp, roundToEuro } from './money';
+import { formatMoney, formatMoneyOrDash, formatRateBp, parseEuros, parsePercentBp, roundToEuro } from './money';
 
 // Intl uses a non-breaking space before the currency sign; normalise it for comparison.
 const fmt = (cents) => formatMoney(cents).replace(/\s/g, ' ');
@@ -63,5 +63,30 @@ describe('roundToEuro', () => {
         expect(roundToEuro(149)).toBe(100);
         expect(roundToEuro(150)).toBe(200);
         expect(roundToEuro(200)).toBe(200);
+    });
+});
+
+describe('formatMoneyOrDash', () => {
+    it('shows a dash for an unknown amount and formats a known one', () => {
+        expect(formatMoneyOrDash(null)).toBe('-');
+        expect(formatMoneyOrDash(undefined)).toBe('-');
+        expect(formatMoneyOrDash(0)).toBe(formatMoney(0));
+        expect(formatMoneyOrDash(123456)).toBe(formatMoney(123456));
+    });
+
+    it('still refuses a non-integer amount', () => {
+        expect(() => formatMoneyOrDash(1.5)).toThrow(TypeError);
+    });
+});
+
+describe('formatRateBp', () => {
+    it('formats basis points as a percentage', () => {
+        expect(formatRateBp(2000)).toBe('20');
+        expect(formatRateBp(750)).toBe('7,5');
+        expect(formatRateBp(0)).toBe('0');
+    });
+
+    it('rejects a non-integer rate', () => {
+        expect(() => formatRateBp(20.5)).toThrow(TypeError);
     });
 });
