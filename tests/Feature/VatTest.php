@@ -100,4 +100,20 @@ class VatTest extends TestCase
         $this->assertSame(100, Money::roundToEuro(149));
         $this->assertSame(200, Money::roundToEuro(150));
     }
+
+    public function test_money_format_matches_the_shared_cases(): void
+    {
+        foreach ($this->fixture('money-format-cases.json')['cases'] as $case) {
+            // The output has a non-breaking space before the euro sign; the fixture has a plain one.
+            $this->assertSame($case['text'], preg_replace('/\s/u', ' ', Money::format($case['cents'])), "cents {$case['cents']}");
+        }
+    }
+
+    public function test_money_format_uses_a_non_breaking_space_and_refuses_the_impossible_amount(): void
+    {
+        $this->assertSame("1.234,56\u{00A0}€", Money::format(123456));
+
+        $this->expectException(\InvalidArgumentException::class);
+        Money::format(PHP_INT_MIN);
+    }
 }

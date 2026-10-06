@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\ClientProfileController;
 use App\Http\Controllers\OfferCatalogController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\OfferPdfController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -124,6 +125,7 @@ Route::middleware(['auth', 'role:client'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
     Route::get('/offers/{offer}', [OfferController::class, 'show'])->whereNumber('offer')->name('offers.show');
+    Route::get('/offers/{offer}/pdf', OfferPdfController::class)->whereNumber('offer')->middleware('throttle:30,1')->name('offers.pdf');
 });
 
 Route::middleware('auth')->group(function () {

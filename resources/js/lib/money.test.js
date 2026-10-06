@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import formatCases from '../../../tests/fixtures/money-format-cases.json';
 import parseCases from '../../../tests/fixtures/money-parse-cases.json';
 import { formatMoney, formatMoneyOrDash, formatRateBp, parseEuros, parsePercentBp, roundToEuro } from './money';
 
@@ -88,5 +89,11 @@ describe('formatRateBp', () => {
 
     it('rejects a non-integer rate', () => {
         expect(() => formatRateBp(20.5)).toThrow(TypeError);
+    });
+});
+
+describe('formatMoney (shared fixture cases, same as Money::format in PHP)', () => {
+    it.each(formatCases.cases)('$cents -> $text', ({ cents, text }) => {
+        expect(fmt(cents)).toBe(text);
     });
 });
