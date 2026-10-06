@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OfferIndexRequest;
 use App\Http\Requests\StoreOfferRequest;
+use App\Http\Requests\UpdateOfferNoteRequest;
 use App\Models\CarModel;
 use App\Models\ClientProfile;
 use App\Models\Offer;
 use App\Models\User;
 use App\Services\OfferCreator;
+use App\Services\OfferNotEditableException;
+use App\Services\OfferNoteUpdater;
 use App\Services\OfferTotalMismatchException;
 use App\Support\Like;
 use App\Support\OfferCalculator;
@@ -17,6 +20,7 @@ use App\Support\OfferPresenter;
 use App\Support\VatRate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -93,7 +97,28 @@ class OfferController extends Controller
         $admin = $request->user()->isAdmin();
         $offer->load($admin ? ['items.options', 'user.clientProfile:id,user_id'] : ['items.options']);
 
-        return Inertia::render('Offers/Show', ['offer' => OfferPresenter::detail($offer, $admin), 'isAdmin' => $admin]);
+        return Inertia::render('Offers/Show', [
+            'offer' => OfferPresenter::detail($offer, $admin),
+            'isAdmin' => $admin,
+            'canEditNote' => Gate::allows('update', $offer),
+            'noteMax' => StoreOfferRequest::NOTE_MAX,
+        ]);
+    }
+
+    /** Editing an offer is the note only (4.6c); the request asks the Policy before validating. */
+    public function updateNote(UpdateOfferNoteRequest $request, Offer $offer, OfferNoteUpdater $updater): RedirectResponse
+    {
+        try {
+            $changed = $updater->update($offer, $request->validated('note'));
+        } catch (OfferNotEditableException $e) {
+            abort(403, $e->getMessage());
+        }
+
+        $message = $changed
+            ? __('The note of offer :number was saved.', ['number' => $offer->number])
+            : __('The note of offer :number is unchanged.', ['number' => $offer->number]);
+
+        return redirect()->route('offers.show', $offer)->with('success', $message);
     }
 
     public function create(Request $request): Response

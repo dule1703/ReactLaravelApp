@@ -133,6 +133,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
     Route::get('/offers/{offer}', [OfferController::class, 'show'])->whereNumber('offer')->name('offers.show');
+    Route::patch('/offers/{offer}/note', [OfferController::class, 'updateNote'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.note.update');
     Route::get('/offers/{offer}/pdf', OfferPdfController::class)->whereNumber('offer')->middleware('throttle:30,1')->name('offers.pdf');
     Route::post('/offers/{offer}/withdraw', [OfferStatusController::class, 'withdraw'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.withdraw');
     Route::post('/offers/{offer}/withdrawal/revert', [OfferStatusController::class, 'revertWithdrawal'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.withdrawal.revert');

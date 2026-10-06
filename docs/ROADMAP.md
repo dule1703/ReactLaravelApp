@@ -149,8 +149,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       `OfferPolicy::viewAny/view` (admin sve, klijent svoje; tuđa ponuda = 404 jer su brojevi uzastopni), lista sužena upitom po ulozi; sastavljanje props-a samo kroz `App\Support\OfferPresenter` (whitelist). Posle snimanja redirect na `offers.show`. "Ponude" u navigaciji je aktivna.
 - [x] 4.6b Povlačenje i brisanje ponude: klijent povlači svoju ponudu (`withdrawn_at`, oznaka u listi, žig "POVUČENA" u PDF-u, povratak samo admin); admin soft-delete i restore (`deleted_at`, 404 za sve, filter "Obrisane" u admin listi, broj se ne koristi ponovo).
       Servis `OfferStatus`, `OfferPolicy` (`withdraw`, `revertWithdrawal`, `delete`, `restore`), dnevnik `offer.withdrawn|withdrawal_reverted|deleted|restored`. Zavisnosti broje i obrisane (`withTrashed`): blokada brisanja klijenta i `catalog:purge-demo`.
-- [ ] 4.6c Izmena ponude: samo napomena (preporuka; ponovno razrešavanje cena iz kataloga uz isti broj nije u planu), povučena se ne menja. Pojedinačno logovanje izmena stavki ostaje otvoreno.
-- [ ] 4.7 Policy za izmenu + Feature testovi (čitanje i tuđa ponuda su pokriveni u 4.6; povlačenje, brisanje i restore u 4.6b; ostaje izmena iz 4.6c).
+- [x] 4.6c Izmena ponude: samo napomena (`OfferNoteUpdater`, `OfferPolicy::update`, `PATCH /offers/{offer}/note`, zapis `offer.note_updated` bez teksta); povučena se ne menja (403). Van obima: stavke se ne menjaju, druga konfiguracija = nova ponuda (pojedinačno logovanje izmena stavki otpada).
+- [x] 4.7 Kompletna matrica `OfferPolicy` (`OfferPolicyMatrixTest`: sve sposobnosti x gost/vlasnik/drugi klijent/admin x normalna/povučena/obrisana).
 
 ## Faza 5 - PDF i štampa
 
