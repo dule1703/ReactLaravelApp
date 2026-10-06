@@ -17,8 +17,8 @@ const SHORTCUTS = [
 
 const COUNTS = [
     { key: 'clients', label: 'Clients registered' },
-    { key: 'active_offers', label: 'Active offers' },
-    { key: 'withdrawn_offers', label: 'Withdrawn offers' },
+    { key: 'active_offers', label: 'dashboard.active_offers' },
+    { key: 'withdrawn_offers', label: 'dashboard.withdrawn_offers' },
     { key: 'offers_last_30_days', label: 'Offers in the last 30 days' },
 ];
 

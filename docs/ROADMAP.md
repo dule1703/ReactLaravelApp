@@ -175,7 +175,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 ## Faza 6 - Admin dashboard i poliranje
 
-- [x] 6.1 Dashboard `/admin`: brojevi (klijenti, aktivne, povučene, ponude u 30 dana), poslednjih 5 ponuda i 8 aktivnosti (bez `auth.*` i PDF zapisa), prečice; `AppSupportAdminDashboard` (whitelist, 4 upita).
+- [x] 6.1 Dashboard `/admin`: brojevi (klijenti, aktivne, povučene, ponude u 30 dana), poslednjih 5 ponuda i 8 aktivnosti (bez `auth.*` i PDF zapisa), prečice; `App\Support\AdminDashboard` (whitelist, 4 upita).
 - [ ] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost
 - [ ] 6.3 Bezbednosni pregled: rate limiting, pokrivenost Policy-ja, bez osetljivih podataka u logovima
 
