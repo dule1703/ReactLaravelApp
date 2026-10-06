@@ -239,6 +239,16 @@ class OfferPdfTest extends TestCase
         $this->assertStringNotContainsString('<b>x</b>', $html);
     }
 
+    public function test_the_header_is_the_product_name_and_does_not_depend_on_app_name(): void
+    {
+        config(['app.name' => 'ReactLaravel']);
+
+        $html = app(OfferPdf::class)->html($this->realOffer());
+
+        $this->assertStringContainsString('Škoda konfigurator', $html);
+        $this->assertStringNotContainsString('ReactLaravel', $html);
+    }
+
     public function test_the_template_has_no_remote_file_and_no_javascript(): void
     {
         $html = app(OfferPdf::class)->html($this->realOffer());

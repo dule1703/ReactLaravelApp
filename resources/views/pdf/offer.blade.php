@@ -56,7 +56,7 @@
                 @endif
             </td>
             <td>
-                <strong style="font-size: 12pt;">{{ $appName }}</strong>
+                <strong style="font-size: 12pt;">{{ __('Škoda Configurator') }}</strong>
             </td>
             <td class="right">
                 <h1>{{ __('Offer :number', ['number' => $offer['number']]) }}</h1>
