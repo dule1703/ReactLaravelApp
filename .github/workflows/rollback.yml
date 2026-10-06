@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   rollback:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Inputs go through env instead of being pasted into the shell command:
     # the repo is public, so never interpolate free-text input into a script.
     env:
