@@ -60,7 +60,8 @@ class FilesBackup
                 return $sources;
             });
 
-            if (! is_file($tarGz) || filesize($tarGz) === 0) {
+            // Open what was written and make sure it holds at least one entry BEFORE it is kept and older ones are pruned.
+            if (! is_file($tarGz) || filesize($tarGz) === 0 || $this->entryCount($tarGz) < 1) {
                 throw new BackupFailed(BackupFailed::ARCHIVE_FAILED);
             }
 
@@ -85,6 +86,20 @@ class FilesBackup
                     @unlink($file);
                 }
             }
+        }
+    }
+
+    /** Number of entries in the finished archive; 0 when it cannot be opened. */
+    protected function entryCount(string $archive): int
+    {
+        try {
+            $tar = new PharData($archive);
+            $count = count($tar);
+            unset($tar);
+
+            return $count;
+        } catch (Throwable) {
+            return 0;
         }
     }
 
