@@ -178,6 +178,25 @@ class ActivityLogPageTest extends TestCase
         $this->page(['q' => '%'])->assertInertia(fn (Assert $page) => $page->has('logs.data', 0));
     }
 
+    /** 6.3: Support\Like with escape '!' (the same on MySQL and SQLite): %, _ and ! are plain characters. */
+    public function test_search_and_ip_filter_escape_the_like_characters(): void
+    {
+        $this->entry(['description' => 'rate 100% done', 'ip' => '10.0.0.1']);
+        $this->entry(['description' => 'rate 100 done', 'ip' => '10x0x0x1']);
+        $this->entry(['description' => 'file_name!', 'ip' => '10.0.0.10']);
+        $this->entry(['description' => 'fileXname!', 'ip' => '2001:db8::1']);
+
+        $count = fn (array $query) => count($this->page($query)->viewData('page')['props']['logs']['data']);
+
+        $this->assertSame(1, $count(['q' => '100%']));   // % is not a wildcard
+        $this->assertSame(1, $count(['q' => 'file_name'])); // _ is not a wildcard
+        $this->assertSame(2, $count(['q' => '!']));      // the escape character itself is literal
+        $this->assertSame(1, $count(['q' => 'e_name!'])); // literal _ next to the literal !
+        $this->assertSame(2, $count(['ip' => '10.0.0.1'])); // prefix: 10.0.0.1 and 10.0.0.10
+        $this->assertSame(1, $count(['ip' => '10.0.0.10']));
+        $this->assertSame(0, $count(['ip' => '10_0'])); // _ is not "any character"
+    }
+
     public function test_invalid_filters_are_rejected(): void
     {
         $this->page(['role' => 'superuser'])->assertSessionHasErrors('role');
