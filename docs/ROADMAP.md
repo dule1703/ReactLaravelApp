@@ -184,6 +184,53 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       Štiklira se kad vlasnik potvrdi VEŽBU OPORAVKA na stagingu (`gunzip -c backup | mysql` u probnu bazu, provera broja redova) i da je cron napravio backup u 02:30 (nedeljom i fajlove).
 - [ ] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
 
+## Stanje projekta
+
+Na dan 07.10.2026:
+
+- Faze 0 do 6 i 7.1 su gotove. `main` i `develop` imaju identična stabla (PR #103 je poslednji `develop` -> `main`).
+- 7.2 (backup) je u kodu i na oba okruženja. Na production-u je ručno potvrđeno: prvi backup 07.10.2026 u 15:37, fajl
+  `0600`, direktorijum `0700`, zapis u dnevniku aktivnosti. Čeka se vežba oporavka na stagingu i potvrda noćnog cron-a
+  u 02:30; zato je 7.2 `[ ]`.
+- 7.3: audit stanja i regresija u čistoj kopiji su urađeni (PHP: 1047 testova, 1 preskočen na Windowsu zbog `umask`,
+  JS: 239 testova; `pint --test`, `composer audit` i `npm audit --omit=dev` bez nalaza). Ručna regresija po
+  [REGRESSION.md](REGRESSION.md) čeka vlasnika, pa je 7.3 `[ ]`. Posle potvrde sledi anotirani tag `v1.0.0` na `main`.
+
+## Poznata ograničenja i kasnije
+
+Svaka stavka: zašto je tako i šta bi trebalo.
+
+- **3.12 kopiranje opreme iz linije:** ručni unos u matrici je spor za "Plus" linije. Trebalo bi "kopiraj iz linije" sa
+  pregledom promena pre primene.
+- **5.4 logo dilera:** štampa se naš `logo.png`. Trebalo bi otpremanje kroz admin (isto pravilo kao slike modela).
+- **`MustVerifyEmail` je isključen:** SMTP je došao kasnije. Trebalo bi ga uključiti i popuniti `email_verified_at` pri
+  postavljanju lozinke preko mejla iz 4.5c.
+- **`ShouldQueue` / `queue:work`:** mejlovi su sinhroni, red je prazan. Kad se pojavi prvi posao u redu, treba dodati
+  `queue:work --stop-when-empty` u cron.
+- **CSP i HSTS nisu uključeni:** HSTS se teško povlači, a CSP traži podešavanje za Vite i Inertia. Trebalo bi prvo CSP
+  samo za izveštaje, a HSTS tek posle perioda stabilnog HTTPS-a.
+- **`npm audit` (ceo, bez `--omit=dev`) ima 9 nalaza** u razvojnim alatima (`tailwindcss` 3 i `concurrently`); u produkcijski
+  build ne ulaze. Ispravka traži major `tailwindcss` 4, pa bi trebalo planirati nadogradnju.
+- **Neuspeh backup-a se vidi samo kao `backup.failed`** u dnevniku i na dashboardu, bez obaveštenja. Trebalo bi kartica
+  "Poslednji backup" na dashboardu i mejl pri neuspehu.
+- **Backup je na istom serveru:** gubitak servera znači gubitak i backup-a. Trebalo bi redovno preuzimanje (README) ili
+  odredište van servera.
+- **Lozinka demo klijenata iz `DatabaseSeeder`-a je poznata (samo staging):** dolazi iz `UserFactory`. Ne sme na
+  production; pre prikaza trećim licima na stagingu treba je promeniti ili ukloniti naloge.
+- **Ziggy izlaže imena admin ruta u browseru** (odluka 6.3: ostavljeno): nisu tajna, pristup štiti Policy. Trebalo bi
+  razmotriti filtriranje ruta po ulozi.
+- **Filter korisnika u dnevniku učitava sve korisnike** (odluka 6.3: ostavljeno): u redu za demo. Trebalo bi pretraga ili
+  straničenje kad korisnika bude hiljade.
+- **Rollback i `deleted_at`:** stari release ne zna za meko brisanje, pa prikazuje obrisane ponude do sledećeg deploy-a.
+  Trebalo bi izbegavati rollback preko te granice ili ga pratiti novim deploy-om.
+- **Realni podaci kataloga:** izvor dozvoljava samo ličnu nekomercijalnu upotrebu; prikaz trećim licima traži pismeno
+  odobrenje izdavača (v. [real-catalog.md](real-catalog.md)).
+- **Rate limiting** pokriva auth rute i ključne akcije klijenta i admina, ali ne i ostale admin rute (katalog, cene).
+  Trebalo bi proširiti ako admin nalog postane meta.
+- **Lokalni disk ima `serve => true`** (ruta `storage/{path}` radi samo uz potpisan URL, aplikacija je ne koristi).
+  Trebalo bi je isključiti malim zasebnim PR-om.
+- **Deploy skripte u javnom repou sadrže korisničko ime cPanel naloga.** Trebalo bi ga izdvojiti u fajl na serveru
+  (izmena `deploy/*.sh` traži posebno odobrenje).
 ## Otvorene odluke
 
 - D1 (ODLUČENO): svaki klijent je registrovan korisnik (`users` + `client_profiles`, 1:1).

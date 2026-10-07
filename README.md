@@ -23,6 +23,7 @@ u njega nikad ne idu tajne, `.env`, ključevi ni realni podaci kataloga.
 - [Deploy](#deploy)
 - [Rollback](#rollback)
 - [Backup i oporavak](#backup-i-oporavak)
+- [Provera pred izlazak](#provera-pred-izlazak)
 - [Tajne i ključevi](#tajne-i-ključevi)
 - [Rešavanje problema](#rešavanje-problema)
 - [Bezbednost u kratkim crtama](#bezbednost-u-kratkim-crtama)
@@ -410,6 +411,12 @@ Oporavak se uvek radi u **praznu ili probnu bazu**, nikad preko žive baze bez p
 5. Prijavite se, otvorite ponudu i njen PDF, proverite JMBG jednog klijenta (admin → Klijenti).
 
 **Vežba oporavka** (korak 1 do 3) radi se na stagingu pre nego što se backup smatra proverenim (ROADMAP 7.2).
+
+## Provera pred izlazak
+
+Pre izlaska na production (i posle većih izmena) vlasnik prolazi ručnu kontrolnu listu iz
+[docs/REGRESSION.md](docs/REGRESSION.md): gost, klijent, admin, sistem (cron, backup, deploy), responzivnost i
+bezbednost, posebno za staging i production. Automatski deo (testovi, build, `pint --test`, audit) radi CI.
 
 ## Tajne i ključevi
 
