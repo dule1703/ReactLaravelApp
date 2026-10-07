@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\ActivityLog;
 use App\Services\Backup\BackupFailed;
+use App\Services\Backup\BackupStorage;
+use App\Services\Backup\FilesBackup;
 use App\Support\AdminDashboard;
 use App\Support\BackupSchedule;
 use Illuminate\Console\Scheduling\Schedule;
@@ -333,6 +335,9 @@ class BackupTest extends TestCase
         $this->assertSame('0 3 * * 0', $events['backup:files']->expression);
         $this->assertTrue($events['backup:database']->withoutOverlapping);
         $this->assertTrue($events['backup:files']->withoutOverlapping);
+        // The overlap lock is short (minutes): a killed process must not block the next run for 24 hours.
+        $this->assertSame(120, $events['backup:database']->expiresAt);
+        $this->assertSame(120, $events['backup:files']->expiresAt);
 
         $prune = collect(app(Schedule::class)->events())->first(fn ($e) => str_contains($e->command, 'activitylog:prune'));
         $this->assertNotNull($prune);
@@ -437,6 +442,38 @@ class BackupTest extends TestCase
             $this->assertNotContains('testing-files-20260101-030000.tar.gz', $kept);
         } finally {
             File::deleteDirectory($empty);
+        }
+    }
+
+    public function test_an_archive_without_entries_is_a_failure_and_older_backups_stay(): void
+    {
+        $public = $this->dir.'-public';
+        File::ensureDirectoryExists($public);
+        file_put_contents($public.'/a.jpg', 'jpg');
+        config(['filesystems.disks.public.root' => $public, 'catalog.real_catalog_path' => $this->dir.'-missing.php']);
+
+        $old = ['testing-files-20260101-030000.tar.gz', 'testing-files-20260102-030000.tar.gz'];
+        array_map(fn ($n) => $this->touchBackup($n), $old);
+        config(['backup.files_keep' => 1]); // pruning WOULD delete one of them after a success
+
+        // The archive is written but, when opened, holds nothing.
+        $this->app->bind(FilesBackup::class, fn () => new class(BackupStorage::fromConfig()) extends FilesBackup
+        {
+            protected function entryCount(string $archive): int
+            {
+                return 0;
+            }
+        });
+
+        try {
+            $this->artisan('backup:files')->assertFailed();
+
+            $this->assertEqualsCanonicalizing($old, $this->files(), 'no partial archive is left and no older backup is deleted');
+            $log = ActivityLog::where('action', 'backup.failed')->sole();
+            $this->assertStringContainsString('arhiva nije napravljena', $log->description);
+            $this->assertSame(0, ActivityLog::where('action', 'backup.files_created')->count());
+        } finally {
+            File::deleteDirectory($public);
         }
     }
 
