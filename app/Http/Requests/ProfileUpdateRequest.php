@@ -9,6 +9,12 @@ use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
+    /** A person edits their own account (UserPolicy::update: the owner or an admin; the route has no id). */
+    public function authorize(): bool
+    {
+        return $this->user()?->can('update', $this->user()) ?? false;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
