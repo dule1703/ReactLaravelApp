@@ -16,7 +16,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
 - [x] 0.8 Test Rollback workflow-a na stagingu
 - [x] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
-- [x] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
+- [x] 0.10 Cron: `schedule:run` svaki minut (red se ne zakazuje dok ne postoji prvi ShouldQueue posao)
       Provera: `php artisan schedule:list`. MORA biti gotovo pre produkcije (`activitylog:prune` je
       zakazan dnevno); do tada se `php artisan activitylog:prune` pokreće ručno.
       cPanel > Cron Jobs, jednom u minuti (`* * * * *`), po jedna linija za svako okruženje (`<env>` = `production` ili `staging`):
@@ -178,7 +178,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 ## Faza 7 - Završnica
 
-- [ ] 7.1 README: podešavanje, deploy i rollback
+- [x] 7.1 README: podešavanje, deploy i rollback (lokalno pokretanje, testovi, git tok, CI/CD, server i prvo podešavanje, deploy, rollback sa upozorenjem o `deleted_at`, tajne, rešavanje problema)
       Mora da sadrži ROLLBACK UPOZORENJE iz CLAUDE.md (4.6b): stari release ne zna za `deleted_at`, pa posle rollback-a prikazuje obrisane ponude do sledećeg deploy-a (baza se ne vraća).
 - [ ] 7.2 Rutina za backup baze na serveru
 - [ ] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
