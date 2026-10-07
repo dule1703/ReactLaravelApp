@@ -180,7 +180,8 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 - [x] 7.1 README: podešavanje, deploy i rollback (lokalno pokretanje, testovi, git tok, CI/CD, server i prvo podešavanje, deploy, rollback sa upozorenjem o `deleted_at`, tajne, rešavanje problema)
       Mora da sadrži ROLLBACK UPOZORENJE iz CLAUDE.md (4.6b): stari release ne zna za `deleted_at`, pa posle rollback-a prikazuje obrisane ponude do sledećeg deploy-a (baza se ne vraća).
-- [ ] 7.2 Rutina za backup baze na serveru
+- [ ] 7.2 Rutina za backup baze i fajlova na serveru: `backup:database` (dnevno 02:30, čuva 14) i `backup:files` (nedeljom 03:00, čuva 4) kroz postojeći `schedule:run`, uspeh/neuspeh u dnevniku, README "Backup i oporavak".
+      Štiklira se kad vlasnik potvrdi VEŽBU OPORAVKA na stagingu (`gunzip -c backup | mysql` u probnu bazu, provera broja redova) i da je cron napravio backup u 02:30 (nedeljom i fajlove).
 - [ ] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
 
 ## Otvorene odluke

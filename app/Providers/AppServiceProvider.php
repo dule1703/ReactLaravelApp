@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\ActivityLogSubscriber;
+use App\Services\Backup\BackupStorage;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
@@ -37,7 +38,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // The backup folder and the environment come from config/backup.php and APP_ENV (7.2).
+        $this->app->bind(BackupStorage::class, fn () => BackupStorage::fromConfig());
     }
 
     /**

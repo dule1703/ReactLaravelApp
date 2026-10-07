@@ -22,6 +22,7 @@ u njega nikad ne idu tajne, `.env`, ključevi ni realni podaci kataloga.
 - [Server (cPanel shared hosting)](#server-cpanel-shared-hosting)
 - [Deploy](#deploy)
 - [Rollback](#rollback)
+- [Backup i oporavak](#backup-i-oporavak)
 - [Tajne i ključevi](#tajne-i-ključevi)
 - [Rešavanje problema](#rešavanje-problema)
 - [Bezbednost u kratkim crtama](#bezbednost-u-kratkim-crtama)
@@ -279,6 +280,10 @@ oba servera; ovde su samo imena i očekivanja, nikad prave tajne):
 | `LOG_CHANNEL`, `LOG_STACK`, `LOG_LEVEL` | `stack`, `daily`, `warning` (rotacija 14 dana je podrazumevana, `LOG_DAILY_DAYS`) |
 | `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS` | pravi SMTP; bez njega admin ne može da pošalje klijentu mejl za postavljanje lozinke |
 | `ACTIVITY_LOG_RETENTION_DAYS` | `365` (podrazumevano) |
+| `BACKUP_MYSQLDUMP` | opciono; na serveru `/bin/mysqldump` (cron ima minimalan `PATH`); podrazumevano `mysqldump` |
+| `BACKUP_ENABLED` | opciono; podrazumevano `true` za MySQL/MariaDB, `false` inače |
+| `BACKUP_PATH` | opciono; podrazumevano `storage/app/backups` (na serveru `shared/storage/app/backups`), nikad unutar javnog direktorijuma |
+| `BACKUP_DB_KEEP`, `BACKUP_FILES_KEEP` | opciono; koliko backup-a se čuva, podrazumevano `14` i `4` |
 | `CATALOG_REAL_PATH` | apsolutna putanja do privatnog fajla, samo ako se učitava realni katalog |
 | `CATALOG_PURGE` | `off` (na produkciji nikad drugačije) |
 | `SEED_ADMIN_PASSWORD` | samo privremeno pri pravljenju admina (v. korak 8) |
@@ -293,7 +298,8 @@ cd /home/<cpanel-user>/projects/react-laravel-app/deploy/<env>/current && /usr/l
 ```
 
 Izlaz ide u `/dev/null` (`schedule:run` svaki minut piše da nema spremnih komandi), a greške u `cron-errors.log`.
-Zakazano je čišćenje dnevnika aktivnosti (`activitylog:prune`, dnevno). Red čekanja se ne pokreće dok ne postoji prvi
+Zakazano je čišćenje dnevnika aktivnosti (`activitylog:prune`, dnevno u 00:00) i backup-i (`backup:database` svaki dan u
+02:30 i `backup:files` nedeljom u 03:00, v. [Backup i oporavak](#backup-i-oporavak)); nema posebnih cron linija. Red čekanja se ne pokreće dok ne postoji prvi
 `ShouldQueue` posao (danas red ne nosi ništa). Provera: `php artisan schedule:list`, a posle ponoći u dnevniku
 aktivnosti mora da se pojavi "Čišćenje dnevnika".
 
@@ -339,6 +345,67 @@ release. Ne pravi build, ne pokreće `composer install`, ne dira keš konfigurac
 > deploy-a. Baza se ne vraća. Za demo je prihvatljivo; ako se rollback radi na release iz tog vremena, obavestite
 > korisnike ili što pre uradite novi deploy.
 
+## Backup i oporavak
+
+Backup rade dve Artisan komande, zakazane kroz postojeći `schedule:run` (cron iz [Server](#server-cpanel-shared-hosting)), u
+vremenu `APP_TIMEZONE`:
+
+| Komanda | Kada | Šta | Čuva se |
+| --- | --- | --- | --- |
+| `php artisan backup:database` | svaki dan u 02:30 | `mysqldump` cele baze, kompresovan (`<APP_ENV>-db-YYYYmmdd-HHMMSS.sql.gz`) | 14 najnovijih |
+| `php artisan backup:files` | nedeljom u 03:00 | arhiva otpremljenih slika (`storage/app/public`) i privatnog kataloga iz `CATALOG_REAL_PATH`, ako postoji (`<APP_ENV>-files-YYYYmmdd-HHMMSS.tar.gz`) | 4 najnovija |
+
+Raspored se registruje samo kad je baza MySQL ili MariaDB (`BACKUP_ENABLED`), pa lokalno sa SQLite-om nema backup-a.
+Komande se mogu pokrenuti i ručno iz `current` (npr. pre rizične izmene).
+
+**Gde su fajlovi.** U `shared/storage/app/backups` (`BACKUP_PATH`): preživljava release-ove i nije dostupno sa veba
+(direktorijum `0700`, fajlovi `0600`). Putanja unutar `storage/app/public` ili `public/` se odbija.
+
+**Šta se NE kopira.** `shared/.env` ima tajne, pa ga ne dira nijedan backup: vlasnik ga čuva ručno van servera.
+Za **pun oporavak** su potrebni: dump baze, **`APP_KEY`** i **`JMBG_HASH_KEY`** iz `shared/.env` (bez prvog su
+šifrovani JMBG-ovi nečitljivi, bez drugog ne radi provera duplikata po JMBG-u), fajlovi iz arhive i privatni katalog.
+
+**Kako rade (i šta se dešava pri grešci).**
+- `mysqldump` se pokreće bez shell-a, a lozinka baze ide samo kroz privremeni fajl sa opcijama (`0600`, briše se
+  odmah); nikad kao argument komande. Dump mora završiti linijom "Dump completed" i imati razumnu veličinu.
+- Tek posle uspešnog backup-a brišu se stariji preko ograničenja, i to samo fajlovi sa tačnim obrascem imena te
+  komande i tog okruženja. Neuspeh ne ostavlja nepotpun fajl i ne briše nijedan stariji backup.
+- Ostaci prekinutog rada (`.tmp-*`) brišu se na početku sledećeg pokretanja.
+- Uspeh i neuspeh idu u dnevnik aktivnosti kao akter "Sistem" (`backup.database_created`, `backup.files_created`,
+  `backup.failed`); uspešni se ne prikazuju na početnoj stranici admina, a neuspeh se vidi. Poruka greške ima samo
+  razlog, nikad putanju, lozinku ni izlaz alata.
+
+**Preuzimanje.** Fajlove povucite na svoj računar najmanje jednom mesečno (cPanel File Manager ili SFTP, direktorijum
+`shared/storage/app/backups`); backup na istom serveru ne štiti od gubitka servera. Hosting možda već pravi svoje
+bekape, ali na njih se ne oslanjajte bez provere.
+
+**Backup sadrži lične podatke** (email, adrese, hash i šifrovani JMBG, dnevnik sa IP adresama). Čuva se kao produkcija:
+nikad u git, nikad mejlom, samo na uređaju i mestu koje štitite.
+
+### Ručni oporavak (nema `restore` komande: previše je opasno)
+
+Oporavak se uvek radi u **praznu ili probnu bazu**, nikad preko žive baze bez plana povratka. Na serveru
+(klijent `mysql`, MariaDB), korak po korak:
+
+1. U cPanel-u (MySQL Databases) napravite probnu bazu i dodajte joj korisnika.
+2. Učitajte dump (traži lozinku probnog korisnika; ne upisujte je u komandu):
+
+   ```bash
+   gunzip -c ~/projects/react-laravel-app/deploy/<env>/shared/storage/app/backups/<fajl>.sql.gz | mysql -u <korisnik> -p <probna-baza>
+   ```
+
+3. Proverite sadržaj: broj redova ključnih tabela mora da liči na živu bazu.
+
+   ```sql
+   SELECT COUNT(*) FROM users; SELECT COUNT(*) FROM offers; SELECT COUNT(*) FROM activity_logs;
+   ```
+
+4. Za pravi oporavak: vratite `shared/.env` (sa istim `APP_KEY` i `JMBG_HASH_KEY`), uperite `DB_DATABASE` na bazu
+   iz koraka 2 (ili isti dump učitajte u praznu pravu bazu), pa `php artisan config:cache`. Slike i privatni katalog
+   vratite iz arhive: `tar -xzf <fajl>.tar.gz -C <odredište>` (u arhivi su `public/...` i `private/real_catalog.php`).
+5. Prijavite se, otvorite ponudu i njen PDF, proverite JMBG jednog klijenta (admin → Klijenti).
+
+**Vežba oporavka** (korak 1 do 3) radi se na stagingu pre nego što se backup smatra proverenim (ROADMAP 7.2).
 ## Tajne i ključevi
 
 Samo imena, nikad vrednosti:
@@ -348,8 +415,8 @@ Samo imena, nikad vrednosti:
 - **`JMBG_HASH_KEY`** je ključ HMAC-a za pretragu i jedinstvenost JMBG-a. **Nikad se ne menja kad već postoje podaci**:
   promena ruši proveru duplikata po JMBG-u (stari hash-evi se više ne poklapaju). Mora postojati u `shared/.env`
   pre prvog deploy-a.
-- **`shared/.env`** se čuva van gita i van servera na bezbednom mestu, kao deo plana backup-a (detalji u fazi 7.2 u
-  [docs/ROADMAP.md](docs/ROADMAP.md)). Bez `APP_KEY` i `JMBG_HASH_KEY` backup baze nije upotrebljiv.
+- **`shared/.env`** se čuva van gita i van servera na bezbednom mestu, kao deo plana backup-a (v. [Backup i oporavak](#backup-i-oporavak)).
+  Bez `APP_KEY` i `JMBG_HASH_KEY` backup baze nije upotrebljiv.
 - GitHub secrets (v. [CI i CD](#ci-i-cd-github-actions)) žive samo u GitHub-u.
 - Ništa od ovoga se ne ispisuje u PR-ovima, logovima ni dokumentaciji.
 
@@ -370,6 +437,9 @@ Samo imena, nikad vrednosti:
   `ACTIVITY_LOG_RETENTION_DAYS` (365). IP adresa i uređaj su lični podaci, zato retencija postoji.
 - **Greška `JMBG_HASH_KEY` pri čuvanju JMBG-a**: ključ nedostaje ili je kraći od 32 znaka (v. [Tajne i ključevi](#tajne-i-ključevi)).
 - **PDF ne može da se napravi**: nedostaje PHP ekstenzija `gd` (web ili CLI).
+- **Backup nije napravljen.** Pogledajte dnevnik aktivnosti (`backup.failed` navodi razlog), pa ručno pokrenite
+  `php artisan backup:database`. Najčešće: pogrešna putanja do `mysqldump` (`BACKUP_MYSQLDUMP`), nedostaje `proc_open` u CLI PHP-u
+  ili `phar`/`zlib` ekstenzija (arhiva fajlova).
 - **Deploy staje na "shared/.env does not exist"**: napravite `shared/.env` (v. [Server](#server-cpanel-shared-hosting)).
 
 ## Bezbednost u kratkim crtama

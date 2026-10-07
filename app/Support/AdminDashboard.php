@@ -24,8 +24,8 @@ class AdminDashboard
     /** Prefixes of actions left out of the activity list as noise (sign-ins stay in the full log). */
     public const HIDDEN_ACTION_PREFIXES = ['auth.'];
 
-    /** Single actions left out of the activity list as noise (opening or downloading a PDF). */
-    public const HIDDEN_ACTIONS = ['offer.pdf_opened', 'offer.pdf_downloaded'];
+    /** Single actions left out of the activity list as noise (a PDF opened or downloaded, a successful backup). */
+    public const HIDDEN_ACTIONS = ['offer.pdf_opened', 'offer.pdf_downloaded', 'backup.database_created', 'backup.files_created'];
 
     /**
      * @return array{counts: array<string, int>, recent_offers: list<array<string, mixed>>, recent_activities: list<array<string, mixed>>}
