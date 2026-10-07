@@ -1,8 +1,15 @@
 <?php
 
+use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Middleware\ValidatePostSize;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,25 +20,42 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // ValidatePostSize runs inside the web group (after the session starts) instead of globally,
         // so a 413 can be turned into a flashed field error (see the exception handler below).
-        $middleware->remove(\Illuminate\Http\Middleware\ValidatePostSize::class);
+        $middleware->remove(ValidatePostSize::class);
 
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            \Illuminate\Http\Middleware\ValidatePostSize::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
+            ValidatePostSize::class,
         ]);
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+            'role' => EnsureUserHasRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // A rejected JMBG must not be stored in the session as "old input".
-        $exceptions->dontFlash(['jmbg']);
+        // A rejected JMBG or PIB must not be stored in the session as "old input" (passwords are in Laravel's default list).
+        $exceptions->dontFlash(['jmbg', 'pib', 'client_pib', 'issuer_pib']);
+
+        // 429 (6.3): JSON gets a Serbian message; a form (an Inertia visit or a POST/PATCH/PUT/DELETE)
+        // goes back with a flashed error that FlashMessages shows; a plain GET (a PDF link opened in a new
+        // tab) keeps the standard 429 page. Retry-After and the X-RateLimit headers stay in every case.
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+            $message = __('Too many requests. Try again shortly.');
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 429, $e->getHeaders());
+            }
+
+            if ($request->header('X-Inertia') || ! $request->isMethodSafe()) {
+                return back()->with('error', $message)->withHeaders($e->getHeaders());
+            }
+
+            return null;
+        });
 
         // A request body above post_max_size is rejected before validation (413). On the car model
         // form it becomes a message next to the image field instead of an error page.
-        $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (PostTooLargeException $e, Request $request) {
             if (! $request->is('admin/catalog/models', 'admin/catalog/models/*', 'admin/catalog/equipment', 'admin/catalog/equipment/*')) {
                 return null;
             }

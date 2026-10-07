@@ -45,12 +45,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
     // The salon flow (4.5c). /clients/create goes BEFORE /clients/{clientProfile}.
     Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
-    Route::post('/clients', [ClientController::class, 'store'])->middleware('throttle:20,1')->name('clients.store');
+    Route::post('/clients', [ClientController::class, 'store'])->middleware('throttle:client-create')->name('clients.store');
     Route::get('/clients/{clientProfile}', [ClientController::class, 'edit'])->name('clients.edit');
     Route::patch('/clients/{clientProfile}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{clientProfile}', [ClientController::class, 'destroy'])->name('clients.destroy');
     Route::post('/clients/{clientProfile}/reveal', [ClientController::class, 'reveal'])
-        ->middleware('throttle:20,1')->name('clients.reveal');
+        ->middleware('throttle:client-reveal')->name('clients.reveal');
     Route::delete('/clients/{clientProfile}/jmbg', [ClientController::class, 'destroyJmbg'])->name('clients.jmbg.destroy');
 
     Route::redirect('/catalog', '/admin/catalog/models');
@@ -115,7 +115,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
 Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/client-profile', [ClientProfileController::class, 'edit'])->name('client-profile.edit');
-    Route::patch('/client-profile', [ClientProfileController::class, 'update'])->name('client-profile.update');
+    Route::patch('/client-profile', [ClientProfileController::class, 'update'])->middleware('throttle:writes')->name('client-profile.update');
 });
 
 // Offer configurator (4.5b client, 4.5d admin on behalf of a client). Signed-in users only: every
@@ -123,8 +123,8 @@ Route::middleware(['auth', 'role:client'])->group(function () {
 // Keep /offers/new and /offers/catalog/* before any /offers/{offer} route (that one is numeric).
 Route::middleware('auth')->group(function () {
     Route::get('/offers/new', [OfferController::class, 'create'])->name('offers.create');
-    Route::post('/offers', [OfferController::class, 'store'])->middleware('throttle:10,1')->name('offers.store');
-    Route::prefix('offers/catalog')->name('offers.catalog.')->middleware('throttle:60,1')->group(function () {
+    Route::post('/offers', [OfferController::class, 'store'])->middleware('throttle:offers-store')->name('offers.store');
+    Route::prefix('offers/catalog')->name('offers.catalog.')->middleware('throttle:catalog-read')->group(function () {
         Route::get('/models/{carModel}/versions', [OfferCatalogController::class, 'versions'])->whereNumber('carModel')->name('versions');
         Route::get('/versions/{version}', [OfferCatalogController::class, 'version'])->whereNumber('version')->name('version');
         Route::get('/clients', [OfferCatalogController::class, 'clients'])->name('clients');
@@ -136,18 +136,18 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
     Route::get('/offers/{offer}', [OfferController::class, 'show'])->whereNumber('offer')->name('offers.show');
-    Route::patch('/offers/{offer}/note', [OfferController::class, 'updateNote'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.note.update');
-    Route::get('/offers/{offer}/pdf', OfferPdfController::class)->whereNumber('offer')->middleware('throttle:30,1')->name('offers.pdf');
-    Route::post('/offers/{offer}/withdraw', [OfferStatusController::class, 'withdraw'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.withdraw');
-    Route::post('/offers/{offer}/withdrawal/revert', [OfferStatusController::class, 'revertWithdrawal'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.withdrawal.revert');
-    Route::delete('/offers/{offer}', [OfferStatusController::class, 'destroy'])->whereNumber('offer')->middleware('throttle:30,1')->name('offers.destroy');
+    Route::patch('/offers/{offer}/note', [OfferController::class, 'updateNote'])->whereNumber('offer')->middleware('throttle:writes')->name('offers.note.update');
+    Route::get('/offers/{offer}/pdf', OfferPdfController::class)->whereNumber('offer')->middleware('throttle:pdf')->name('offers.pdf');
+    Route::post('/offers/{offer}/withdraw', [OfferStatusController::class, 'withdraw'])->whereNumber('offer')->middleware('throttle:writes')->name('offers.withdraw');
+    Route::post('/offers/{offer}/withdrawal/revert', [OfferStatusController::class, 'revertWithdrawal'])->whereNumber('offer')->middleware('throttle:writes')->name('offers.withdrawal.revert');
+    Route::delete('/offers/{offer}', [OfferStatusController::class, 'destroy'])->whereNumber('offer')->middleware('throttle:writes')->name('offers.destroy');
     // withTrashed: the only route that opens a deleted offer (to restore it); the Policy keeps it admin-only.
-    Route::post('/offers/{offer}/restore', [OfferStatusController::class, 'restore'])->whereNumber('offer')->withTrashed()->middleware('throttle:30,1')->name('offers.restore');
+    Route::post('/offers/{offer}/restore', [OfferStatusController::class, 'restore'])->whereNumber('offer')->withTrashed()->middleware('throttle:writes')->name('offers.restore');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])->middleware('throttle:writes')->name('profile.update');
 });
 
 require __DIR__.'/auth.php';
