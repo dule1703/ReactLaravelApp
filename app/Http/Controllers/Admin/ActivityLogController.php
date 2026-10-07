@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ActivityLogFilterRequest;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Support\Like;
 use App\Support\UserAgent;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
@@ -25,15 +26,15 @@ class ActivityLogController extends Controller
             ->when($filters['action'] ?? null, fn ($q, $action) => $q->where('action', $action))
             ->when($filters['from'] ?? null, fn ($q, $from) => $q->where('created_at', '>=', Carbon::parse($from)->startOfDay()))
             ->when($filters['to'] ?? null, fn ($q, $to) => $q->where('created_at', '<=', Carbon::parse($to)->endOfDay()))
-            ->when($filters['ip'] ?? null, fn ($q, $ip) => $q->where('ip', 'like', $this->escapeLike($ip).'%'))
+            ->when($filters['ip'] ?? null, fn ($q, $ip) => $q->whereRaw("ip like ? escape '!'", [Like::startsWith($ip)]))
             ->when($filters['q'] ?? null, function ($q, $term) {
-                $like = '%'.$this->escapeLike($term).'%';
+                $like = Like::contains($term);
 
                 $q->where(fn ($q) => $q
-                    ->where('user_name', 'like', $like)
-                    ->orWhere('user_email', 'like', $like)
-                    ->orWhere('subject_label', 'like', $like)
-                    ->orWhere('description', 'like', $like));
+                    ->whereRaw("user_name like ? escape '!'", [$like])
+                    ->orWhereRaw("user_email like ? escape '!'", [$like])
+                    ->orWhereRaw("subject_label like ? escape '!'", [$like])
+                    ->orWhereRaw("description like ? escape '!'", [$like]));
             })
             ->orderByDesc('created_at')
             ->orderByDesc('id')
@@ -60,10 +61,5 @@ class ActivityLogController extends Controller
             'users' => User::query()->orderBy('name')->get(['id', 'name', 'email']),
             'actions' => ActivityLog::query()->distinct()->orderBy('action')->pluck('action'),
         ]);
-    }
-
-    private function escapeLike(string $value): string
-    {
-        return addcslashes($value, '%_\\');
     }
 }

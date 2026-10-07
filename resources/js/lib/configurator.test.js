@@ -187,6 +187,10 @@ describe('errorMessages', () => {
         expect(errorMessages({ response: { status: 500, data: {} } }, 'fallback')).toEqual(['fallback']);
         expect(errorMessages({}, 'fallback')).toEqual(['fallback']);
     });
+
+    it('shows a readable text for a rate limited request', () => {
+        expect(errorMessages({ response: { status: 429, data: { message: 'Too Many Attempts.' } } }, 'x')).toEqual(['Previše zahteva. Pokušajte ponovo za nekoliko trenutaka.']);
+    });
 });
 
 describe('saveBody for an admin', () => {

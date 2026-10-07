@@ -118,7 +118,7 @@ class OfferPdfTest extends TestCase
             $this->actingAs($this->client)->get("/offers/$id/pdf")->assertNotFound();
         }
 
-        $this->assertContains('throttle:30,1', Route::getRoutes()->getByName('offers.pdf')->gatherMiddleware());
+        $this->assertContains('throttle:pdf', Route::getRoutes()->getByName('offers.pdf')->gatherMiddleware());
     }
 
     public function test_the_filename_has_no_slash(): void
