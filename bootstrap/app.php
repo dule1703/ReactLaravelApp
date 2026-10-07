@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -27,6 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
             ValidatePostSize::class,
         ]);
+
+        // Hardening headers on every response, also on /up and on error pages (6.3).
+        $middleware->append(SecurityHeaders::class);
 
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
