@@ -18,16 +18,19 @@ class BackupSchedule
 
     public const FILES_DAY = 0; // Sunday
 
+    /** Minutes the overlap lock lives: the dump times out after 600 s, so a killed process must not block tomorrow's run. */
+    public const LOCK_MINUTES = 120;
+
     public static function register(Schedule $schedule): void
     {
         $schedule->command('backup:database')
             ->dailyAt(self::DATABASE_AT)
-            ->withoutOverlapping()
+            ->withoutOverlapping(self::LOCK_MINUTES)
             ->onFailure(fn () => Log::error('Scheduled backup:database failed (see the activity log: backup.failed).'));
 
         $schedule->command('backup:files')
             ->weeklyOn(self::FILES_DAY, self::FILES_AT)
-            ->withoutOverlapping()
+            ->withoutOverlapping(self::LOCK_MINUTES)
             ->onFailure(fn () => Log::error('Scheduled backup:files failed (see the activity log: backup.failed).'));
     }
 }

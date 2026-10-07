@@ -379,6 +379,10 @@ Za **pun oporavak** su potrebni: dump baze, **`APP_KEY`** i **`JMBG_HASH_KEY`** 
 `shared/storage/app/backups`); backup na istom serveru ne štiti od gubitka servera. Hosting možda već pravi svoje
 bekape, ali na njih se ne oslanjajte bez provere.
 
+**Prostor i kvota hostinga.** 14 dnevnih dump-ova i 4 arhive slika zauzimaju prostor na istom nalogu. Proverite
+`du -sh ~/projects/react-laravel-app/deploy/<env>/shared/storage/app/backups` i `df -h`; ako je kvota mala, smanjite
+`BACKUP_DB_KEEP` i `BACKUP_FILES_KEEP` u `shared/.env` (pa `php artisan config:cache`).
+
 **Backup sadrži lične podatke** (email, adrese, hash i šifrovani JMBG, dnevnik sa IP adresama). Čuva se kao produkcija:
 nikad u git, nikad mejlom, samo na uređaju i mestu koje štitite.
 
@@ -406,6 +410,7 @@ Oporavak se uvek radi u **praznu ili probnu bazu**, nikad preko žive baze bez p
 5. Prijavite se, otvorite ponudu i njen PDF, proverite JMBG jednog klijenta (admin → Klijenti).
 
 **Vežba oporavka** (korak 1 do 3) radi se na stagingu pre nego što se backup smatra proverenim (ROADMAP 7.2).
+
 ## Tajne i ključevi
 
 Samo imena, nikad vrednosti:
