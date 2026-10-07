@@ -414,6 +414,6 @@ class AdminCreateClientTest extends TestCase
 
     public function test_saving_is_throttled(): void
     {
-        $this->assertContains('throttle:20,1', Route::getRoutes()->getByName('clients.store')->gatherMiddleware());
+        $this->assertContains('throttle:client-create', Route::getRoutes()->getByName('clients.store')->gatherMiddleware());
     }
 }
