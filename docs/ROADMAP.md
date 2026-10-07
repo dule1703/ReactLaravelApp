@@ -174,11 +174,12 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 - [x] 6.1 Dashboard `/admin`: brojevi (klijenti, aktivne, povučene, ponude u 30 dana), poslednjih 5 ponuda i 8 aktivnosti (bez `auth.*` i PDF zapisa), prečice; `App\Support\AdminDashboard` (whitelist, 4 upita).
 - [x] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost: klijentska početna (`App\Support\ClientDashboard`, admin na `/dashboard` ide na `/admin`), prazna stanja sa sledećim korakom, prigušivanje lista dok traje pretraga (`BusyRegion`), srpske poruke i nazivi polja uz test za svaki Form Request, `aria-invalid`/`aria-describedby` uz greške, navigacija se skuplja do `lg`.
-- [ ] 6.3 Bezbednosni pregled: rate limiting, pokrivenost Policy-ja, bez osetljivih podataka u logovima
+- [x] 6.3 Bezbednosni pregled: imenovani limiteri (zaseban brojač po imenu; stari numerički `throttle:N,1` je delio jedan brojač po korisniku), 429 kao poruka na formi, `RouteAccessMatrixTest` (sve rute, tuđa ponuda = 404), zaključani shared props, adresa redaktovana u dnevniku, bezbednosna zaglavlja (bez CSP/HSTS), `Support/Like` u dnevniku.
 
 ## Faza 7 - Završnica
 
 - [ ] 7.1 README: podešavanje, deploy i rollback
+      Mora da sadrži ROLLBACK UPOZORENJE iz CLAUDE.md (4.6b): stari release ne zna za `deleted_at`, pa posle rollback-a prikazuje obrisane ponude do sledećeg deploy-a (baza se ne vraća).
 - [ ] 7.2 Rutina za backup baze na serveru
 - [ ] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
 
