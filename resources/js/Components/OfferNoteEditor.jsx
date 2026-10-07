@@ -37,7 +37,7 @@ export default function OfferNoteEditor({ offer, canEdit, noteMax }) {
     return (
         <div className="mt-3">
             <div className="flex items-center justify-between gap-3">
-                <dt className="text-xs uppercase text-gray-500">{t('Note')}</dt>
+                <h4 className="text-xs uppercase text-gray-500">{t('Note')}</h4>
                 {canEdit && !editing && (
                     <button type="button" onClick={open} className="text-sm font-medium text-brand-700 hover:text-brand-800">
                         {t('Edit note')}
@@ -67,7 +67,7 @@ export default function OfferNoteEditor({ offer, canEdit, noteMax }) {
                     </div>
                 </form>
             ) : (
-                <dd className="mt-0.5 whitespace-pre-line text-sm text-ink">{offer.note || '-'}</dd>
+                <p className="mt-0.5 whitespace-pre-line text-sm text-ink">{offer.note || '-'}</p>
             )}
         </div>
     );

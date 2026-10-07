@@ -109,7 +109,7 @@ class IssuerProfileTest extends TestCase
 
         $this->assertSame(['redacted' => true], $created->changes['pib']);
         $this->assertSame(['redacted' => true], $updated->changes['pib']);
-        $this->assertSame(['old' => 'Čačak', 'new' => 'Niš'], $updated->changes['city']);
+        $this->assertSame(['redacted' => true], $updated->changes['city']); // address fields are redacted by name for every model (6.3)
         $this->assertSame($this->admin->id, $updated->user_id);
 
         $all = ActivityLog::all()->toJson();

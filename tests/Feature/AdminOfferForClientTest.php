@@ -374,7 +374,7 @@ class AdminOfferForClientTest extends TestCase
 
     public function test_the_search_is_throttled_and_the_new_route_is_before_the_offer_parameter(): void
     {
-        $this->assertContains('throttle:60,1', Route::getRoutes()->getByName('offers.catalog.clients')->gatherMiddleware());
+        $this->assertContains('throttle:catalog-read', Route::getRoutes()->getByName('offers.catalog.clients')->gatherMiddleware());
 
         $this->actingAs($this->admin)->get('/offers/catalog/clients?q=ab')->assertOk();
         $this->actingAs($this->admin)->get('/offers/new')->assertOk();

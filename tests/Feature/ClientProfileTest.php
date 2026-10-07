@@ -196,7 +196,7 @@ class ClientProfileTest extends TestCase
 
         $this->assertSame(['redacted' => true], $logs[1]->changes['jmbg']);
         $this->assertSame(['redacted' => true], $logs[1]->changes['jmbg_hash']);
-        $this->assertSame('Nis', $logs[1]->changes['city']['new']);
+        $this->assertSame(['redacted' => true], $logs[1]->changes['city']); // the address of a person is a field name only (6.3)
 
         $dump = ActivityLog::all()->toJson();
         foreach ([self::JMBG, '0202990710007', '123456789', '987654321'] as $value) {

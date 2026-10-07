@@ -16,7 +16,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 - [x] 0.7 CI/CD fajlovi + CLAUDE.md + ROADMAP.md kroz PR u `develop` -> CI zelen -> prvi staging deploy
 - [x] 0.8 Test Rollback workflow-a na stagingu
 - [x] 0.9 Priprema produkcije, PR `develop` -> `main`, prvi production deploy
-- [ ] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
+- [x] 0.10 Cron: `schedule:run` svaki minut, `queue:work --stop-when-empty`
       Provera: `php artisan schedule:list`. MORA biti gotovo pre produkcije (`activitylog:prune` je
       zakazan dnevno); do tada se `php artisan activitylog:prune` pokreće ručno.
       cPanel > Cron Jobs, jednom u minuti (`* * * * *`), po jedna linija za svako okruženje (`<env>` = `production` ili `staging`):
@@ -24,6 +24,7 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
       Izlaz ide u `/dev/null` (`schedule:run` svaki minut piše "No scheduled commands are ready"), a greške u `cron-errors.log`.
       `queue:work` se ne zakazuje dok ne postoji prvi `ShouldQueue` posao (danas red ne nosi ništa; mejl iz 4.5c je sinhron).
       Štiklira se kad se potvrdi da se u dnevniku aktivnosti pojavio "Čišćenje dnevnika" posle ponoći.
+      Potvrđeno 07.10.2026: u dnevniku aktivnosti se pojavilo 'Čišćenje dnevnika' u 00:00 (staging i production).
 - [x] 0.11 Reset opcache-a posle deploy-a (`OPCACHE_RESET_URL` ostaje prazan, `deploy/*.sh` se ne menja).
       Zatvoreno bez rute: izmereno na stagingu, nova verzija vidljiva nekoliko sekundi posle deploy-a;
       ako se simptom ponovi, ponovo otvoriti.
@@ -173,11 +174,12 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 - [x] 6.1 Dashboard `/admin`: brojevi (klijenti, aktivne, povučene, ponude u 30 dana), poslednjih 5 ponuda i 8 aktivnosti (bez `auth.*` i PDF zapisa), prečice; `App\Support\AdminDashboard` (whitelist, 4 upita).
 - [x] 6.2 Prazna i učitavajuća stanja, poruke validacije, responzivnost: klijentska početna (`App\Support\ClientDashboard`, admin na `/dashboard` ide na `/admin`), prazna stanja sa sledećim korakom, prigušivanje lista dok traje pretraga (`BusyRegion`), srpske poruke i nazivi polja uz test za svaki Form Request, `aria-invalid`/`aria-describedby` uz greške, navigacija se skuplja do `lg`.
-- [ ] 6.3 Bezbednosni pregled: rate limiting, pokrivenost Policy-ja, bez osetljivih podataka u logovima
+- [x] 6.3 Bezbednosni pregled: imenovani limiteri (zaseban brojač po imenu; stari numerički `throttle:N,1` je delio jedan brojač po korisniku), 429 kao poruka na formi, `RouteAccessMatrixTest` (sve rute, tuđa ponuda = 404), zaključani shared props, adresa redaktovana u dnevniku, bezbednosna zaglavlja (bez CSP/HSTS), `Support/Like` u dnevniku.
 
 ## Faza 7 - Završnica
 
 - [ ] 7.1 README: podešavanje, deploy i rollback
+      Mora da sadrži ROLLBACK UPOZORENJE iz CLAUDE.md (4.6b): stari release ne zna za `deleted_at`, pa posle rollback-a prikazuje obrisane ponude do sledećeg deploy-a (baza se ne vraća).
 - [ ] 7.2 Rutina za backup baze na serveru
 - [ ] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
 

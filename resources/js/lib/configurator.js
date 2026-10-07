@@ -3,6 +3,7 @@
 // The server remains the only authority: it re-reads every price from the catalog and the totals
 // computed here are only what the client SEES (sent back as expected_* to detect a change).
 
+import { t } from './i18n';
 import { calculateOffer, OfferCalculationError } from './offer';
 
 /**
@@ -254,6 +255,11 @@ export function errorMessages(error, fallback, except = []) {
         return Object.entries(data.errors)
             .filter(([field]) => !except.includes(field))
             .flatMap(([, messages]) => messages);
+    }
+
+    // 429 from the rate limiter: always the same readable text, whatever the server sent.
+    if (error.response?.status === 429) {
+        return [t('Too many requests. Try again shortly.')];
     }
 
     return [data?.message ?? fallback];

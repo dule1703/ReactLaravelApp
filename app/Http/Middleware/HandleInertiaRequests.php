@@ -32,8 +32,10 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            // Only what the pages read (the layout: name and email; the account form: email_verified_at).
+            // Never the whole model: a new column must not reach the browser by accident (6.3).
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user()?->only(['name', 'email', 'email_verified_at']),
             ],
             'nav' => fn () => $this->navigation($request),
             // Flash data lives for exactly one request: it is shown once and then gone.
