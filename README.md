@@ -140,7 +140,7 @@ Napomene:
 - Tokom rada pokrećite samo pogođene testove (`php artisan test putanja/Fajl.php` ili `--filter`), a ceo skup
   jednom pre commita. Ako test pada samo u paralelnom režimu, ponovite ga sekvencijalno: testovi dele
   `storage/app/pdf`, a konačni sudija je CI (`composer test`).
-- Testovi koriste SQLite u memoriji. Ceo skup traje oko pola minuta paralelno i oko minut i po sekvencijalno.
+- Testovi koriste SQLite u memoriji. Ceo skup traje oko 45 s paralelno i oko 2 minuta sekvencijalno (CI, koji ide sekvencijalno, oko 2 minuta).
   Xdebug (ako je uključen) ga znatno usporava, pa ga isključite osim kad vam treba.
 - Testove proverite i sa `CI=true` (CI okruženje se ponaša drugačije od lokalnog): `CI=true composer test`.
 - Kalkulacije novca i PDV-a postoje u PHP-u i JavaScript-u i moraju davati isti rezultat (zajednički fixture-i u

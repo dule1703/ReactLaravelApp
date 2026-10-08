@@ -74,7 +74,7 @@ označeno sa [P] ili [S+P]. Ne unosite prave lične podatke na stagingu i ne upi
 44. [S+P] Posle ponoći u dnevniku aktivnosti piše "Čišćenje dnevnika".
 45. [S+P] Sutradan u 02:30 zapis "Napravljen backup baze", a nedeljom u 03:00 i "Napravljen backup fajlova".
 46. [S+P] `ls -l shared/storage/app/backups` -> fajlovi `-rw-------`, direktorijum `drwx------`.
-47. [S+P] `https://<domen>/storage/app/backups/<fajl>` -> 404.
+47. [S+P] `https://<domen>/storage/app/backups/<fajl>` -> 404 (production) ili 403 (staging); bitno je da se fajl ne preuzme.
 48. [S] Vežba oporavka: `gunzip -c <fajl> | mysql` u probnu bazu, pa broj redova `users`, `offers`, `activity_logs`.
 49. [S] Privremeno pogrešan `BACKUP_MYSQLDUMP` -> `backup:database` ne uspeva, `backup.failed` je u dnevniku i na
     dashboardu; vrati vrednost i `php artisan config:cache`.
