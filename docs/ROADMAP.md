@@ -180,21 +180,20 @@ Legenda: `[x]` gotovo, `[ ]` na redu.
 
 - [x] 7.1 README: podešavanje, deploy i rollback (lokalno pokretanje, testovi, git tok, CI/CD, server i prvo podešavanje, deploy, rollback sa upozorenjem o `deleted_at`, tajne, rešavanje problema)
       Mora da sadrži ROLLBACK UPOZORENJE iz CLAUDE.md (4.6b): stari release ne zna za `deleted_at`, pa posle rollback-a prikazuje obrisane ponude do sledećeg deploy-a (baza se ne vraća).
-- [ ] 7.2 Rutina za backup baze i fajlova na serveru: `backup:database` (dnevno 02:30, čuva 14) i `backup:files` (nedeljom 03:00, čuva 4) kroz postojeći `schedule:run`, uspeh/neuspeh u dnevniku, README "Backup i oporavak".
-      Štiklira se kad vlasnik potvrdi VEŽBU OPORAVKA na stagingu (`gunzip -c backup | mysql` u probnu bazu, provera broja redova) i da je cron napravio backup u 02:30 (nedeljom i fajlove).
-- [ ] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
+- [x] 7.2 Rutina za backup baze i fajlova na serveru: `backup:database` (dnevno 02:30, čuva 14) i `backup:files` (nedeljom 03:00, čuva 4) kroz postojeći `schedule:run`, uspeh/neuspeh u dnevniku, README "Backup i oporavak".
+      Potvrdio vlasnik: vežba oporavka na stagingu 07.10.2026 (probna baza: 27 tabela, users 2, offers 4, activity_logs 76; živa baza 77, razlika je zapis o samom backup-u; poslednja migracija se poklapa); noćni backup baze u 02:30 na staging i production 08.10.2026 (zapis u dnevniku). Prva arhiva fajlova očekivana 11.10.2026 u 03:00.
+- [x] 7.3 Završna regresija: testovi zeleni, prolazak kroz staging, production release
+      Zatvoreno 08.10.2026 bez formalnog prolaska kroz docs/REGRESSION.md: automatske provere (testovi, build, audit), vežba oporavka i backup su potvrđeni, a ručna provera je rađena neformalno tokom razvoja. Lista ostaje za buduće izlaske.
 
 ## Stanje projekta
 
-Na dan 07.10.2026:
+Na dan 08.10.2026: funkcionalno završen; sledi tag `v1.0.0` posle promocije u `main`.
 
-- Faze 0 do 6 i 7.1 su gotove. `main` i `develop` imaju identična stabla (PR #103 je poslednji `develop` -> `main`).
-- 7.2 (backup) je u kodu i na oba okruženja. Na production-u je ručno potvrđeno: prvi backup 07.10.2026 u 15:37, fajl
-  `0600`, direktorijum `0700`, zapis u dnevniku aktivnosti. Čeka se vežba oporavka na stagingu i potvrda noćnog cron-a
-  u 02:30; zato je 7.2 `[ ]`.
+- Faze 0 do 7 su gotove. Poslednji `develop` -> `main` je PR #103; `v1.0.0` sledi posle sledeće promocije.
+- 7.2 (backup) je potvrđen na oba okruženja (vežba oporavka, noćni cron). Prvi nedeljni backup fajlova očekuje se 11.10.2026 u 03:00.
 - 7.3: audit stanja i regresija u čistoj kopiji su urađeni (PHP: 1047 testova, 1 preskočen na Windowsu zbog `umask`,
   JS: 239 testova; `pint --test`, `composer audit` i `npm audit --omit=dev` bez nalaza). Ručna regresija po
-  [REGRESSION.md](REGRESSION.md) čeka vlasnika, pa je 7.3 `[ ]`. Posle potvrde sledi anotirani tag `v1.0.0` na `main`.
+  [REGRESSION.md](REGRESSION.md) nije prolažena u celini (v. napomenu uz 7.3).
 
 ## Poznata ograničenja i kasnije
 
@@ -231,6 +230,7 @@ Svaka stavka: zašto je tako i šta bi trebalo.
   Trebalo bi je isključiti malim zasebnim PR-om.
 - **Deploy skripte u javnom repou sadrže korisničko ime cPanel naloga.** Trebalo bi ga izdvojiti u fajl na serveru
   (izmena `deploy/*.sh` traži posebno odobrenje).
+
 ## Otvorene odluke
 
 - D1 (ODLUČENO): svaki klijent je registrovan korisnik (`users` + `client_profiles`, 1:1).
